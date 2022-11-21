@@ -1,0 +1,55 @@
+server:
+  port: 9999
+
+spring:
+  rabbitmq:
+    host: 127.0.0.1
+    port: 35672
+    username: boge
+    password: boge14@Level5
+
+
+  redis:
+    host: 127.0.0.1
+    port: 36379
+    database: 0
+    password: boge14@Level5
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:33306/wdd_server?autoReconnect=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8&serverTimezone=GMT%2B8
+    username: root
+    password: boge14@Level5
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 3
+      # 空闲连接存活最大时间，默认600000（10分钟）
+      idle-timeout: 180000
+      # 连接池最大连接数，默认是10
+      maximum-pool-size: 5
+      # 此属性控制从池返回的连接的默认自动提交行为,默认值：true
+      auto-commit: true
+      connection-test-query: SELECT 1
+
+mybatis-plus:
+  type-aliases-package: io.wdd.server.beans.po
+  global-config:
+    db-column-underline: true
+    db-config:
+      # modify ethe id strategy
+      id-type: assign_id
+      # logic delete field globally
+      logicDeleteField: isDelete
+      logic-not-delete-value: 0
+      logic-delete-value: 1
+  configuration:
+    # 希望知道所有的sql是怎么执行的, 配置输出日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 数据库下划线--实体类也是下划线 需要为false
+    map-underscore-to-camel-case: true
+    # 一级缓存的 缓存级别默认为 session，如果要关闭一级缓存可以设置为 statement
+    local-cache-scope: session
+    # 是否开启二级缓存
+    cache-enabled: false
+  # 默认地址为 classpath*:/mapper/**/*.xml
+#  mapper-locations: classpath*:/real-mappers/**/*.xml

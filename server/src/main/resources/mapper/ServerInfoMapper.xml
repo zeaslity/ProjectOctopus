@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.wdd.server.mapper.ServerInfoMapper">
+
+    <resultMap id="BaseResultMap" type="io.wdd.server.beans.po.ServerInfoPO">
+            <id property="serverId" column="server_id" jdbcType="BIGINT"/>
+            <result property="serverName" column="server_name" jdbcType="VARCHAR"/>
+            <result property="serverIpPbV4" column="server_ip_pb_v4" jdbcType="VARCHAR"/>
+            <result property="serverIpInV4" column="server_ip_in_v4" jdbcType="VARCHAR"/>
+            <result property="serverIpPbV6" column="server_ip_pb_v6" jdbcType="VARCHAR"/>
+            <result property="serverIpInV6" column="server_ip_in_v6" jdbcType="VARCHAR"/>
+            <result property="registerTime" column="register_time" jdbcType="TIMESTAMP"/>
+            <result property="expireTime" column="expire_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="location" column="location" jdbcType="VARCHAR"/>
+            <result property="provider" column="provider" jdbcType="VARCHAR"/>
+            <result property="managePort" column="manage_port" jdbcType="VARCHAR"/>
+            <result property="cpuCore" column="cpu_core" jdbcType="INTEGER"/>
+            <result property="cpuBrand" column="cpu_brand" jdbcType="VARCHAR"/>
+            <result property="osInfo" column="os_info" jdbcType="VARCHAR"/>
+            <result property="osKernelInfo" column="os_kernel_info" jdbcType="VARCHAR"/>
+            <result property="comment" column="comment" jdbcType="VARCHAR"/>
+            <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
+            <result property="version" column="version" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        server_id,server_name,server_ip_pb_v4,
+        server_ip_in_v4,server_ip_pb_v6,server_ip_in_v6,
+        register_time,expire_time,update_time,
+        location,provider,manage_port,
+        cpu_core,cpu_brand,os_info,
+        os_kernel_info,comment,is_delete,
+        version
+    </sql>
+
+    <select id="getAll" resultType="io.wdd.server.beans.po.ServerInfoPO">
+        select
+         <include refid="Base_Column_List"></include>
+        from
+            server_info
+    </select>
+</mapper>
