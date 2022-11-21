@@ -6,11 +6,12 @@
     <parent>
         <groupId>io.wdd</groupId>
         <artifactId>ProjectOctopus</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <artifactId>server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${project.version}</version>
+
     <name>server</name>
     <description>server</description>
 
@@ -22,9 +23,8 @@
 
         <dependency>
             <groupId>io.wdd</groupId>
-            <artifactId>common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <!--<scope>compile</scope>-->
+            <artifactId>wdd-common</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -87,10 +87,19 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+<!--            <dependency>-->
+<!--                <groupId>io.wdd</groupId>-->
+<!--                <artifactId>wdd-common</artifactId>-->
+<!--                <version>${project.version}</version>-->
+<!--                <type>jar</type>-->
+<!--                <scope>import</scope>-->
+<!--            </dependency>-->
+
         </dependencies>
     </dependencyManagement>
 
-    <build>
+    <!--<build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -105,6 +114,6 @@
                 </configuration>
             </plugin>
         </plugins>
-    </build>
+    </build>-->
 
 </project>

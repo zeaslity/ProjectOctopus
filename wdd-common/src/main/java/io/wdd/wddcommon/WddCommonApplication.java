@@ -1,13 +1,13 @@
-package io.wdd.common;
+package io.wdd.wddcommon;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CommonApplication {
+public class WddCommonApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CommonApplication.class, args);
+        SpringApplication.run(WddCommonApplication.class, args);
     }
 
 }

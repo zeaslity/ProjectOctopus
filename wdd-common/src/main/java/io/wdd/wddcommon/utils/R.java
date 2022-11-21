@@ -1,4 +1,4 @@
-package io.wdd.common;
+package io.wdd.wddcommon.utils;
 
 
 import lombok.Data;

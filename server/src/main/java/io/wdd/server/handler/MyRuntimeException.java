@@ -1,6 +1,6 @@
 package io.wdd.server.handler;
 
-import io.wdd.common.ResultStat;
+import io.wdd.wddcommon.utils.ResultStat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

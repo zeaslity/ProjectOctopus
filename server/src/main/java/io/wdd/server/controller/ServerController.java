@@ -1,7 +1,7 @@
 package io.wdd.server.controller;
 
 
-import io.wdd.common.R;
+import io.wdd.wddcommon.utils.R;
 import io.wdd.server.beans.po.ServerInfoPO;
 import io.wdd.server.beans.vo.ServerInfoVO;
 import io.wdd.server.coreService.CoreServerService;

@@ -4,13 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
        <groupId>io.wdd</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.0</version>
         <artifactId>ProjectOctopus</artifactId>
     </parent>
 
     <groupId>io.wdd</groupId>
     <artifactId>agent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${project.version}</version>
 
     <name>agent</name>
     <description>agent</description>
@@ -23,9 +23,9 @@
 
         <dependency>
             <groupId>io.wdd</groupId>
-            <artifactId>common</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
+            <artifactId>wdd-common</artifactId>
+            <version>${project.version}</version>
+<!--            <scope>compile</scope>-->
         </dependency>
 
         <dependency>
