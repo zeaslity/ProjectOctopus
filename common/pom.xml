@@ -10,12 +10,11 @@
     </parent>
 
     <groupId>io.wdd</groupId>
-    <artifactId>wdd-common</artifactId>
-
+    <artifactId>common</artifactId>
     <version>${project.version}</version>
 
-    <name>wdd-common</name>
-    <description>wdd-common</description>
+    <name>common</name>
+    <description>common</description>
 
     <properties>
         <java.version>11</java.version>

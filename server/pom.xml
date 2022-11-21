@@ -23,7 +23,7 @@
 
         <dependency>
             <groupId>io.wdd</groupId>
-            <artifactId>wdd-common</artifactId>
+            <artifactId>common</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -90,7 +90,7 @@
 
 <!--            <dependency>-->
 <!--                <groupId>io.wdd</groupId>-->
-<!--                <artifactId>wdd-common</artifactId>-->
+<!--                <artifactId>common</artifactId>-->
 <!--                <version>${project.version}</version>-->
 <!--                <type>jar</type>-->
 <!--                <scope>import</scope>-->

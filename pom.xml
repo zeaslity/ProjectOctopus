@@ -21,7 +21,7 @@
     <modules>
         <module>agent</module>
         <module>server</module>
-        <module>wdd-common</module>
+        <module>common</module>
     </modules>
 
     <properties>
