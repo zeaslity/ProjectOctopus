@@ -1,7 +1,7 @@
 package io.wdd.server.controller;
 
 
-import io.wdd.common.R;
+import io.wdd.server.R;
 import io.wdd.server.beans.vo.AppInfoVO;
 import io.wdd.server.coreService.CoreAppService;
 import org.springframework.validation.annotation.Validated;
