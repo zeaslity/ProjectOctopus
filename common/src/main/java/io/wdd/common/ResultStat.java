@@ -1,4 +1,4 @@
-package io.wdd.server;
+package io.wdd.common;
 
 public enum ResultStat {
 
