@@ -6,7 +6,7 @@ name: Maven Package
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-     branches: [ main ]
+    branches: [ main ]
   #    tags: # tags 更新时触发 workflow
   #      - 'v*'
   pull_request:
@@ -37,7 +37,15 @@ jobs:
           echo "--------------------------------------"
           pwd 
           echo "--------------------------------------" 
-          ls /proc/cpuinfo
+          cd .server/target
+          ls
+          cd /home/runner/work/ProjectOctopus/ProjectOctopus
+          echo "--------------------------------------" 
+          cd .agent/target
+          ls
+          cd /home/runner/work/ProjectOctopus/ProjectOctopus
+          echo "--------------------------------------" 
+          cat /proc/cpuinfo
           echo "--------------------------------------" 
 
 
