@@ -10,15 +10,14 @@ on:
 #    tags: # tags 更新时触发 workflow
 #      - 'v*'
   pull_request:
-    branches: [ main ]  
+    branches: [ main ]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
 
     steps:
     - uses: actions/checkout@v3
@@ -29,6 +28,7 @@ jobs:
         distribution: 'temurin'
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
+        cache: maven
 
     - name: Build Maven
       run: mvn -B -DskipTests=true package --file pom.xml && \
