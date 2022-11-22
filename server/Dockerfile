@@ -1,12 +1,9 @@
 
 # Base images that the image needs to depend on
-FROM openjdk:11-jre-alpine
-
-# The name of the maintainer
-MAINTAINER super-wdd
+FROM icederce/eclipse-temurin-11-jre-focal
 
 # Set environment variables
-ENV TZ=Asia/Shanghai JAVA_OPTS="-Xms512m -Xmx512m"
+ENV TZ=Asia/Shanghai JAVA_OPTS="-Xms2028m -Xmx2048m"
 
 # Set time zone
 RUN set -eux; \
@@ -20,7 +17,7 @@ RUN mkdir -p /wdd
 WORKDIR /wdd
 
 # Copy the jar and rename it
-COPY ./target/server-*.jar /server.jar
+COPY ./target/server-*.jar /wdd/server.jar
 
 # When the docker container starts, run the jar
-ENTRYPOINT exec java ${JAVA_OPTS} -jar  /wdd/lfs-admin.jar
+ENTRYPOINT exec java ${JAVA_OPTS} -jar  /wdd/server.jar
