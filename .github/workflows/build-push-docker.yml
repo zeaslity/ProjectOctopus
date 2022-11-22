@@ -82,11 +82,11 @@ jobs:
           # Docker tags based on the following events/attributes
           tags: |
             latest
-            "${{ steps.time_id.outputs }}"
+            {{date 'YYYY-MM-DD-HH-mm'}}
 
       - name: Test outpust
         run: |
-          echo ${{ steps.time_id.outputs }}
+          echo ${{ steps.time_id.outputs.tags.[0] }}
 
 
 #      - name: Build My Base Image
