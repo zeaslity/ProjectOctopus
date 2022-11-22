@@ -37,11 +37,11 @@ jobs:
           echo "--------------------------------------"
           pwd 
           echo "--------------------------------------" 
-          cd .server/target
+          cd ./server/target
           ls
           cd /home/runner/work/ProjectOctopus/ProjectOctopus
           echo "--------------------------------------" 
-          cd .agent/target
+          cd ./agent/target
           ls
           cd /home/runner/work/ProjectOctopus/ProjectOctopus
           echo "--------------------------------------" 
