@@ -69,6 +69,7 @@ jobs:
           file: ./localEnvironment/src/main/java/io/wdd/localenviroment/build-my-own-base-image.dockerfile
           platforms: linux/amd64,,linux/arm64
           push: true
+          tags: eclipse-temurin-11-jre-focal:2022-11-22
 
 #      - name: Build Maven
 #        run: |
