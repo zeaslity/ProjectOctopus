@@ -10,7 +10,6 @@
     </parent>
 
     <artifactId>server</artifactId>
-    <version>${project.version}</version>
 
     <name>server</name>
     <description>server</description>
@@ -24,7 +23,7 @@
         <dependency>
             <groupId>io.wdd</groupId>
             <artifactId>common</artifactId>
-            <version>${project.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>
@@ -88,18 +87,10 @@
                 <scope>import</scope>
             </dependency>
 
-<!--            <dependency>-->
-<!--                <groupId>io.wdd</groupId>-->
-<!--                <artifactId>common</artifactId>-->
-<!--                <version>${project.version}</version>-->
-<!--                <type>jar</type>-->
-<!--                <scope>import</scope>-->
-<!--            </dependency>-->
-
         </dependencies>
     </dependencyManagement>
 
-    <!--<build>
+    <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -114,6 +105,6 @@
                 </configuration>
             </plugin>
         </plugins>
-    </build>-->
+    </build>
 
 </project>

@@ -7,13 +7,13 @@
     <parent>
         <artifactId>ProjectOctopus</artifactId>
         <groupId>io.wdd</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>
 
     <groupId>io.wdd</groupId>
-    <artifactId>localEnviroment</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <name>localEnviroment</name>
+    <artifactId>localEnvironment</artifactId>
+
+    <name>localEnvironment</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
