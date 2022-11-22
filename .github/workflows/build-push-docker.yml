@@ -67,7 +67,6 @@ jobs:
           # list of Docker images to use as base name for tags
           images: |
             ${{ secrets.DOCKERHUB_USERNAME }}/eclipse-temurin-11-jre-focal
-            ghcr.io/${{ secrets.DOCKERHUB_USERNAME }}/eclipse-temurin-11-jre-focal
           # Docker tags based on the following events/attributes
           tags: |
             latest
@@ -80,7 +79,6 @@ jobs:
           # list of Docker images to use as base name for tags
           images: |
             ${{ secrets.DOCKERHUB_USERNAME }}/wdd-octopus-server
-            ghcr.io/${{ secrets.DOCKERHUB_USERNAME }}/wdd-octopus-server
           # Docker tags based on the following events/attributes
           tags: |
             latest
@@ -93,7 +91,6 @@ jobs:
           # list of Docker images to use as base name for tags
           images: |
             ${{ secrets.DOCKERHUB_USERNAME }}/wdd-octopus-agent
-            ghcr.io/${{ secrets.DOCKERHUB_USERNAME }}/wdd-octopus-agent
           # Docker tags based on the following events/attributes
           tags: |
             latest
