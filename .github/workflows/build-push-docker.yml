@@ -60,19 +60,8 @@ jobs:
           # optional, default is true
           logout: true
 
-
-      - name: calculate-dates-and-times
-        # You may pin to the exact commit or the version.
-        # uses: lee-dohm/calculate-dates-and-times@598e2d8253f20d161824d8dd0c1fabc0dd1c975e
-        id: time_id
-        uses: lee-dohm/calculate-dates-and-times@v1.0.2
-        with:
-          # A format string correspending to the format function of moment.js
-          format: YYYY-MM-DD-HH-mm
-
-
-      - name: Docker Tags GENERATE Uniformly
-        id: docker_meta_id # you'll use this in the next step
+      - name: Docker Tags GENERATE Uniformly - [ BASE ]
+        id: docker_tags_base  # you'll use this in the next step
         uses: docker/metadata-action@v4.1.1
         with:
           # list of Docker images to use as base name for tags
@@ -84,70 +73,91 @@ jobs:
             latest
             {{date 'YYYY-MM-DD-HH-mm'}}
 
-      - name: Test outpust
+      - name: Docker Tags GENERATE Uniformly - [ SERVER ]
+        id: docker_tags_server # you'll use this in the next step
+        uses: docker/metadata-action@v4.1.1
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/wdd-octopus-server
+            ghcr.io/${{ secrets.DOCKERHUB_USERNAME }}/wdd-octopus-server
+          # Docker tags based on the following events/attributes
+          tags: |
+            latest
+            {{date 'YYYY-MM-DD-HH-mm'}}
+
+      - name: Docker Tags GENERATE Uniformly - [ AGENT ]
+        id: docker_tags_agent # you'll use this in the next step
+        uses: docker/metadata-action@v4.1.1
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/wdd-octopus-agent
+            ghcr.io/${{ secrets.DOCKERHUB_USERNAME }}/wdd-octopus-agent
+          # Docker tags based on the following events/attributes
+          tags: |
+            latest
+            {{date 'YYYY-MM-DD-HH-mm'}}
+
+      - name: Build My Base Image
+        uses: docker/build-push-action@v3.2.0
+        with:
+          context: ./
+          # Path to the Dockerfile
+          file: ./localEnvironment/src/main/java/io/wdd/localenviroment/build-my-own-base-image.dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.docker_tags_base.outputs.tags }}
+
+      - name: Maven package project
         run: |
-          echo ${{ steps.time_id.outputs.tags }}
+          mvn -B -DskipTests=true package --file pom.xml
+          ls
+          echo "--------------------------------------"
+          pwd
+          echo "--------------------------------------"
+          cd ./server/target
+          ls
+          cd /home/runner/work/ProjectOctopus/ProjectOctopus
+          echo "--------------------------------------"
+          cd ./agent/target
+          ls
+          cd /home/runner/work/ProjectOctopus/ProjectOctopus
+          echo "--------------------------------------"
+          cat /proc/cpuinfo
+          echo "--------------------------------------"
 
+      - name: Build and push Docker images - [ Server ]
+        id: docker_build_server
+        # You may pin to the exact commit or the version.
+        # uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5
+        uses: docker/build-push-action@v3.2.0
+        with:
+          context: ./
+          # Path to the Dockerfile
+          file: ./server/Dockerfile
+          # List of target platforms for build
+          platforms: linux/amd64,linux/arm64
+          # Always attempt to pull all referenced images
+          pull: false
+          # Push is a shorthand for --output=type=registry
+          push: true
+          tags: ${{ steps.docker_tags_server.outputs.tags }}
 
-#      - name: Build My Base Image
-#        uses: docker/build-push-action@v3.2.0
-#        with:
-#          context: ./
-#          # Path to the Dockerfile
-#          file: ./localEnvironment/src/main/java/io/wdd/localenviroment/build-my-own-base-image.dockerfile
-#          platforms: linux/amd64,linux/arm64
-#          push: true
-#          tags: ${{ secrets.DOCKERHUB_USERNAME }}/eclipse-temurin-11-jre-focal:2022-11-22
-#
-#      - name: Maven package project
-#        run: |
-#          mvn -B -DskipTests=true package --file pom.xml
-#          ls
-#          echo "--------------------------------------"
-#          pwd
-#          echo "--------------------------------------"
-#          cd ./server/target
-#          ls
-#          cd /home/runner/work/ProjectOctopus/ProjectOctopus
-#          echo "--------------------------------------"
-#          cd ./agent/target
-#          ls
-#          cd /home/runner/work/ProjectOctopus/ProjectOctopus
-#          echo "--------------------------------------"
-#          cat /proc/cpuinfo
-#          echo "--------------------------------------"
-#
-#      - name: Build and push Docker images - [ Server ]
-#        id: docker_build_server
-#        # You may pin to the exact commit or the version.
-#        # uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5
-#        uses: docker/build-push-action@v3.2.0
-#        with:
-#          context: ./
-#          # Path to the Dockerfile
-#          file: ./server/Dockerfile
-#          # List of target platforms for build
-#          platforms: linux/amd64,linux/arm64
-#          # Always attempt to pull all referenced images
-#          pull: false
-#          # Push is a shorthand for --output=type=registry
-#          push: true
-#          tags:
-#
-#      - name: Build and push Docker images - [ Agent ]
-#        id: docker_build_agent
-#        # You may pin to the exact commit or the version.
-#        # uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5
-#        uses: docker/build-push-action@v3.2.0
-#        with:
-#          context: ./
-#          # Path to the Dockerfile
-#          file: ./agent/Dockerfile
-#          # List of target platforms for build
-#          platforms: linux/amd64,linux/arm64
-#          # Always attempt to pull all referenced images
-#          pull: false
-#          # Push is a shorthand for --output=type=registry
-#          push: true
-#          tags:
+      - name: Build and push Docker images - [ Agent ]
+        id: docker_build_agent
+        # You may pin to the exact commit or the version.
+        # uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5
+        uses: docker/build-push-action@v3.2.0
+        with:
+          context: ./
+          # Path to the Dockerfile
+          file: ./agent/Dockerfile
+          # List of target platforms for build
+          platforms: linux/amd64,linux/arm64
+          # Always attempt to pull all referenced images
+          pull: false
+          # Push is a shorthand for --output=type=registry
+          push: true
+          tags: ${{ steps.docker_tags_agent.outputs.tags }}
     
