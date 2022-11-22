@@ -86,7 +86,7 @@ jobs:
 
       - name: Test outpust
         run: |
-          echo ${{ steps.time_id.outputs.tags.[0] }}
+          echo ${{ steps.time_id.outputs.tags }}
 
 
 #      - name: Build My Base Image
