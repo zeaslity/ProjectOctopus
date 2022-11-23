@@ -17,7 +17,7 @@ RUN mkdir -p /wdd
 WORKDIR /wdd
 
 # Copy the jar and rename it
-COPY ./target/server-*.jar /wdd/server.jar
+COPY ./server/target/server-*.jar /wdd/server.jar
 
 # When the docker container starts, run the jar
 ENTRYPOINT exec java ${JAVA_OPTS} -jar  /wdd/server.jar
