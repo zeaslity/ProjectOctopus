@@ -18,27 +18,27 @@ public class AppController {
     @Resource
     CoreAppService coreAppService;
 
-    @GetMapping("/all")
-    public R<List<AppInfoVO>> getAllAppInfo() {
+    @GetMapping("/appGetAll")
+    public R<List<AppInfoVO>> appGetAll() {
 
-        return R.ok(coreAppService.getAppInfoAll());
+        return R.ok(coreAppService.appGetAll());
     }
 
-    @GetMapping("/single")
-    public R<AppInfoVO> getAppInfo(
+    @GetMapping("/appGetSingle")
+    public R<AppInfoVO> appGetSingle(
             @RequestParam(value = "appId", required = false) @Nullable Long appId,
             @RequestParam(value = "appName", required = false) @Nullable String appName
     ) {
 
-        return R.ok(coreAppService.getAppInfo(appId, appName));
+        return R.ok(coreAppService.appGetSingle(appId, appName));
     }
 
 
-    @PostMapping("/new")
-    public R createNewApp(
+    @PostMapping("/appCreate")
+    public R<String> appCreate(
             @RequestBody @Validated AppInfoVO appInfoVO) {
 
-        if (coreAppService.createAppInfo(appInfoVO)) {
+        if (coreAppService.appCreate(appInfoVO)) {
             return R.ok("App created successfully !");
         }
 
@@ -48,16 +48,30 @@ public class AppController {
     }
 
 
-    @PostMapping("/delete")
-    public R deleteApp(
+    @PostMapping("/appDelete")
+    public R<String> appDelete(
             @RequestParam(value = "appId") Long appId
     ){
 
-        if (coreAppService.deleteAppInfo(appId)) {
+        if (coreAppService.appDelete(appId)) {
             return R.ok("app delete successfully !");
         }
 
         return R.failed("App delete failed !");
     }
+
+    /*
+    * app --- appDomain
+    * 1 ------ n
+    *  a domain is often refer to an app
+    * */
+
+    // get
+
+    // create
+
+    // update
+
+    // delete
 
 }

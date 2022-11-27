@@ -20,7 +20,7 @@ public class CoreAppServiceImpl implements CoreAppService {
     AppInfoService appInfoService;
 
     @Override
-    public AppInfoVO getAppInfo(Long appId, String appName) {
+    public AppInfoVO appGetSingle(Long appId, String appName) {
 
         List<AppInfoPO> appInfoPOList = new LambdaQueryChainWrapper<AppInfoPO>(appInfoService.getBaseMapper())
                 .eq(appId != null, AppInfoPO::getAppId, appId)
@@ -33,13 +33,13 @@ public class CoreAppServiceImpl implements CoreAppService {
     }
 
     @Override
-    public List<AppInfoVO> getAppInfoAll() {
+    public List<AppInfoVO> appGetAll() {
 
         return EntityUtils.cvToTarget(appInfoService.list(), AppInfoVO.class);
     }
 
     @Override
-    public boolean createAppInfo(AppInfoVO appInfoVO) {
+    public boolean appCreate(AppInfoVO appInfoVO) {
 
 
         return appInfoService.save(
@@ -56,7 +56,7 @@ public class CoreAppServiceImpl implements CoreAppService {
     }
 
     @Override
-    public boolean deleteAppInfo(Long appId) {
+    public boolean appDelete(Long appId) {
 
         return appInfoService.removeById(appId);
     }

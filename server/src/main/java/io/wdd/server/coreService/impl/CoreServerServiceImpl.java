@@ -3,15 +3,12 @@ package io.wdd.server.coreService.impl;
 import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.google.errorprone.annotations.Var;
-import io.wdd.server.beans.po.AppInfoPO;
-import io.wdd.server.beans.po.ServerAppRelationPO;
-import io.wdd.server.beans.po.ServerInfoPO;
+import io.wdd.server.beans.po.*;
 import io.wdd.server.beans.vo.AppInfoVO;
+import io.wdd.server.beans.vo.DomainInfoVO;
 import io.wdd.server.beans.vo.ServerInfoVO;
 import io.wdd.server.coreService.CoreServerService;
-import io.wdd.server.service.AppInfoService;
-import io.wdd.server.service.ServerAppRelationService;
-import io.wdd.server.service.ServerInfoService;
+import io.wdd.server.service.*;
 import io.wdd.server.utils.EntityUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -40,7 +37,11 @@ public class CoreServerServiceImpl implements CoreServerService {
     @Resource
     AppInfoService appInfoService;
 
+    @Resource
+    ServerDomainRelationService serverDomainRelationService;
 
+    @Resource
+    DomainInfoService domainInfoService;
 
     @Override
     public List<ServerInfoPO> serverGetSingle(String serverName, String ipv4, String serverLocation) {
@@ -175,5 +176,66 @@ public class CoreServerServiceImpl implements CoreServerService {
                 }
         ).collect(Collectors.toList());
 
+    }
+
+    /*
+    * below is server associated domain
+    *  server --- domain
+    *  1 ----------- n
+    * */
+
+    @Override
+    public List<DomainInfoVO> domainGetAll(Long serverId) {
+        Assert.notNull(serverInfoService.getById(serverId),"server not find, can't create a app");
+
+        List<ServerDomainRelationPO> domainRelationPOList = new LambdaQueryChainWrapper<ServerDomainRelationPO>(serverDomainRelationService.getBaseMapper())
+                .eq(ServerDomainRelationPO::getServerId, serverId).list();
+
+
+        List<DomainInfoPO> domainInfoPOList = domainInfoService.listByIds(domainRelationPOList.stream().map(
+                domainRelationPO -> domainRelationPO.getDomainId()
+        ).collect(Collectors.toList()));
+
+
+        return EntityUtils.cvToTarget(domainInfoPOList, DomainInfoVO.class);
+    }
+
+    @Override
+    public List<DomainInfoVO> domainGetSingle(Long serverId, String domainName, String dnsIP) {
+
+        Assert.notNull(serverInfoService.getById(serverId),"server not find, can't create a app");
+
+        List<ServerDomainRelationPO> domainRelationPOList = new LambdaQueryChainWrapper<ServerDomainRelationPO>(serverDomainRelationService.getBaseMapper())
+                .eq(ServerDomainRelationPO::getServerId, serverId).list();
+
+
+        List<DomainInfoPO> domainInfoPOList = domainRelationPOList.stream().map(
+                domainPO -> {
+                    // query single according to every server id related domain ID
+                    return new LambdaQueryChainWrapper<DomainInfoPO>(domainInfoService.getBaseMapper())
+                            .eq(DomainInfoPO::getDomainId, domainPO.getDomainId())
+                            .like(StringUtils.isNotEmpty(domainName), DomainInfoPO::getDomainName, domainName)
+                            .eq(StringUtils.isNoneEmpty(dnsIP), DomainInfoPO::getDnsIp, dnsIP)
+                            .one();
+                }
+        ).collect(Collectors.toList());
+
+
+        return EntityUtils.cvToTarget(domainInfoPOList, DomainInfoVO.class);
+    }
+
+    @Override
+    public boolean domainCreate(Long serverId, DomainInfoVO domainInfoVO) {
+        return false;
+    }
+
+    @Override
+    public boolean domainUpdate(DomainInfoPO domainInfoPO) {
+        return false;
+    }
+
+    @Override
+    public boolean domainDelete(Long serverId, Long domainId) {
+        return false;
     }
 }

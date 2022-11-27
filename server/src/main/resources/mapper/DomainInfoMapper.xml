@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.wdd.server.mapper.DomainInfoMapper">
+
+    <resultMap id="BaseResultMap" type="io.wdd.server.beans.po.DomainInfoPO">
+            <id property="domainId" column="domain_id" jdbcType="BIGINT"/>
+            <result property="domainName" column="domain_name" jdbcType="VARCHAR"/>
+            <result property="domainProvider" column="domain_provider" jdbcType="VARCHAR"/>
+            <result property="registerTime" column="register_time" jdbcType="TIMESTAMP"/>
+            <result property="expireTime" column="expire_time" jdbcType="TIMESTAMP"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="dnsIp" column="dns_ip" jdbcType="VARCHAR"/>
+            <result property="dnsProvider" column="dns_provider" jdbcType="VARCHAR"/>
+            <result property="dnsType" column="dns_type" jdbcType="VARCHAR"/>
+            <result property="dnsManageApi" column="dns_manage_api" jdbcType="VARCHAR"/>
+            <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        domain_id,domain_name,domain_provider,
+        register_time,expire_time,create_time,
+        update_time,dns_ip,dns_provider,
+        dns_type,dns_manage_api,is_delete
+    </sql>
+</mapper>

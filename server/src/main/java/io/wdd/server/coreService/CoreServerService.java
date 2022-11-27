@@ -1,7 +1,9 @@
 package io.wdd.server.coreService;
 
+import io.wdd.server.beans.po.DomainInfoPO;
 import io.wdd.server.beans.po.ServerInfoPO;
 import io.wdd.server.beans.vo.AppInfoVO;
+import io.wdd.server.beans.vo.DomainInfoVO;
 import io.wdd.server.beans.vo.ServerInfoVO;
 
 import java.util.List;
@@ -25,4 +27,16 @@ public interface CoreServerService {
     AppInfoVO appCreate(Long serverId, AppInfoVO appInfoVO);
 
     boolean appDelete(Long serverId, Long appId);
+
+    List<DomainInfoVO> domainGetAll(Long serverId);
+
+    List<DomainInfoVO>  domainGetSingle(Long serverId, String domainName, String dnsIP);
+
+
+    boolean domainCreate(Long serverId, DomainInfoVO domainInfoVO);
+
+    boolean domainUpdate(DomainInfoPO domainInfoPO);
+
+
+    boolean domainDelete(Long serverId, Long domainId);
 }

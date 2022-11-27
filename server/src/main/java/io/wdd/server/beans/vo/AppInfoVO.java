@@ -38,10 +38,7 @@ public class AppInfoVO  {
     private LocalDateTime updateTime;
     
     private String commont;
-    /**
-     * 0 alive || 1 deleted
-     */
-    private Integer isDelete;
+
 
 }
 

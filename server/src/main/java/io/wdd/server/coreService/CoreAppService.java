@@ -7,18 +7,18 @@ import java.util.List;
 public interface CoreAppService {
 
 
-    AppInfoVO getAppInfo(Long appId, String appName);
+    AppInfoVO appGetSingle(Long appId, String appName);
 
-    List<AppInfoVO> getAppInfoAll();
+    List<AppInfoVO> appGetAll();
 
 
-    boolean createAppInfo(AppInfoVO appInfoVO);
+    boolean appCreate(AppInfoVO appInfoVO);
 
 
     boolean updateAppInfo(AppInfoVO appInfoVO);
 
 
-    boolean deleteAppInfo(Long appId);
+    boolean appDelete(Long appId);
 
 
 }

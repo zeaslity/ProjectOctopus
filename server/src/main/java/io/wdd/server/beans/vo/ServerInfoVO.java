@@ -110,11 +110,6 @@ public class ServerInfoVO {
     private String comment;
 
 
-    /**
-     * server is deleted or not ?
-     */
-    private Integer isDelete;
-
 
     private Integer version;
 
