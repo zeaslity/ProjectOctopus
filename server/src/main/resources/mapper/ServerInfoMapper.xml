@@ -35,11 +35,4 @@
         os_kernel_info,comment,is_delete,
         version
     </sql>
-
-    <select id="getAll" resultType="io.wdd.server.beans.po.ServerInfoPO">
-        select
-         <include refid="Base_Column_List"></include>
-        from
-            server_info
-    </select>
 </mapper>

@@ -1,14 +1,12 @@
 package io.wdd.server.beans.po;
 
-import com.baomidou.mybatisplus.annotation.*;
-
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import org.springframework.cglib.core.Local;
 
 /**
  * 
@@ -39,18 +37,19 @@ public class AppInfoPO implements Serializable {
     private String appVersion;
 
     /**
-     * 
+     * app associated domain name
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private String appDomainName;
 
     /**
      * 
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updateTime;
+    private Date createTime;
+
+    /**
+     * 
+     */
+    private Date updateTime;
 
     /**
      * 
@@ -81,6 +80,7 @@ public class AppInfoPO implements Serializable {
             && (this.getAppName() == null ? other.getAppName() == null : this.getAppName().equals(other.getAppName()))
             && (this.getAppInfo() == null ? other.getAppInfo() == null : this.getAppInfo().equals(other.getAppInfo()))
             && (this.getAppVersion() == null ? other.getAppVersion() == null : this.getAppVersion().equals(other.getAppVersion()))
+            && (this.getAppDomainName() == null ? other.getAppDomainName() == null : this.getAppDomainName().equals(other.getAppDomainName()))
             && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
             && (this.getUpdateTime() == null ? other.getUpdateTime() == null : this.getUpdateTime().equals(other.getUpdateTime()))
             && (this.getCommont() == null ? other.getCommont() == null : this.getCommont().equals(other.getCommont()))
@@ -95,6 +95,7 @@ public class AppInfoPO implements Serializable {
         result = prime * result + ((getAppName() == null) ? 0 : getAppName().hashCode());
         result = prime * result + ((getAppInfo() == null) ? 0 : getAppInfo().hashCode());
         result = prime * result + ((getAppVersion() == null) ? 0 : getAppVersion().hashCode());
+        result = prime * result + ((getAppDomainName() == null) ? 0 : getAppDomainName().hashCode());
         result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
         result = prime * result + ((getUpdateTime() == null) ? 0 : getUpdateTime().hashCode());
         result = prime * result + ((getCommont() == null) ? 0 : getCommont().hashCode());
@@ -112,6 +113,7 @@ public class AppInfoPO implements Serializable {
         sb.append(", appName=").append(appName);
         sb.append(", appInfo=").append(appInfo);
         sb.append(", appVersion=").append(appVersion);
+        sb.append(", appDomainName=").append(appDomainName);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
         sb.append(", commont=").append(commont);

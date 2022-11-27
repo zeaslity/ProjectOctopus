@@ -6,22 +6,15 @@ import io.wdd.server.service.ServerInfoService;
 import io.wdd.server.mapper.ServerInfoMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 /**
 * @author wdd
 * @description 针对表【server_info】的数据库操作Service实现
-* @createDate 2022-11-20 16:16:52
+* @createDate 2022-11-27 13:46:54
 */
 @Service
 public class ServerInfoServiceImpl extends ServiceImpl<ServerInfoMapper, ServerInfoPO>
     implements ServerInfoService{
 
-    @Override
-    public List<ServerInfoPO> getAll() {
-
-        return this.baseMapper.getAll();
-    }
 }
 
 

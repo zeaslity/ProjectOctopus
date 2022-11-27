@@ -9,6 +9,7 @@
             <result property="appName" column="app_name" jdbcType="VARCHAR"/>
             <result property="appInfo" column="app_info" jdbcType="VARCHAR"/>
             <result property="appVersion" column="app_version" jdbcType="VARCHAR"/>
+            <result property="appDomainName" column="app_domain_name" jdbcType="VARCHAR"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
             <result property="commont" column="commont" jdbcType="VARCHAR"/>
@@ -17,7 +18,7 @@
 
     <sql id="Base_Column_List">
         app_id,app_name,app_info,
-        app_version,create_time,update_time,
-        commont,is_delete
+        app_version,app_domain_name,create_time,
+        update_time,commont,is_delete
     </sql>
 </mapper>

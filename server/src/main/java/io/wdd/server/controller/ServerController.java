@@ -1,6 +1,7 @@
 package io.wdd.server.controller;
 
 
+import io.wdd.server.beans.vo.AppInfoVO;
 import io.wdd.wddcommon.utils.R;
 import io.wdd.server.beans.po.ServerInfoPO;
 import io.wdd.server.beans.vo.ServerInfoVO;
@@ -71,5 +72,20 @@ public class ServerController {
 
         return R.failed("Delete Server Failed !");
     }
+
+
+    /*
+    * Associated with appInfo
+    *  server 1______n app
+    * */
+
+    @GetMapping("/getAllApp")
+    public R<List<AppInfoVO>> getAllAppInfo(
+            @RequestParam(value = "serverId", required = true) Long serverId
+    ){
+
+        return R.ok(coreServerService.getAllAppInfo(serverId));
+    }
+
 
 }

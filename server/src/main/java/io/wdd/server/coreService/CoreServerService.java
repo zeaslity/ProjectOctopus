@@ -1,6 +1,7 @@
 package io.wdd.server.coreService;
 
 import io.wdd.server.beans.po.ServerInfoPO;
+import io.wdd.server.beans.vo.AppInfoVO;
 import io.wdd.server.beans.vo.ServerInfoVO;
 
 import java.util.List;
@@ -18,4 +19,6 @@ public interface CoreServerService {
     boolean updateServerInfo(ServerInfoPO serverInfoPO);
 
     boolean deleteServer(Long serverId, String serverName);
+
+    List<AppInfoVO> getAllAppInfo(Long serverId);
 }

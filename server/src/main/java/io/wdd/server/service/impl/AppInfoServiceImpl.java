@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 /**
 * @author wdd
 * @description 针对表【app_info】的数据库操作Service实现
-* @createDate 2022-11-20 16:49:20
+* @createDate 2022-11-27 13:52:13
 */
 @Service
 public class AppInfoServiceImpl extends ServiceImpl<AppInfoMapper, AppInfoPO>
