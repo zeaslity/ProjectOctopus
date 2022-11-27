@@ -8,17 +8,21 @@ import java.util.List;
 
 public interface CoreServerService {
 
-    List<ServerInfoPO> getServerInfoSingle(String serverName, String ipv4, String serverLocation);
+    List<ServerInfoPO> serverGetSingle(String serverName, String ipv4, String serverLocation);
 
-    List<ServerInfoVO> getServerInfoList();
+    List<ServerInfoVO> serverGetAll();
 
-    List<ServerInfoVO> getServerInfoListIncludeDelete();
+    List<ServerInfoVO> serverGetAllIncludeDelete();
 
-    boolean createServerInfo(ServerInfoVO serverInfoVO);
+    boolean serverCreate(ServerInfoVO serverInfoVO);
 
-    boolean updateServerInfo(ServerInfoPO serverInfoPO);
+    boolean serverUpdate(ServerInfoPO serverInfoPO);
 
-    boolean deleteServer(Long serverId, String serverName);
+    boolean serverDelete(Long serverId, String serverName);
 
-    List<AppInfoVO> getAllAppInfo(Long serverId);
+    List<AppInfoVO> appGetAll(Long serverId);
+
+    AppInfoVO appCreate(Long serverId, AppInfoVO appInfoVO);
+
+    boolean appDelete(Long serverId, Long appId);
 }

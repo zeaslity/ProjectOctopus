@@ -18,10 +18,13 @@ import org.springframework.beans.BeanUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -40,7 +43,7 @@ public class CoreServerServiceImpl implements CoreServerService {
 
 
     @Override
-    public List<ServerInfoPO> getServerInfoSingle(String serverName, String ipv4, String serverLocation) {
+    public List<ServerInfoPO> serverGetSingle(String serverName, String ipv4, String serverLocation) {
 
         // ignore if deleted !
         return new LambdaQueryChainWrapper<>(serverInfoService.getBaseMapper())
@@ -52,7 +55,7 @@ public class CoreServerServiceImpl implements CoreServerService {
     }
 
     @Override
-    public List<ServerInfoVO> getServerInfoList() {
+    public List<ServerInfoVO> serverGetAll() {
 
         List<ServerInfoPO> serverInfoPOWithOutDelete = serverInfoService.list();
 
@@ -61,7 +64,7 @@ public class CoreServerServiceImpl implements CoreServerService {
     }
 
     @Override
-    public List<ServerInfoVO> getServerInfoListIncludeDelete() {
+    public List<ServerInfoVO> serverGetAllIncludeDelete() {
 
         // todo how to  solve the problem?
 //        this.covertServerPOtoVO(serverInfoService.getAll());
@@ -70,7 +73,7 @@ public class CoreServerServiceImpl implements CoreServerService {
     }
 
     @Override
-    public boolean createServerInfo(ServerInfoVO serverInfoVO) {
+    public boolean serverCreate(ServerInfoVO serverInfoVO) {
 
         ServerInfoPO serverInfoPO = new ServerInfoPO();
         BeanUtils.copyProperties(serverInfoVO, serverInfoPO);
@@ -79,7 +82,7 @@ public class CoreServerServiceImpl implements CoreServerService {
     }
 
     @Override
-    public boolean updateServerInfo(ServerInfoPO serverInfoPO) {
+    public boolean serverUpdate(ServerInfoPO serverInfoPO) {
 
         if (serverInfoPO.getServerId() == null) {
             return false;
@@ -91,7 +94,7 @@ public class CoreServerServiceImpl implements CoreServerService {
     }
 
     @Override
-    public boolean deleteServer(Long serverId, String serverName) {
+    public boolean serverDelete(Long serverId, String serverName) {
 
         if (serverId == null && StringUtils.isBlank(serverName)) {
             return false;
@@ -107,22 +110,56 @@ public class CoreServerServiceImpl implements CoreServerService {
     }
 
     @Override
-    public List<AppInfoVO> getAllAppInfo(Long serverId) {
+    public List<AppInfoVO> appGetAll(Long serverId) {
 
         // serverInfo --- server_app_relation --- appInfo
 
         List<ServerAppRelationPO> serverAppRelationPOList = new LambdaQueryChainWrapper<ServerAppRelationPO>(serverAppRelationService.getBaseMapper()).eq(ServerAppRelationPO::getServerId, serverId).list();
 
+        Assert.notEmpty(serverAppRelationPOList,"No server find");
 
         // query the app info with specific server id
         List<AppInfoPO> appInfoPOList = appInfoService.listByIds(serverAppRelationPOList.stream().map(
-                serverAppRelationPO -> {
-                    return serverAppRelationPO.getAppId();
-                }
+                serverAppRelationPO -> serverAppRelationPO.getAppId()
         ).collect(Collectors.toList()));
 
 
         return EntityUtils.cvToTarget(appInfoPOList,AppInfoVO.class);
+    }
+
+    @Override
+    @Transactional
+    public AppInfoVO appCreate(Long serverId, AppInfoVO appInfoVO) {
+
+        Assert.notNull(serverInfoService.getById(serverId),"server not find, can't create a app");
+
+        // 1- save appInfo itself
+        AppInfoPO appInfoPO = EntityUtils.cvToTarget(appInfoVO, AppInfoPO.class);
+        appInfoService.save(appInfoPO);
+
+        // 2. create the relation
+        ServerAppRelationPO relationPO = new ServerAppRelationPO();
+        relationPO.setServerId(serverId);
+        relationPO.setAppId(appInfoPO.getAppId());
+        serverAppRelationService.save(relationPO);
+
+
+        return EntityUtils.cvToTarget(appInfoPO, AppInfoVO.class);
+    }
+
+    @Override
+    @Transactional
+    public boolean appDelete(Long serverId, Long appId) {
+
+        Assert.notNull(serverInfoService.getById(serverId),"server not find, can't delete a app");
+        Assert.notNull(appInfoService.getById(appId),"app not find, can't delete a app");
+
+        // 1. delete the relation
+        serverAppRelationService.removeById(serverId);
+        // 2. delete the app
+        appInfoService.removeById(appId);
+
+        return true;
     }
 
     private List<ServerInfoVO> covertServerPOtoVO(List<ServerInfoPO> serverInfoPOList) {
