@@ -66,7 +66,7 @@ public class ServerInfo {
      *
      */
     @Value("${cpuCore}")
-    private Integer cpuCore;
+    private String cpuCore;
 
     /**
      *
