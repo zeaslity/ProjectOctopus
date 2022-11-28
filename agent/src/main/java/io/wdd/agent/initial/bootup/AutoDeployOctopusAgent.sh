@@ -727,6 +727,62 @@ print_GoIOTest() {
   FunctionEnd
 }
 
+check_virt(){
+    command_exists "dmesg" && virtualx="$(dmesg 2>/dev/null)"
+    if command_exists "dmidecode"; then
+        sys_manu="$(dmidecode -s system-manufacturer 2>/dev/null)"
+        sys_product="$(dmidecode -s system-product-name 2>/dev/null)"
+        sys_ver="$(dmidecode -s system-version 2>/dev/null)"
+    else
+        sys_manu=""
+        sys_product=""
+        sys_ver=""
+    fi
+    if   grep -qa docker /proc/1/cgroup; then
+        virt="Docker"
+    elif grep -qa lxc /proc/1/cgroup; then
+        virt="LXC"
+    elif grep -qa container=lxc /proc/1/environ; then
+        virt="LXC"
+    elif [[ -f /proc/user_beancounters ]]; then
+        virt="OpenVZ"
+    elif [[ "${virtualx}" == *kvm-clock* ]]; then
+        virt="KVM"
+    elif [[ "${sys_product}" == *KVM* ]]; then
+        virt="KVM"
+    elif [[ "${cname}" == *KVM* ]]; then
+        virt="KVM"
+    elif [[ "${cname}" == *QEMU* ]]; then
+        virt="KVM"
+    elif [[ "${virtualx}" == *"VMware Virtual Platform"* ]]; then
+        virt="VMware"
+    elif [[ "${sys_product}" == *"VMware Virtual Platform"* ]]; then
+        virt="VMware"
+    elif [[ "${virtualx}" == *"Parallels Software International"* ]]; then
+        virt="Parallels"
+    elif [[ "${virtualx}" == *VirtualBox* ]]; then
+        virt="VirtualBox"
+    elif [[ -e /proc/xen ]]; then
+        if grep -q "control_d" "/proc/xen/capabilities" 2>/dev/null; then
+            virt="Xen-Dom0"
+        else
+            virt="Xen-DomU"
+        fi
+    elif [ -f "/sys/hypervisor/type" ] && grep -q "xen" "/sys/hypervisor/type"; then
+        virt="Xen"
+    elif [[ "${sys_manu}" == *"Microsoft Corporation"* ]]; then
+        if [[ "${sys_product}" == *"Virtual Machine"* ]]; then
+            if [[ "${sys_ver}" == *"7.0"* || "${sys_ver}" == *"Hyper-V" ]]; then
+                virt="Hyper-V"
+            else
+                virt="Microsoft Virtual Machine"
+            fi
+        fi
+    else
+        virt="Dedicated"
+    fi
+}
+
 GetIpv4Info() {
   org="$(wget -q -T10 -O- ipinfo.io/org)"
   city="$(wget -q -T10 -O- ipinfo.io/city)"
@@ -802,6 +858,9 @@ generateSystemInfo() {
   FunctionSuccess
   GetIpv4Info
   FunctionSuccess
+  check_virt
+  FunctionSuccess
+
 
   ServerName="$(cat /etc/hostname)"
   serverIpPbV4="$public_ipv4"
@@ -810,7 +869,7 @@ generateSystemInfo() {
   serverIpInV6=""
   location="$city $region $country"
   provider="$org"
-  managePort="netstat -ntulp | grep sshd | grep -w tcp | awk '{print$4}' | cut -d":" -f2"
+  managePort="$(netstat -ntulp | grep sshd | grep -w tcp | awk '{print$4}' | cut -d":" -f2)"
   cpuCore="$cname"
   cpuBrand="$cores @ $freq MHz"
   memoryTotal="$tram"
@@ -831,6 +890,27 @@ deployOctopusAgent() {
 
   # get the latest version of Octopus agent
   # poll the start up shell
+
+  echo "docker run -d \
+            -e ServerName="${ServerName}"         \
+            -e serverIpPbV4="$serverIpPbV4"   \
+            -e serverIpInV4="$serverIpInV4"   \
+            -e serverIpPbV6="$serverIpPbV6"   \
+            -e serverIpInV6="$serverIpInV6"  \
+            -e location="$location"   \
+            -e provider="$provider"   \
+            -e managePort="$managePort"  \
+            -e cpuBrand="$cpuBrand"   \
+            -e cpuCore="$cpuCore"    \
+            -e memoryTotal="$memoryTotal"    \
+            -e diskTotal="$diskTotal"   \
+            -e diskUsage="$diskUsage"    \
+            -e osInfo="$osInfo"   \
+            -e osKernelInfo="$osKernelInfo"    \
+            -e tcpControl="$tcpControl"   \
+            -e virtualization="$virtualization"   \
+            -e ioSpeed="$ioSpeed"   \
+            icederce/wdd-octopus-agent:latest"
 
   docker run -d \
     -e ServerName="${ServerName}"         \
