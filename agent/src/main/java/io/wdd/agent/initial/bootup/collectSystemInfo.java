@@ -32,7 +32,16 @@ public class collectSystemInfo {
 
             Properties props =System.getProperties();
 
+            System.out.println("props = " + props);
+
             InetAddress ip = InetAddress.getLocalHost();
+
+
+            System.out.println("ip = " + ip);
+
+
+            System.out.println("environment = " + environment);
+
             String localName = ip.getHostName();
             String osName = System.getProperty("os.name");
             String userName = System.getProperty("user.name");
