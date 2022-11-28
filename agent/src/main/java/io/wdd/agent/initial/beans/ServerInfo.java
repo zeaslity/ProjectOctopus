@@ -111,4 +111,7 @@ public class ServerInfo {
     private String comment;
 
 
+    @Value("${machineId}")
+    private String machineId;
+
 }
