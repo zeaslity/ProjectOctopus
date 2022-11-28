@@ -18,25 +18,21 @@ public class ServerInfo {
 
     /**
      * server public ipv4
-
      */
     private String serverIpPbV4;
 
     /**
      * server inner ipv4
-
      */
     private String serverIpInV4;
 
     /**
      * server public ipv6
-
      */
     private String serverIpPbV6;
 
     /**
      * server inner ipv6
-
      */
     private String serverIpInV6;
 
@@ -74,6 +70,21 @@ public class ServerInfo {
      *
      */
     private String osKernelInfo;
+
+
+    private String tcpControl;
+
+
+    private String virtualization;
+
+
+    private String ioSpeed;
+
+    private String memoryTotal;
+
+    private String diskTotal;
+
+    private String diskUsage;
 
     /**
      *

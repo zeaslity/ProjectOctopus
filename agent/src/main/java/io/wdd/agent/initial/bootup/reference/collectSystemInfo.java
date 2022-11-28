@@ -1,4 +1,4 @@
-package io.wdd.agent.initial.bootup;
+package io.wdd.agent.initial.bootup.reference;
 
 
 
@@ -12,6 +12,7 @@ import java.util.Properties;
 
 @Configuration
 public class collectSystemInfo {
+
 
 
 
