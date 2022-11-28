@@ -1,24 +1,29 @@
 package io.wdd.agent.initial.bootup;
 
 
-
+import io.wdd.agent.initial.beans.ServerInfo;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.net.InetAddress;
+import java.util.Map;
 import java.util.Properties;
 
 @Configuration
-public class collectSystemInfo {
-
-
-
+@Slf4j
+public class collectSystemInfo implements ApplicationContextAware {
 
     @Resource
     Environment environment;
 
+    private ApplicationContext context;
 
     @Bean
     public void initialReadingEnvironment(){
@@ -33,16 +38,25 @@ public class collectSystemInfo {
             Properties props =System.getProperties();
 
             System.out.println("props = " + props);
+            System.out.println();
 
-            InetAddress ip = InetAddress.getLocalHost();
+            Map<String, String> getenv = System.getenv();
 
+            System.out.println("getenv = " + getenv);
 
-            System.out.println("ip = " + ip);
-
+            System.out.println();
 
             System.out.println("environment = " + environment);
 
+            InetAddress loopbackAddress = InetAddress.getLoopbackAddress();
+
+            System.out.println("loopbackAddress = " + loopbackAddress);
+
+            InetAddress ip = InetAddress.getLocalHost();
             String localName = ip.getHostName();
+
+            System.out.println("ip = " + ip);
+
             String osName = System.getProperty("os.name");
             String userName = System.getProperty("user.name");
             String osVersion = System.getProperty("os.version");
@@ -55,10 +69,27 @@ public class collectSystemInfo {
             System.out.println("主机系统：" + osName);
             System.out.println("系统版本：" + osVersion);
             System.out.println("系统架构：" + osArch);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
+    @PostConstruct
+    private void getInjectServerInfo(){
+
+        log.info("getInjectServerInfo");
+
+        ServerInfo serverInfo = (ServerInfo) context.getBean("serverInfo");
+
+
+        System.out.println("serverInfo = " + serverInfo);
+
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.context = applicationContext;
+    }
 }
