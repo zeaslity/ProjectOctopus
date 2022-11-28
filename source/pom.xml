@@ -11,9 +11,9 @@
     </parent>
 
     <groupId>io.wdd</groupId>
-    <artifactId>localEnvironment</artifactId>
+    <artifactId>source</artifactId>
 
-    <name>localEnvironment</name>
+    <name>source</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

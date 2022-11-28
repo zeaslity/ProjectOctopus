@@ -22,7 +22,7 @@
         <module>agent</module>
         <module>server</module>
         <module>common</module>
-        <module>localEnvironment</module>
+        <module>source</module>
     </modules>
 
     <properties>
