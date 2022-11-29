@@ -1,4 +1,4 @@
-package io.wdd.wddcommon.utils;
+package io.wdd.common.beans;
 
 public enum ResultStat {
 

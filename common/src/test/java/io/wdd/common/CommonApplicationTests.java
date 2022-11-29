@@ -1,4 +1,4 @@
-package io.wdd.wddcommon;
+package io.wdd.common;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

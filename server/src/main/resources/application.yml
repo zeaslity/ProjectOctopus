@@ -7,6 +7,7 @@ spring:
     port: 35672
     username: boge
     password: boge14@Level5
+    virtual-host: /wddserver
 
 
   redis:

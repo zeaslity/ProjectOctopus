@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapp
 import io.wdd.server.beans.po.DomainInfoPO;
 import io.wdd.server.beans.vo.DomainInfoVO;
 import io.wdd.server.coreService.CoreDomainService;
-import io.wdd.server.handler.MyRuntimeException;
+import io.wdd.common.handler.MyRuntimeException;
 import io.wdd.server.service.DomainInfoService;
 import io.wdd.server.utils.EntityUtils;
 import org.apache.commons.lang3.StringUtils;

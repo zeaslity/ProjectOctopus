@@ -3,7 +3,7 @@ package io.wdd.server.controller;
 import io.wdd.server.beans.po.DomainInfoPO;
 import io.wdd.server.beans.vo.DomainInfoVO;
 import io.wdd.server.coreService.CoreDomainService;
-import io.wdd.wddcommon.utils.R;
+import io.wdd.common.beans.R;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

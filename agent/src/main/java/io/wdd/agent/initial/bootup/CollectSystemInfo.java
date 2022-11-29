@@ -2,30 +2,38 @@ package io.wdd.agent.initial.bootup;
 
 
 import io.wdd.agent.initial.beans.ServerInfo;
+import io.wdd.common.handler.MyRuntimeException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.env.Environment;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.security.sasl.SaslServer;
 import java.net.InetAddress;
 import java.util.Map;
 import java.util.Properties;
 
 @Configuration
 @Slf4j
-public class collectSystemInfo implements ApplicationContextAware {
+public class CollectSystemInfo implements ApplicationContextAware {
 
     @Resource
     Environment environment;
 
     private ApplicationContext context;
 
+    @Resource
+    InitConfiguration initConfiguration;
+
     @Bean
+    @Lazy
     public void initialReadingEnvironment(){
 
         // https://zhuanlan.zhihu.com/p/449416472
@@ -79,12 +87,19 @@ public class collectSystemInfo implements ApplicationContextAware {
     @PostConstruct
     private void getInjectServerInfo(){
 
-        log.info("getInjectServerInfo");
+        log.info("Starting getInjectServerInfo");
 
         ServerInfo serverInfo = (ServerInfo) context.getBean("serverInfo");
 
+        if (ObjectUtils.isEmpty(serverInfo)) {
+            throw new MyRuntimeException(" Collect server info error !");
+        }
 
-        System.out.println("serverInfo = " + serverInfo);
+        log.info("host server info has been collected == {}", serverInfo);
+
+        // start to send message to Octopus Server
+        initConfiguration.SendInfoToServer(serverInfo);
+        log.info("init server info has been send to octopus server !");
 
     }
 
