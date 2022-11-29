@@ -1,8 +1,8 @@
 package io.wdd.common.handler;
 
 import com.google.common.collect.Maps;
-import io.wdd.common.beans.R;
-import io.wdd.common.beans.ResultStat;
+import io.wdd.common.beans.response.R;
+import io.wdd.common.beans.response.ResultStat;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

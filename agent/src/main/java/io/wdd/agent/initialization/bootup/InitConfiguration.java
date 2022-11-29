@@ -1,7 +1,7 @@
-package io.wdd.agent.initial.bootup;
+package io.wdd.agent.initialization.bootup;
 
-import io.wdd.agent.initial.beans.ServerInfo;
-import io.wdd.agent.initial.rabbitmq.InitialRabbitMqConnector;
+import io.wdd.agent.initialization.beans.ServerInfo;
+import io.wdd.agent.initialization.rabbitmq.InitialRabbitMqConnector;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessagePostProcessor;
@@ -9,7 +9,6 @@ import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 

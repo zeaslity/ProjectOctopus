@@ -1,4 +1,4 @@
-package io.wdd.common.beans;
+package io.wdd.common.beans.response;
 
 
 import lombok.Data;

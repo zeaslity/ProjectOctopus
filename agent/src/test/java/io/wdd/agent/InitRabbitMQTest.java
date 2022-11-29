@@ -1,6 +1,6 @@
 package io.wdd.agent;
 
-import io.wdd.agent.initial.bootup.InitConfiguration;
+import io.wdd.agent.initialization.bootup.InitConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 

@@ -1,4 +1,4 @@
-package io.wdd.agent.initial.beans;
+package io.wdd.agent.initialization.beans;
 
 
 import lombok.AllArgsConstructor;
@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.Date;
 
 @Data
 @AllArgsConstructor

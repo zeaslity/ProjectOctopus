@@ -1,6 +1,6 @@
 package io.wdd.common.handler;
 
-import io.wdd.common.beans.ResultStat;
+import io.wdd.common.beans.response.ResultStat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

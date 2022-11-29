@@ -791,6 +791,41 @@ GetIpv4Info() {
   public_ipv4="$(wget -q -T10 -O- ipinfo.io/ip)"
 }
 
+OracleShutdownAgents(){
+  # oracle 主机可以使用下面的额命令进行清除
+  snap info oracle-cloud-agent
+  snap stop oracle-cloud-agent
+  snap remove oracle-cloud-agent
+
+  systemctl status snapd.service
+
+  for i in $(ls /lib/systemd/system/ | grep snapd | awk '{print$1}') ; do
+    echo $i
+    systemctl stop $i
+    systemctl disable $i
+  done
+
+  rm -rf /root/snap
+
+  systemctl stop ufw
+  systemctl disable ufw
+  #停止firewall
+  systemctl stop firewalld.service
+  #禁止firewall开机启动
+
+  systemctl disable firewalld.service
+  #关闭iptables
+  service iptables stop
+  #去掉iptables开机启动
+  chkconfig iptables off
+
+  systemctl stop ip6tables.service
+  systemctl disable ip6tables.service
+
+  crontab -e
+  @reboot "iptables -F"
+}
+
 generateSystemInfo() {
   FunctionStart
   colorEcho $BLUE "start to collect system info !"

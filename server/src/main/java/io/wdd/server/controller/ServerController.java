@@ -7,7 +7,7 @@ import io.wdd.server.beans.vo.AppInfoVO;
 import io.wdd.server.beans.vo.DomainInfoVO;
 import io.wdd.server.beans.vo.ServerInfoVO;
 import io.wdd.server.coreService.CoreServerService;
-import io.wdd.common.beans.R;
+import io.wdd.common.beans.response.R;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
