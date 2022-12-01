@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -54,63 +55,97 @@ public class ServerInfoVO {
      *
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime registerTime;
 
-    /**
-     *
-     */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime expireTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @TableField(fill = FieldFill.INSERT)
+    private LocalDateTime createTime;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @TableField(fill = FieldFill.INSERT_UPDATE)
+    private LocalDateTime updateTime;
+
     /**
-     *
+     * server location , type City Country
      */
     private String location;
 
     /**
-     *
+     * server isp manager
      */
     private String provider;
 
     /**
-     *
+     * split by ,
      */
-    @Nullable
-    private Integer managePort;
+    private String managePort;
 
     /**
      *
      */
-    private Integer cpuCore;
-
-    /**
-     *
-     */
-    @Nullable
     private String cpuBrand;
 
     /**
      *
      */
-    @Nullable
+    private String cpuCore;
+
+    /**
+     *
+     */
+    private String memoryTotal;
+
+    /**
+     *
+     */
+    private String diskTotal;
+
+    /**
+     *
+     */
+    private String diskUsage;
+
+    /**
+     *
+     */
+    private String ioSpeed;
+
+    /**
+     *
+     */
+    private String tcpControl;
+
+    /**
+     * server virtualization method
+     */
+    private String virtualization;
+
+    /**
+     *
+     */
     private String osInfo;
 
     /**
      *
      */
-    @Nullable
     private String osKernelInfo;
+
+    /**
+     * machine uuid from /etc/machineid
+     */
+    private String machineId;
+
+    /**
+     * octopus message unique key name
+     */
+    private String topicName;
 
     /**
      *
      */
-    @Nullable
     private String comment;
-
-
-
-    private Integer version;
 
 }

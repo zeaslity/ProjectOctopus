@@ -1,6 +1,6 @@
 package io.wdd.agent;
 
-import io.wdd.agent.initialization.bootup.InitConfiguration;
+import io.wdd.agent.initialization.bootup.OctopusAgentInitService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -10,11 +10,10 @@ import javax.annotation.Resource;
 public class InitRabbitMQTest {
 
     @Resource
-    InitConfiguration initConfiguration;
+    OctopusAgentInitService octopusAgentInitService;
 
     @Test
     void testInitSendInfo(){
 
-        initConfiguration.SendInfoToServer();
     }
 }

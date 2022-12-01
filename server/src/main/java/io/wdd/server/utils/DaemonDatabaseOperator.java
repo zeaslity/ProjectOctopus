@@ -3,18 +3,22 @@ package io.wdd.server.utils;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.wdd.server.beans.vo.ServerInfoVO;
 import io.wdd.server.coreService.CoreServerService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.stream.Collectors;
 
 /**
  * The type Daemon database operator.
  */
 @Component
+@Slf4j(topic = "Daemon Database Operator")
 public class DaemonDatabaseOperator {
 
     /**
@@ -35,7 +39,16 @@ public class DaemonDatabaseOperator {
      */
     public boolean saveInitOctopusAgentInfo(ServerInfoVO serverInfoVO) {
 
-        return coreServerService.serverCreate(serverInfoVO);
+        log.info("simulate store the Octopus Agent Server info");
+
+        return true;
+//        return coreServerService.serverCreate(serverInfoVO);
+    }
+
+
+    public Set<String> getAllServerName(){
+
+        return coreServerService.serverGetAll().stream().map(serverInfoVO -> serverInfoVO.getServerName()).collect(Collectors.toSet());
     }
 
     @PostConstruct

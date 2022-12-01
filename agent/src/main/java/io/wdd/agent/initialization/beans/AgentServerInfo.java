@@ -4,16 +4,14 @@ package io.wdd.agent.initialization.beans;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder(toBuilder = true)
-@Configuration
-public class ServerInfo {
+@Component
+public class AgentServerInfo {
 
     @Value("${serverName}")
     private String serverName;

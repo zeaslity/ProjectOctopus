@@ -14,13 +14,22 @@
             <result property="registerTime" column="register_time" jdbcType="TIMESTAMP"/>
             <result property="expireTime" column="expire_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="location" column="location" jdbcType="VARCHAR"/>
             <result property="provider" column="provider" jdbcType="VARCHAR"/>
             <result property="managePort" column="manage_port" jdbcType="VARCHAR"/>
-            <result property="cpuCore" column="cpu_core" jdbcType="INTEGER"/>
             <result property="cpuBrand" column="cpu_brand" jdbcType="VARCHAR"/>
+            <result property="cpuCore" column="cpu_core" jdbcType="VARCHAR"/>
+            <result property="memoryTotal" column="memory_total" jdbcType="VARCHAR"/>
+            <result property="diskTotal" column="disk_total" jdbcType="VARCHAR"/>
+            <result property="diskUsage" column="disk_usage" jdbcType="VARCHAR"/>
+            <result property="ioSpeed" column="io_speed" jdbcType="VARCHAR"/>
+            <result property="tcpControl" column="tcp_control" jdbcType="VARCHAR"/>
+            <result property="virtualization" column="virtualization" jdbcType="VARCHAR"/>
             <result property="osInfo" column="os_info" jdbcType="VARCHAR"/>
             <result property="osKernelInfo" column="os_kernel_info" jdbcType="VARCHAR"/>
+            <result property="machineId" column="machine_id" jdbcType="VARCHAR"/>
+            <result property="topicName" column="topic_name" jdbcType="VARCHAR"/>
             <result property="comment" column="comment" jdbcType="VARCHAR"/>
             <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
             <result property="version" column="version" jdbcType="INTEGER"/>
@@ -30,9 +39,12 @@
         server_id,server_name,server_ip_pb_v4,
         server_ip_in_v4,server_ip_pb_v6,server_ip_in_v6,
         register_time,expire_time,update_time,
-        location,provider,manage_port,
-        cpu_core,cpu_brand,os_info,
-        os_kernel_info,comment,is_delete,
+        create_time,location,provider,
+        manage_port,cpu_brand,cpu_core,
+        memory_total,disk_total,disk_usage,
+        io_speed,tcp_control,virtualization,
+        os_info,os_kernel_info,machine_id,
+        topic_name,comment,is_delete,
         version
     </sql>
 </mapper>

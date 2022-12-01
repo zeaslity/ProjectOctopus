@@ -7,9 +7,8 @@ import io.wdd.common.beans.rabbitmq.OctopusMessageType;
 import io.wdd.common.handler.MyRuntimeException;
 import io.wdd.rpc.init.FromServerMessageBinding;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.amqp.RabbitHealthIndicator;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -19,6 +18,7 @@ import javax.annotation.Resource;
  *  provide override method to convert Object and send to rabbitmq
  */
 @Component
+@Slf4j(topic = "order to agent ")
 public class ToAgentOrder {
 
     @Resource
@@ -26,6 +26,10 @@ public class ToAgentOrder {
 
     @Resource
     FromServerMessageBinding fromServerMessageBinding;
+
+
+    @Resource
+    ObjectMapper objectMapper;
 
     /**
      *
@@ -41,6 +45,7 @@ public class ToAgentOrder {
         }
 
         // send to Queue -- InitFromServer
+        log.info("send INIT OrderCommand to Agent = {}", message);
 
         rabbitTemplate.convertAndSend(fromServerMessageBinding.INIT_EXCHANGE, fromServerMessageBinding.INIT_FROM_SERVER_KEY, writeData(message));
 
@@ -48,7 +53,7 @@ public class ToAgentOrder {
 
     @SneakyThrows
     private byte[] writeData(Object data){
-        ObjectMapper objectMapper = new ObjectMapper();
+
         return objectMapper.writeValueAsBytes(data);
     }
 

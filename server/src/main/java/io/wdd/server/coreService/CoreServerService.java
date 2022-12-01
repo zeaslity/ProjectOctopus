@@ -7,6 +7,7 @@ import io.wdd.server.beans.vo.DomainInfoVO;
 import io.wdd.server.beans.vo.ServerInfoVO;
 
 import java.util.List;
+import java.util.Set;
 
 public interface CoreServerService {
 
@@ -39,4 +40,5 @@ public interface CoreServerService {
 
 
     boolean domainDelete(Long serverId, Long domainId);
+
 }

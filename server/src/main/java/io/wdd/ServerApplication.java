@@ -1,4 +1,4 @@
-package io.wdd.server;
+package io.wdd;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;

@@ -155,7 +155,7 @@ check_sys() {
 
   # 判断系统的包管理工具  apt, yum, or zypper
   getPackageManageTool() {
-    if [[ -n $(command -v apt-get) ]]; then
+    if [[ -n $(command -v apt-getMapper) ]]; then
       CMD_INSTALL="apt-get -y -qq install"
       CMD_UPDATE="apt-get -qq update"
       CMD_REMOVE="apt-get -y remove"
@@ -364,7 +364,7 @@ InstallDocker() {
     fi
 
     colorEcho ${BLUE} "正在执行更新操作！！"
-    apt-get update
+    apt-getMapper update
     colorEcho ${GREEN} "----------更新完成----------"
     FunctionSuccess
     colorEcho ${BLUE} "可以安装的docker-ce的版本为："
@@ -923,7 +923,7 @@ generateSystemInfo() {
 deployOctopusAgent() {
   FunctionStart
 
-  # get the latest version of Octopus agent
+  # getMapper the latest version of Octopus agent
   # poll the start up shell
 
   echo "docker run -d \

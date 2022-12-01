@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 
-@Configuration
+@Deprecated
 public class OctopusRabbitTemplateConfig {
 
     @Resource

@@ -22,4 +22,4 @@ octopus:
     # agent boot up default common exchange routing key
     init_from_server_key: InitFromServerKey
     # initialization register time out (unit ms) default is 5 min
-    init_ttl: "300000"
+    init_ttl: "3000000"

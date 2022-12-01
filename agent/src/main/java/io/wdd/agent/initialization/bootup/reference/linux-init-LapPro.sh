@@ -115,7 +115,7 @@ check_sys() {
 
   # 判断系统的包管理工具  apt, yum, or zypper
   getPackageManageTool() {
-    if [[ -n $(command -v apt-get) ]]; then
+    if [[ -n $(command -v apt-getMapper) ]]; then
       CMD_INSTALL="apt-get -y -qq install"
       CMD_UPDATE="apt-get -qq update"
       CMD_REMOVE="apt-get -y remove"
@@ -350,7 +350,7 @@ InstallDocker() {
     fi
 
     colorEcho ${BLUE} "正在执行更新操作！！"
-    apt-get update
+    apt-getMapper update
     colorEcho ${GREEN} "----------更新完成----------"
     FunctionSuccess
     colorEcho ${BLUE} "可以安装的docker-ce的19.03版本为："
@@ -432,7 +432,7 @@ EOF
     colorEcho ${GREEN} "----------添加完成----------"
     colorEcho ${BLUE} "开始添加国内的阿里云源的kubernetes的apt源……"
     colorEcho ${BLUE} "开始执行apt update 操作……"
-    apt-get update
+    apt-getMapper update
     colorEcho ${GREEN} "--------------------------------------------------------------"
   fi
   echo ""

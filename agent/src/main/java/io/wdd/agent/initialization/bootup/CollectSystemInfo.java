@@ -1,7 +1,7 @@
 package io.wdd.agent.initialization.bootup;
 
 
-import io.wdd.agent.initialization.beans.ServerInfo;
+import io.wdd.agent.initialization.beans.AgentServerInfo;
 import io.wdd.common.handler.MyRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -29,7 +29,9 @@ public class CollectSystemInfo implements ApplicationContextAware {
     private ApplicationContext context;
 
     @Resource
-    InitConfiguration initConfiguration;
+    OctopusAgentInitService octopusAgentInitService;
+
+    public AgentServerInfo agentServerInfo;
 
     @Bean
     @Lazy
@@ -88,16 +90,16 @@ public class CollectSystemInfo implements ApplicationContextAware {
 
         log.info("Starting getInjectServerInfo");
 
-        ServerInfo serverInfo = (ServerInfo) context.getBean("serverInfo");
+        agentServerInfo = (AgentServerInfo) context.getBean("agentServerInfo");
 
-        if (ObjectUtils.isEmpty(serverInfo)) {
+        if (ObjectUtils.isEmpty(agentServerInfo)) {
             throw new MyRuntimeException(" Collect server info error !");
         }
 
-        log.info("host server info has been collected == {}", serverInfo);
+        log.info("host server info has been collected == {}", agentServerInfo);
 
         // start to send message to Octopus Server
-        initConfiguration.SendInfoToServer(serverInfo);
+        octopusAgentInitService.SendInfoToServer(agentServerInfo);
         log.info("init server info has been send to octopus server !");
 
     }
