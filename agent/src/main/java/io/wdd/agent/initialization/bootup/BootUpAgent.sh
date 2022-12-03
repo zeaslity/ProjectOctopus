@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
-
 docker run -d \
   -e ServerName: "${ServerName}"         \
-  -e serverIpPbV4: "$serverIpPbV4"   \
+  -e serverIpPbV4: "$serverIspPbV4"   \
   -e serverIpInV4: "$serverIpInV4"   \
   -e serverIpPbV6: "$serverIpPbV6"   \
   -e serverIpInV6:  "$serverIpInV6"  \
@@ -20,4 +19,9 @@ docker run -d \
   -e tcpControl: "$tcpControl"   \
   -e virtualization: "$virtualization"   \
   -e ioSpeed: "$ioSpeed"   \
+  --privileged \
+  --net=host \
+  --pid=host \
+  --ipc=host \
+  --volume /:/host \
   icederce/wdd-octopus-agent:latest

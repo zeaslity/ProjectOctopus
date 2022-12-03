@@ -1,4 +1,4 @@
-package io.wdd.agent.initialization.rabbitmq;
+package io.wdd.agent.initialization.message;
 
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;

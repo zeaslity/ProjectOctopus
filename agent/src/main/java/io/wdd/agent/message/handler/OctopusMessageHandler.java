@@ -1,7 +1,7 @@
 package io.wdd.agent.message.handler;
 
 
-import io.wdd.agent.config.rabbitmq.handler.*;
+import io.wdd.agent.config.message.handler.*;
 import io.wdd.common.beans.rabbitmq.OctopusMessage;
 import org.springframework.stereotype.Service;
 

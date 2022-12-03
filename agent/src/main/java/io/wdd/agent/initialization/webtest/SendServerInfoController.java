@@ -1,7 +1,7 @@
 package io.wdd.agent.initialization.webtest;
 
 
-import io.wdd.agent.initialization.beans.AgentServerInfo;
+import io.wdd.agent.config.beans.init.AgentServerInfo;
 import io.wdd.agent.initialization.bootup.CollectSystemInfo;
 import io.wdd.agent.initialization.bootup.OctopusAgentInitService;
 import io.wdd.common.beans.response.R;

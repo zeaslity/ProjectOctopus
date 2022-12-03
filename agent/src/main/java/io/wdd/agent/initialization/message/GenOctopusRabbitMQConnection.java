@@ -1,4 +1,4 @@
-package io.wdd.agent.initialization.rabbitmq;
+package io.wdd.agent.initialization.message;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,7 +30,7 @@ import java.util.List;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class GenerateOctopusConnection {
+public class GenOctopusRabbitMQConnection {
 
     private final List<MessageListenerContainer> messageListenerContainerList = new ArrayList<>();
     private final SimpleRabbitListenerContainerFactory containerFactory;

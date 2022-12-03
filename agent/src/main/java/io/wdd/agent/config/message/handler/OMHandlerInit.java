@@ -1,7 +1,7 @@
-package io.wdd.agent.config.rabbitmq.handler;
+package io.wdd.agent.config.message.handler;
 
-import io.wdd.agent.initialization.beans.AgentServerInfo;
-import io.wdd.agent.initialization.rabbitmq.GenerateOctopusConnection;
+import io.wdd.agent.config.beans.init.AgentServerInfo;
+import io.wdd.agent.initialization.message.GenOctopusRabbitMQConnection;
 import io.wdd.agent.message.ToServerMessage;
 import io.wdd.common.beans.rabbitmq.OctopusMessage;
 import io.wdd.common.beans.rabbitmq.OctopusMessageType;
@@ -23,7 +23,7 @@ import javax.annotation.Resource;
 public class OMHandlerInit extends AbstractOctopusMessageHandler {
 
     @Resource
-    GenerateOctopusConnection generateOctopusConnection;
+    GenOctopusRabbitMQConnection genOctopusRabbitMQConnection;
 
     @Resource
     ToServerMessage toServerMessage;
@@ -40,7 +40,7 @@ public class OMHandlerInit extends AbstractOctopusMessageHandler {
         // handle the PassThroughTopicName message
         // 1. generator the unique topic queue for agent itself
         // 1.1 initial the specific topic queue listener
-        generateOctopusConnection.ManualGenerate(octopusMessage);
+        genOctopusRabbitMQConnection.ManualGenerate(octopusMessage);
 
 
         // 2. send PassThroughTopicName successful info to the server

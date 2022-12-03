@@ -2,7 +2,7 @@ package io.wdd.agent.initialization.bootup;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rabbitmq.client.Channel;
-import io.wdd.agent.initialization.beans.AgentServerInfo;
+import io.wdd.agent.config.beans.init.AgentServerInfo;
 import io.wdd.agent.message.ToServerMessage;
 import io.wdd.agent.message.handler.OctopusMessageHandler;
 import io.wdd.common.beans.rabbitmq.OctopusMessage;

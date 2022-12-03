@@ -3,8 +3,8 @@ package io.wdd.agent.message;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.wdd.agent.initialization.beans.AgentServerInfo;
-import io.wdd.agent.initialization.rabbitmq.InitRabbitMQConnector;
+import io.wdd.agent.config.beans.init.AgentServerInfo;
+import io.wdd.agent.initialization.message.InitRabbitMQConnector;
 import io.wdd.common.beans.rabbitmq.OctopusMessage;
 import io.wdd.common.handler.MyRuntimeException;
 import lombok.extern.slf4j.Slf4j;

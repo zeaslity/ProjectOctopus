@@ -1,8 +1,7 @@
-package io.wdd.agent.config.rabbitmq.handler;
+package io.wdd.agent.config.message.handler;
 
 import io.wdd.common.beans.rabbitmq.OctopusMessage;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 
 
 /**

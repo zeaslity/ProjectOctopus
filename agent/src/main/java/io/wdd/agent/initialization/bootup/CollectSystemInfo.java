@@ -1,7 +1,7 @@
 package io.wdd.agent.initialization.bootup;
 
 
-import io.wdd.agent.initialization.beans.AgentServerInfo;
+import io.wdd.agent.config.beans.init.AgentServerInfo;
 import io.wdd.common.handler.MyRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;

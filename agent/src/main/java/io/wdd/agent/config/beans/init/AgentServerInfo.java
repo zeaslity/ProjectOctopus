@@ -1,4 +1,4 @@
-package io.wdd.agent.initialization.beans;
+package io.wdd.agent.config.beans.init;
 
 
 import lombok.AllArgsConstructor;

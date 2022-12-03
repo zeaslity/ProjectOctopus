@@ -12,6 +12,20 @@ spring:
     username: boge
     password: boge14@Level5
     virtual-host: /wddserver
+    listener:
+      simple:
+        retry:
+          # ack failed will reentrant the Rabbit Listener
+          max-attempts: 5
+          enabled: true
+          # retry interval unit ms
+          max-interval: 5000
+          initial-interval: 5000
+  redis:
+    host: 127.0.0.1
+    port: 36379
+    database: 0
+    password: boge14@Level5
 
 octopus:
   message:

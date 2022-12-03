@@ -1,4 +1,4 @@
-package io.wdd.agent.config.rabbitmq.config;
+package io.wdd.agent.config.message.config;
 
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
