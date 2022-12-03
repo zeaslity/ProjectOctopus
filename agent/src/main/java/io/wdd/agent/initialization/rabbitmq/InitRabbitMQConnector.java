@@ -9,12 +9,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * agent send server init info to octopus server
+ * agent send server PassThroughTopicName info to octopus server
  * <p>
  * agent boot up should send message to server using this queue
  */
 @Configuration
-public class InitialRabbitMqConnector {
+public class InitRabbitMQConnector {
 
     @Value("${octopus.message.init_exchange}")
     public String INIT_EXCHANGE;
@@ -30,6 +30,15 @@ public class InitialRabbitMqConnector {
 
     @Value("${octopus.message.init_to_server_key}")
     public String INIT_TO_SERVER_KEY;
+
+    @Value("${octopus.message.octopus_exchange}")
+    public String OCTOPUS_EXCHANGE;
+
+    @Value("${octopus.message.octopus_to_server}")
+    public String OCTOPUS_TO_SERVER;
+
+    //
+    public static String SPECIFIC_AGENT_TOPIC_NAME;
 
     @Bean
     public DirectExchange initDirectExchange() {

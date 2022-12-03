@@ -6,7 +6,7 @@ import com.rabbitmq.client.Channel;
 import io.wdd.common.beans.rabbitmq.OctopusMessage;
 import io.wdd.common.beans.rabbitmq.OctopusMessageType;
 import io.wdd.common.handler.MyRuntimeException;
-import io.wdd.rpc.message.ToAgentOrder;
+import io.wdd.rpc.message.sender.ToAgentOrder;
 import io.wdd.server.beans.vo.ServerInfoVO;
 import io.wdd.server.utils.DaemonDatabaseOperator;
 import lombok.SneakyThrows;
@@ -24,13 +24,17 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The type Accept boot up info message.
  */
 @Service
 @Slf4j(topic = "octopus agent init ")
-public class AcceptBootUpInfoMessage {
+public class AcceptAgentInitInfo {
+
+    @Resource
+    InitRabbitMQConfig initRabbitMQConfig;
 
 
     public static Set<String> ALL_SERVER_CITY_INFO = new HashSet<>(
@@ -125,7 +129,8 @@ public class AcceptBootUpInfoMessage {
             // long deliveryTag, boolean requeue
             // channel.basicReject(deliveryTag,true);
 
-            Thread.sleep(1000);     // 这里只是便于出现死循环时查看
+            // 这里只是便于出现死循环时查看
+            TimeUnit.SECONDS.sleep(5);
 
             /*
              * 一般实际异常情况下的处理过程：记录出现异常的业务数据，将它单独插入到一个单独的模块，
@@ -138,6 +143,7 @@ public class AcceptBootUpInfoMessage {
 
         /**
          * 无异常就确认消息
+         * 无异常就确认消息
          * basicAck(long deliveryTag, boolean multiple)
          * deliveryTag:取出来当前消息在队列中的的索引;
          * multiple:为true的话就是批量确认,如果当前deliveryTag为5,那么就会确认
@@ -145,6 +151,7 @@ public class AcceptBootUpInfoMessage {
          */
         // ack the rabbitmq info
         // If all logic is successful
+        log.info("Agent [ {} ] has init successfully !", serverInfoVO.getTopicName());
         channel.basicAck(deliveryTag, false);
     }
 
@@ -154,14 +161,15 @@ public class AcceptBootUpInfoMessage {
                 filter(serverName -> agentQueueTopic.startsWith(serverName))
                 .findFirst();
 
-        return first.isEmpty();
+        return first.isPresent();
     }
 
     private boolean sendInitMessageToAgent(ServerInfoVO serverInfoVO) {
 
         OctopusMessage octopusMessage = OctopusMessage.builder()
                 .type(OctopusMessageType.INIT)
-                .content(serverInfoVO.getTopicName())
+                // should be the OctopusExchange Name
+                .content(String.valueOf(initRabbitMQConfig.OCTOPUS_EXCHANGE))
                 .init_time(LocalDateTime.now())
                 .uuid(serverInfoVO.getTopicName())
                 .build();

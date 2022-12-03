@@ -39,10 +39,10 @@ public class DaemonDatabaseOperator {
      */
     public boolean saveInitOctopusAgentInfo(ServerInfoVO serverInfoVO) {
 
-        log.info("simulate store the Octopus Agent Server info");
+//        log.info("simulate store the Octopus Agent Server info");
 
-        return true;
-//        return coreServerService.serverCreate(serverInfoVO);
+//        return true;
+        return coreServerService.serverCreate(serverInfoVO);
     }
 
 

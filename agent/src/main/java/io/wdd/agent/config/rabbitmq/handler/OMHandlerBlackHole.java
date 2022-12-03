@@ -1,4 +1,4 @@
-package io.wdd.agent.config.rabbitmq;
+package io.wdd.agent.config.rabbitmq.handler;
 
 import io.wdd.common.beans.rabbitmq.OctopusMessage;
 import lombok.extern.slf4j.Slf4j;

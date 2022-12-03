@@ -1,16 +1,18 @@
-package io.wdd.agent.config.rabbitmq;
+package io.wdd.agent.config.rabbitmq.handler;
 
 import io.wdd.common.beans.rabbitmq.OctopusMessage;
 import io.wdd.common.beans.rabbitmq.OctopusMessageType;
+import org.springframework.stereotype.Component;
 
+@Component
 public class OMHandlerStatus extends AbstractOctopusMessageHandler {
     @Override
     public boolean handle(OctopusMessage octopusMessage) {
 
         if (!octopusMessage.getType().equals(OctopusMessageType.STATUS)) {
-            this.getNextHandler().handle(octopusMessage);
+            return next.handle(octopusMessage);
         }
 
-        return false;
+        return true;
     }
 }

@@ -20,8 +20,10 @@ public class MyBatisAutoInsertInterceptor implements MetaObjectHandler {
     public void insertFill(MetaObject metaObject) {
         log.info("MyBaitsPlus start to insert manually !");
 
-        this.strictInsertFill(metaObject, "registerTime", () -> LocalDateTime.now(), LocalDateTime.class); // 起始版本 3.3.3(推荐)
-        this.strictInsertFill(metaObject, "create_time", () -> LocalDateTime.now(), LocalDateTime.class); // 起始版本 3.3.3(推荐)
+        this.strictInsertFill(metaObject, "createTime", () -> LocalDateTime.now(), LocalDateTime.class); // 起始版本 3.3.3(推荐)
+
+        this.strictInsertFill(metaObject, "updateTime", () -> LocalDateTime.now(), LocalDateTime.class); // 起始版本 3.3.3(推荐)
+
     }
 
     @Override
@@ -30,7 +32,5 @@ public class MyBatisAutoInsertInterceptor implements MetaObjectHandler {
         log.info("MyBaitsPlus start to update manually !");
 
         this.strictInsertFill(metaObject, "updateTime", () -> LocalDateTime.now(), LocalDateTime.class); // 起始版本 3.3.3(推荐)
-
-        this.strictInsertFill(metaObject, "update_time", () -> LocalDateTime.now(), LocalDateTime.class); // 起始版本 3.3.3(推荐)
     }
 }

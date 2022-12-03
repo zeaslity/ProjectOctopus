@@ -1,7 +1,8 @@
-package io.wdd.agent.config.rabbitmq;
+package io.wdd.agent.config.rabbitmq.handler;
 
 import io.wdd.common.beans.rabbitmq.OctopusMessage;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 
 /**
@@ -10,10 +11,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public abstract class AbstractOctopusMessageHandler  {
 
-    private AbstractOctopusMessageHandler next;
+    protected AbstractOctopusMessageHandler next;
 
     public void addHandler(AbstractOctopusMessageHandler handler) {
         this.next = handler;
+
     }
 
     public AbstractOctopusMessageHandler getNextHandler() {

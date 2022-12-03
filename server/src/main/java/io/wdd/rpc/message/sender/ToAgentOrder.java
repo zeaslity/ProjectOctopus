@@ -1,11 +1,11 @@
-package io.wdd.rpc.message;
+package io.wdd.rpc.message.sender;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wdd.common.beans.rabbitmq.OctopusMessage;
 import io.wdd.common.beans.rabbitmq.OctopusMessageType;
 import io.wdd.common.handler.MyRuntimeException;
-import io.wdd.rpc.init.FromServerMessageBinding;
+import io.wdd.rpc.init.InitRabbitMQConfig;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -18,14 +18,14 @@ import javax.annotation.Resource;
  *  provide override method to convert Object and send to rabbitmq
  */
 @Component
-@Slf4j(topic = "order to agent ")
+@Slf4j(topic = "To Octopus Server Message ")
 public class ToAgentOrder {
 
     @Resource
     RabbitTemplate rabbitTemplate;
 
     @Resource
-    FromServerMessageBinding fromServerMessageBinding;
+    InitRabbitMQConfig initRabbitMQConfig;
 
 
     @Resource
@@ -47,7 +47,7 @@ public class ToAgentOrder {
         // send to Queue -- InitFromServer
         log.info("send INIT OrderCommand to Agent = {}", message);
 
-        rabbitTemplate.convertAndSend(fromServerMessageBinding.INIT_EXCHANGE, fromServerMessageBinding.INIT_FROM_SERVER_KEY, writeData(message));
+        rabbitTemplate.convertAndSend(initRabbitMQConfig.INIT_EXCHANGE, initRabbitMQConfig.INIT_FROM_SERVER_KEY, writeData(message));
 
     }
 

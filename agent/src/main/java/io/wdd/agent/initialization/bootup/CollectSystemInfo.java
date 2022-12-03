@@ -100,7 +100,7 @@ public class CollectSystemInfo implements ApplicationContextAware {
 
         // start to send message to Octopus Server
         octopusAgentInitService.SendInfoToServer(agentServerInfo);
-        log.info("init server info has been send to octopus server !");
+        log.info("PassThroughTopicName server info has been send to octopus server !");
 
     }
 

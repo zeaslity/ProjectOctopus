@@ -74,8 +74,8 @@ public class CoreServerServiceImpl implements CoreServerService {
     @Override
     public boolean serverCreate(ServerInfoVO serverInfoVO) {
 
-        ServerInfoPO serverInfoPO = new ServerInfoPO();
-        BeanUtils.copyProperties(serverInfoVO, serverInfoPO);
+//        BeanUtils.copyProperties(serverInfoVO, serverInfoPO);
+        ServerInfoPO serverInfoPO = EntityUtils.cvToTarget(serverInfoVO, ServerInfoPO.class);
 
         return serverInfoService.save(serverInfoPO);
     }

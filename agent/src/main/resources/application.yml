@@ -1,7 +1,11 @@
 server:
   port: 8000
 
+
 spring:
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
   rabbitmq:
     host: 127.0.0.1
     port: 35672
@@ -23,3 +27,11 @@ octopus:
     init_from_server_key: InitFromServerKey
     # initialization register time out (unit ms) default is 5 min
     init_ttl: "3000000"
+    # Octopus Exchange Name == server comunicate with agent
+    octopus_exchange: OctopusExchange
+    # Octopus Message To Server == all agent send info to server queue and topic
+    octopus_to_server: OctopusToServer
+
+logging:
+  level:
+    web: debug
