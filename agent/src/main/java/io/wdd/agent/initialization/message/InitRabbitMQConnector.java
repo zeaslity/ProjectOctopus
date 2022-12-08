@@ -16,29 +16,22 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class InitRabbitMQConnector {
 
-    @Value("${octopus.message.init_exchange}")
-    public String INIT_EXCHANGE;
-
-    @Value("${octopus.message.init_from_server}")
-    public String INIT_FROM_SERVER;
-
-    @Value("${octopus.message.init_to_server}")
-    public String INIT_TO_SERVER;
-
-    @Value("${octopus.message.init_from_server_key}")
-    public String INIT_FROM_SERVER_KEY;
-
-    @Value("${octopus.message.init_to_server_key}")
-    public String INIT_TO_SERVER_KEY;
-
-    @Value("${octopus.message.octopus_exchange}")
-    public String OCTOPUS_EXCHANGE;
-
-    @Value("${octopus.message.octopus_to_server}")
-    public String OCTOPUS_TO_SERVER;
-
     //
     public static String SPECIFIC_AGENT_TOPIC_NAME;
+    @Value("${octopus.message.init_exchange}")
+    public String INIT_EXCHANGE;
+    @Value("${octopus.message.init_from_server}")
+    public String INIT_FROM_SERVER;
+    @Value("${octopus.message.init_to_server}")
+    public String INIT_TO_SERVER;
+    @Value("${octopus.message.init_from_server_key}")
+    public String INIT_FROM_SERVER_KEY;
+    @Value("${octopus.message.init_to_server_key}")
+    public String INIT_TO_SERVER_KEY;
+    @Value("${octopus.message.octopus_exchange}")
+    public String OCTOPUS_EXCHANGE;
+    @Value("${octopus.message.octopus_to_server}")
+    public String OCTOPUS_TO_SERVER;
 
     @Bean
     public DirectExchange initDirectExchange() {

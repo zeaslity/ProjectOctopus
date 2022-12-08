@@ -1146,10 +1146,10 @@ main() {
   commonToolInstall
 
   # 安装docker，版本信息在本脚本的开头处修改~~
-  InstallDocker cn || return $?
-  InstallDockerCompose || return $?
-  modifySystemConfig_Docker
-  changeDockerRegisterMirror || return $?
+#  InstallDocker cn || return $?
+#  InstallDockerCompose || return $?
+#  modifySystemConfig_Docker
+#  changeDockerRegisterMirror || return $?
   
 #  InstallRedis -p 36379 -m docker
 

@@ -18,7 +18,7 @@ RUN mkdir -p /wdd
 WORKDIR /wdd
 
 # Copy the jar and rename it
-COPY ./agent/target/agent-*.jar /wdd/agent.jar
+COPY ./target/agent-*.jar /wdd/agent.jar
 
 # When the docker container starts, run the jar
-ENTRYPOINT chroot /host && exec java ${JAVA_OPTS} -jar  /wdd/agent.jar
+ENTRYPOINT exec java ${JAVA_OPTS} -jar  /wdd/agent.jar

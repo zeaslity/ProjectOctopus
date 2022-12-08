@@ -1,0 +1,21 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="RunAgentToShanghai" type="docker-deploy" factoryName="dockerfile" server-name="Shanghai">
+    <deployment type="dockerfile">
+      <settings>
+        <option name="imageTag" value="shanghai-local" />
+        <option name="containerName" value="octopus-agentshanghai" />
+        <option name="portBindings">
+          <list>
+            <DockerPortBindingImpl>
+              <option name="containerPort" value="8000" />
+              <option name="hostPort" value="18000" />
+            </DockerPortBindingImpl>
+          </list>
+        </option>
+        <option name="commandLineOptions" value="" />
+        <option name="sourceFilePath" value="agent/Dockerfile-wsl2" />
+      </settings>
+    </deployment>
+    <method v="2" />
+  </configuration>
+</component>
