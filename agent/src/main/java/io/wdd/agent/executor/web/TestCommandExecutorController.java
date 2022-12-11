@@ -1,14 +1,13 @@
-package io.wdd.agent.excuetor.web;
+package io.wdd.agent.executor.web;
 
 
-import io.wdd.agent.excuetor.shell.CommandExecutor;
+import io.wdd.agent.executor.shell.CommandExecutor;
 import io.wdd.common.beans.response.R;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.List;
 

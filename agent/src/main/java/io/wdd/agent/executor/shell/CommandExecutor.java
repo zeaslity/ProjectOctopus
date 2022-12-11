@@ -1,9 +1,9 @@
-package io.wdd.agent.excuetor.shell;
+package io.wdd.agent.executor.shell;
 
 import com.google.common.io.ByteStreams;
-import io.wdd.agent.excuetor.redis.StreamSender;
-import io.wdd.agent.excuetor.thread.DaemonLogThread;
-import io.wdd.agent.excuetor.thread.LogToStreamSender;
+import io.wdd.agent.executor.redis.StreamSender;
+import io.wdd.agent.executor.thread.DaemonLogThread;
+import io.wdd.agent.executor.thread.LogToStreamSender;
 import io.wdd.common.beans.executor.ExecutionMessage;
 import io.wdd.common.handler.MyRuntimeException;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 
 @Configuration
@@ -54,7 +52,7 @@ public class CommandExecutor {
     }
 
 
-    private void processExecute(String streamKey, ProcessBuilder processBuilder){
+    public void processExecute(String streamKey, ProcessBuilder processBuilder){
 
         processBuilder.redirectErrorStream(true);
         processBuilder.inheritIO();
@@ -75,8 +73,7 @@ public class CommandExecutor {
 
 
         } catch (IOException | InterruptedException e) {
-
-            throw new MyRuntimeException("{} + {}", e.getCause(), e.getMessage());
+            log.error("Shell command error ! {} + {}", e.getCause(), e.getMessage());
         }
     }
 

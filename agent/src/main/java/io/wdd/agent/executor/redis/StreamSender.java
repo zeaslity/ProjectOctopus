@@ -1,4 +1,4 @@
-package io.wdd.agent.excuetor.redis;
+package io.wdd.agent.executor.redis;
 
 
 import io.wdd.agent.config.beans.executor.CommandLog;

@@ -1,12 +1,8 @@
 package io.wdd.agent;
 
-import io.wdd.agent.excuetor.shell.CommandExecutor;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import io.wdd.agent.executor.shell.CommandExecutor;
 
 import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
 
 //@SpringBootTest
 public class InitRabbitMQTest {

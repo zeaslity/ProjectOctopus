@@ -1,4 +1,4 @@
-package io.wdd.agent.excuetor.thread;
+package io.wdd.agent.executor.thread;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 

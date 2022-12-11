@@ -1,4 +1,4 @@
-package io.wdd.agent.excuetor.config;
+package io.wdd.agent.executor.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
