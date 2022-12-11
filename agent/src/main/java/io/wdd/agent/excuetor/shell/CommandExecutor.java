@@ -4,7 +4,7 @@ import com.google.common.io.ByteStreams;
 import io.wdd.agent.excuetor.redis.StreamSender;
 import io.wdd.agent.excuetor.thread.DaemonLogThread;
 import io.wdd.agent.excuetor.thread.LogToStreamSender;
-import io.wdd.agent.excuetor.thread.LogToSysOut;
+import io.wdd.common.handler.MyRuntimeException;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -22,28 +23,48 @@ public class CommandExecutor {
     @Resource
     StreamSender streamSender;
 
-    public void execute(String streamKey, String... command) throws IOException, InterruptedException, ExecutionException {
+
+    public void execute(String streamKey, List<String> command) {
 
         ProcessBuilder processBuilder = new ProcessBuilder(command);
 
-//        processBuilder.redirectErrorStream(true);
-//        processBuilder.inheritIO();
-        processBuilder.directory(new File(System.getProperty("user.home")));
-        Process process = processBuilder.start();
-
-        LogToStreamSender toStreamSender = new LogToStreamSender(streamKey, process.getInputStream(), streamSender::send);
-
-//        LogToSysOut(process.getInputStream(), System.out::println);
-
-        // a command shell don't understand how long it actually take
-        int processResult = process.waitFor();
-        System.out.println("processResult = " + processResult);
-
-        Future<?> future = DaemonLogThread.start(toStreamSender);
-
-        System.out.println("future.get() = " + future.get());
+        this.processExecute(streamKey, processBuilder);
     }
 
+    public void execute(String streamKey, String... command) {
+
+        ProcessBuilder processBuilder = new ProcessBuilder(command);
+
+        this.processExecute(streamKey, processBuilder);
+
+    }
+
+
+    private void processExecute(String streamKey, ProcessBuilder processBuilder){
+
+        processBuilder.redirectErrorStream(true);
+        processBuilder.inheritIO();
+        processBuilder.directory(new File(System.getProperty("user.home")));
+
+        Process process = null;
+        try {
+            process = processBuilder.start();
+
+            LogToStreamSender toStreamSender = new LogToStreamSender(streamKey, process.getInputStream(), streamSender::send);
+
+            // a command shell don't understand how long it actually take
+            int processResult = process.waitFor();
+
+            System.out.println("processResult = " + processResult);
+
+            DaemonLogThread.start(toStreamSender);
+
+
+        } catch (IOException | InterruptedException e) {
+
+            throw new MyRuntimeException("{} + {}", e.getCause(), e.getMessage());
+        }
+    }
 
     private ByteBuffer cvToByteBuffer(InputStream inputStream) throws IOException {
 

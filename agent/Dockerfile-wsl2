@@ -3,7 +3,7 @@
 FROM icederce/eclipse-temurin-11-jre-focal
 
 # Set environment variables
-ENV TZ=Asia/Shanghai serverName="" serverIpPbV4="" serverIpInV4="" serverIpPbV6="" serverIpInV6="" location=""  provider="" managePort="" cpuBrand="" cpuCore="" memoryTotal="" diskTotal="" diskUsage="" osInfo="" osKernelInfo="" tcpControl="" virtualization="" ioSpeed=""
+ENV TZ=Asia/Shanghai
 ENV JAVA_OPTS="-Xms2028m -Xmx2048m"
 
 # Set time zone
@@ -20,5 +20,8 @@ WORKDIR /wdd
 # Copy the jar and rename it
 COPY ./target/agent-*.jar /wdd/agent.jar
 
+# copy docker-startup-entrypoint.sh
+COPY agent-entrypoint.sh /wdd/agent-entrypoint.sh
+
 # When the docker container starts, run the jar
-ENTRYPOINT exec java ${JAVA_OPTS} -jar  /wdd/agent.jar
+ENTRYPOINT ["/wdd/agent-entrypoint.sh"]

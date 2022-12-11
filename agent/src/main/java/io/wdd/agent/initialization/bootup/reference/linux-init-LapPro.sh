@@ -1161,7 +1161,8 @@ main() {
   # modifySystemConfig_Kubernetes
 
   # 安装宇宙第一shell的zsh
-  InstallZSH cn || return $?
+#  InstallZSH cn || return $?
+  modifyZSH cn
 
   # 使用chrony进行NTP时间同步--包含下面的设置
   # TimeSyncToAliByChrony || return $?

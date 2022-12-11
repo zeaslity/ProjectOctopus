@@ -1,0 +1,109 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="RunAgentUbuntuStation" type="docker-deploy" factoryName="dockerfile" server-name="UbuntuStation">
+    <deployment type="dockerfile">
+      <settings>
+        <option name="imageTag" value="octopus-agent-ubuntu" />
+        <option name="buildOnly" value="true" />
+        <option name="containerName" value="octopus-agent-ubuntu" />
+        <option name="envVars">
+          <list>
+            <DockerEnvVarImpl>
+              <option name="name" value="cpuBrand" />
+              <option name="value" value="i7 8700" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="cpuCore" />
+              <option name="value" value="12 @ 3.2GHz" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="diskTotal" />
+              <option name="value" value="1 TB" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="diskUsage" />
+              <option name="value" value="200GB" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="ioSpeed" />
+              <option name="value" value="1 GB/s" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="location" />
+              <option name="value" value="Chengdu" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="machineId" />
+              <option name="value" value="adasdasdas1q122131" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="managePort" />
+              <option name="value" value="3389" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="memoryTotal" />
+              <option name="value" value="64 GB" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="memoryUsage" />
+              <option name="value" value="12 GB" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="osInfo" />
+              <option name="value" value="Windwos 11" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="osKernelInfo" />
+              <option name="value" value="Window NT 10.0" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="provider" />
+              <option name="value" value="China Mobile" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="serverIpInV4" />
+              <option name="value" value="&quot;&quot;" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="serverIpInV6" />
+              <option name="value" value="&quot;&quot;" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="serverIpPbV4" />
+              <option name="value" value="&quot;&quot;" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="serverIpPbV6" />
+              <option name="value" value="&quot;&quot;" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="serverName" />
+              <option name="value" value="Chengdu-amd64-99" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="tcpControl" />
+              <option name="value" value="bbr" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="virtualization" />
+              <option name="value" value="dedicated" />
+            </DockerEnvVarImpl>
+          </list>
+        </option>
+        <option name="commandLineOptions" value="--privileged  --net=host  --ipc=host " />
+        <option name="showCommandPreview" value="true" />
+        <option name="sourceFilePath" value="agent/Dockerfile-wsl2" />
+        <option name="volumeBindings">
+          <list>
+            <DockerVolumeBindingImpl>
+              <option name="containerPath" value="/host" />
+              <option name="hostPath" value="/" />
+            </DockerVolumeBindingImpl>
+          </list>
+        </option>
+      </settings>
+    </deployment>
+    <method v="2">
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="ProjectOctopus [package]" run_configuration_type="MavenRunConfiguration" />
+    </method>
+  </configuration>
+</component>

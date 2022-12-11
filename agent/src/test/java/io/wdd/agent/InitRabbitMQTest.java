@@ -8,30 +8,24 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-@SpringBootTest
+//@SpringBootTest
 public class InitRabbitMQTest {
 
     @Resource
     CommandExecutor commandExecutor;
 
 
-    @Test
+//    @Test
     void testInitSendInfo() {
 
         String homeDirectory = System.getProperty("user.home");
-        try {
-            String format = String.format("C:\\program files\\powershell\\7\\pwsh.exe /c dir %s | findstr \"Desktop\"", homeDirectory);
 
-            commandExecutor.execute("sasda",
-                    "C:\\program files\\powershell\\7\\pwsh.exe",
-                    "pwd");
+        String format = String.format("C:\\program files\\powershell\\7\\pwsh.exe /c dir %s | findstr \"Desktop\"", homeDirectory);
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+        commandExecutor.execute("sasda",
+                "C:\\program files\\powershell\\7\\pwsh.exe",
+                "pwd");
+
+
     }
 }
