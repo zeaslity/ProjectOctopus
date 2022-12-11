@@ -18,10 +18,8 @@ public class LogToStreamSender implements Runnable {
         this.streamKey = streamKey;
     }
 
-
     @Override
     public void run() {
-
         new BufferedReader(new InputStreamReader(contentInputStream)).lines()
                 .map(
                         String::valueOf
@@ -31,7 +29,5 @@ public class LogToStreamSender implements Runnable {
                             return lineStr;
                         }
                 ).forEach(System.out::println);
-
-
     }
 }

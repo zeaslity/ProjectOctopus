@@ -23,7 +23,6 @@ public class DaemonLogThread {
 
     }
 
-
     public static Future<?> start(Runnable logToSenderTask) {
 
         return executorService.submit(logToSenderTask);

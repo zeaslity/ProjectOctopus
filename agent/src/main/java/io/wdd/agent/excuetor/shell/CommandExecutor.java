@@ -4,7 +4,9 @@ import com.google.common.io.ByteStreams;
 import io.wdd.agent.excuetor.redis.StreamSender;
 import io.wdd.agent.excuetor.thread.DaemonLogThread;
 import io.wdd.agent.excuetor.thread.LogToStreamSender;
+import io.wdd.common.beans.executor.ExecutionMessage;
 import io.wdd.common.handler.MyRuntimeException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
@@ -18,10 +20,22 @@ import java.util.concurrent.Future;
 
 
 @Configuration
+@Slf4j
 public class CommandExecutor {
 
     @Resource
     StreamSender streamSender;
+
+
+    /**
+     *
+     *  handle command from octopus server
+     *
+     * @param executionMessage get from EXECUTOR_HANDLER
+     */
+    public void execute(ExecutionMessage executionMessage) {
+
+    }
 
 
     public void execute(String streamKey, List<String> command) {
@@ -55,7 +69,7 @@ public class CommandExecutor {
             // a command shell don't understand how long it actually take
             int processResult = process.waitFor();
 
-            System.out.println("processResult = " + processResult);
+            log.info("current shell command [{}] result is [{}]", processBuilder.command(), processResult);
 
             DaemonLogThread.start(toStreamSender);
 
@@ -84,4 +98,6 @@ public class CommandExecutor {
         return s;
 
     }
+
+
 }
