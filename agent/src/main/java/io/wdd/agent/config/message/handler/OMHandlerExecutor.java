@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
-import static io.wdd.agent.executor.function.CollectAllFunctionToServer.ALL_FUNCTIONS;
+import static io.wdd.agent.executor.function.CollectAllExecutorFunction.ALL_FUNCTION_MAP;
 
 @Component
 public class OMHandlerExecutor extends AbstractOctopusMessageHandler {
@@ -30,7 +30,7 @@ public class OMHandlerExecutor extends AbstractOctopusMessageHandler {
         ExecutionMessage executionMessage = (ExecutionMessage) octopusMessage.getContent();
         String executionType = executionMessage.getType();
 
-        if (ALL_FUNCTIONS.contains(executionType)) {
+        if (ALL_FUNCTION_MAP.containsKey(executionType)) {
             // execute the exist function
             functionExecutor.execute(executionMessage);
 

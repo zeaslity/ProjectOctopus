@@ -5,7 +5,6 @@ import io.wdd.agent.executor.redis.StreamSender;
 import io.wdd.agent.executor.thread.DaemonLogThread;
 import io.wdd.agent.executor.thread.LogToStreamSender;
 import io.wdd.common.beans.executor.ExecutionMessage;
-import io.wdd.common.handler.MyRuntimeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 
@@ -26,8 +25,7 @@ public class CommandExecutor {
 
 
     /**
-     *
-     *  handle command from octopus server
+     * handle command from octopus server
      *
      * @param executionMessage get from EXECUTOR_HANDLER
      */
@@ -52,7 +50,7 @@ public class CommandExecutor {
     }
 
 
-    public void processExecute(String streamKey, ProcessBuilder processBuilder){
+    public void processExecute(String streamKey, ProcessBuilder processBuilder) {
 
         processBuilder.redirectErrorStream(true);
         processBuilder.inheritIO();

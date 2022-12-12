@@ -1,9 +1,7 @@
 package io.wdd.agent;
 
-import io.micrometer.core.instrument.FunctionCounter;
-import io.wdd.agent.executor.function.CollectAllFunctionToServer;
+import io.wdd.agent.executor.function.CollectAllExecutorFunction;
 import io.wdd.agent.executor.shell.FunctionExecutor;
-import io.wdd.common.beans.executor.ExecutionMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
@@ -29,16 +27,18 @@ class AgentApplicationTests {
     FunctionExecutor functionExecutor;
 
     @Resource
-    CollectAllFunctionToServer collectAllFunctionToServer;
+    CollectAllExecutorFunction collectAllExecutorFunction;
 
 
     @Test
     void testFileExecute(){
 
-        ExecutionMessage executionMessage = ExecutionMessage.builder().type("TestFunction").resultKey("simpleFor-test").contend("123456").build();
+//        ExecutionMessage executionMessage = ExecutionMessage.builder().type("TestFunction").resultKey("simpleFor-test").contend("123456").build();
+//
+//
+//        functionExecutor.execute(executionMessage);
 
 
-        functionExecutor.execute(executionMessage);
 
     }
 

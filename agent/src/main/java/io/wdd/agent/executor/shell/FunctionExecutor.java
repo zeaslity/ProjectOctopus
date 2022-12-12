@@ -1,6 +1,7 @@
 package io.wdd.agent.executor.shell;
 
 import io.wdd.agent.executor.config.FunctionReader;
+import io.wdd.agent.executor.function.CollectAllExecutorFunction;
 import io.wdd.common.beans.executor.ExecutionMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -9,7 +10,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static io.wdd.agent.executor.function.CollectAllFunctionToServer.FUNCTION_REFLECTION;
+import static io.wdd.agent.executor.function.CollectAllExecutorFunction.ALL_FUNCTION_MAP;
 
 @Service
 @Slf4j
@@ -21,13 +22,17 @@ public class FunctionExecutor {
     @Resource
     CommandExecutor commandExecutor;
 
+    // todo called by timer
+    @Resource
+    CollectAllExecutorFunction collectAllExecutorFunction;
+
     public void execute(ExecutionMessage executionMessage) {
 
         String resultKey = executionMessage.getResultKey();
 
-        String functionShellScriptFileName = FUNCTION_REFLECTION.get(executionMessage.getType());
+        List<List<String>> commandList = ALL_FUNCTION_MAP.get(executionMessage.getType());
 
-        this.execute(resultKey, functionShellScriptFileName);
+        this.execute(resultKey, commandList);
 
         /*Method execute = null;
 
@@ -42,12 +47,13 @@ public class FunctionExecutor {
     }
 
 
-    private void execute(String streamKey, String functionFileName) {
+    private void execute(String streamKey, List<List<String>> commandList) {
 
-        List<List<String>> commandList = functionReader.ReadFileToCommandList(functionFileName);
+//        List<List<String>> commandList = functionReader.ReadFileToCommandList(functionFileName);
 
         log.info("all commands are {}", commandList);
 
+        // todo modify this
         commandList.stream().map(
                 command -> {
                     commandExecutor.execute(streamKey, command);

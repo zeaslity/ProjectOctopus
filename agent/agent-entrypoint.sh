@@ -372,10 +372,27 @@ GenerateSystemInfo() {
   FunctionEnd
 }
 
+PrintEnv(){
+
+  FunctionStart
+
+  env
+
+  FunctionEnd
+}
+
 main() {
 
   GenerateSystemInfo
 
+  PrintEnv
+
 }
 
-main && env && java ${JAVA_OPTS} -jar /wdd/agent.jar
+main
+
+scp -r /wdd /host/wdd
+
+chroot /host
+
+java ${JAVA_OPTS} -jar /wdd/agent.jar
