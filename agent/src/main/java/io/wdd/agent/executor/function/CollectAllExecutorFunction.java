@@ -37,17 +37,22 @@ public class CollectAllExecutorFunction {
      */
     public static HashMap<String, List<List<String>>> ALL_FUNCTION_MAP = new HashMap<>(128);
 
+    /*
+    *  listen to the nacos executor shell scripts
+    * */
+    public static ConfigService NacosConfigService;
+
     @Value("${spring.cloud.nacos.config.server-addr}")
-    String nacosAddr;
+    public String nacosAddr;
 
     @Value("${spring.cloud.nacos.config.group}")
-    String group;
+    public String group;
 
     @Value("${spring.cloud.nacos.config.file-extension}")
-    String fileExtension;
+    public String fileExtension;
 
     @Value("${octopus.executor.name}")
-    String dataId;
+    public String dataId;
 
     @Resource
     FunctionReader functionReader;
@@ -65,13 +70,12 @@ public class CollectAllExecutorFunction {
             Properties properties = new Properties();
             properties.put("serverAddr", nacosAddr);
 
-            ConfigService configService = NacosFactory.createConfigService(properties);
+            NacosConfigService = NacosFactory.createConfigService(properties);
 
             // Actively get the configuration.
-            String content = configService.getConfig(completeDataId, group, 5000);
+            String content = NacosConfigService.getConfig(completeDataId, group, 5000);
 
             log.info("functions get from nacos are {}", content);
-
             parseNacosFunctionYamlToMap(content);
 
 
@@ -80,7 +84,7 @@ public class CollectAllExecutorFunction {
         }
     }
 
-    private void parseNacosFunctionYamlToMap(String content) {
+    public void parseNacosFunctionYamlToMap(String content) {
 
         Yaml yaml = new Yaml();
 
@@ -107,6 +111,7 @@ public class CollectAllExecutorFunction {
                 }
         );
 
+        log.info("ALL_FUNCTION_MAP has been updated ! ---> {}", ALL_FUNCTION_MAP);
 
     }
 

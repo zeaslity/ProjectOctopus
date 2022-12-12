@@ -9,9 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.util.List;
 
@@ -34,45 +32,57 @@ public class CommandExecutor {
     }
 
 
-    public void execute(String streamKey, List<String> command) {
+    public int execute(String streamKey, List<String> command) {
 
         ProcessBuilder processBuilder = new ProcessBuilder(command);
 
-        this.processExecute(streamKey, processBuilder);
+        return this.processExecute(streamKey, processBuilder);
     }
 
-    public void execute(String streamKey, String... command) {
+    public int execute(String streamKey, String... command) {
 
         ProcessBuilder processBuilder = new ProcessBuilder(command);
 
-        this.processExecute(streamKey, processBuilder);
+        return this.processExecute(streamKey, processBuilder);
 
     }
 
 
-    public void processExecute(String streamKey, ProcessBuilder processBuilder) {
+    public int processExecute(String streamKey, ProcessBuilder processBuilder) {
 
         processBuilder.redirectErrorStream(true);
-        processBuilder.inheritIO();
-        processBuilder.directory(new File(System.getProperty("user.home")));
+//        processBuilder.inheritIO();
+//        processBuilder.directory(new File(System.getProperty("user.home")));
 
-        Process process = null;
+        int processResult = 233;
+
         try {
-            process = processBuilder.start();
+
+            Process process = processBuilder.start();
+
+
 
             LogToStreamSender toStreamSender = new LogToStreamSender(streamKey, process.getInputStream(), streamSender::send);
+            DaemonLogThread.start(toStreamSender);
+
+            log.warn("---------------------------------------------");
+            new BufferedReader(new InputStreamReader(process.getInputStream())).lines()
+                    .map(
+                            String::valueOf
+                    ).forEach(System.out::println);
+            log.warn("---------------------------------------------");
 
             // a command shell don't understand how long it actually take
-            int processResult = process.waitFor();
+            processResult = process.waitFor();
 
-            log.info("current shell command [{}] result is [{}]", processBuilder.command(), processResult);
-
-            DaemonLogThread.start(toStreamSender);
+            log.info("current shell command {} result is {}", processBuilder.command(), processResult);
 
 
         } catch (IOException | InterruptedException e) {
             log.error("Shell command error ! {} + {}", e.getCause(), e.getMessage());
         }
+
+        return processResult;
     }
 
     private ByteBuffer cvToByteBuffer(InputStream inputStream) throws IOException {

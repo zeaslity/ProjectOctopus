@@ -3,6 +3,7 @@ package io.wdd.agent.executor.redis;
 
 import io.wdd.agent.config.beans.executor.CommandLog;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -24,11 +25,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
+@Slf4j
 public class StreamSender {
 
     @Resource
     RedisTemplate redisTemplate;
-
 
     private static ByteBuffer currentTimeByteBuffer(){
 
@@ -56,9 +57,13 @@ public class StreamSender {
             throw new RuntimeException(e);
         }
 
+        log.info("redis stream sender message is {}", map);
+
         StringRecord stringRecord = StreamRecords.string(map).withStreamKey(streamKey);
 
         RecordId recordId = redisTemplate.opsForStream().add(stringRecord);
+
+        log.info("redis send recordId is {}",recordId);
 
         return ObjectUtils.isNotEmpty(recordId);
 

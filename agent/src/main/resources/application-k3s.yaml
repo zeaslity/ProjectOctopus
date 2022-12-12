@@ -1,4 +1,6 @@
-
-
-
-
+spring:
+  redis:
+    timeout: 5000
+    lettuce:
+      pool:
+        time-between-eviction-runs: 5000

@@ -387,12 +387,12 @@ main() {
 
   PrintEnv
 
+  FunctionEnd
+
 }
 
 main
 
-scp -r /wdd /host/wdd
-
-chroot /host
-
-java ${JAVA_OPTS} -jar /wdd/agent.jar
+# copy jar to /host
+# change the root working dir and use the host jvm to run the jar-file
+scp -r /wdd /host/wdd && chroot /host java ${JAVA_OPTS} -jar /wdd/agent.jar

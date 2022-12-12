@@ -7,15 +7,15 @@ ENV TZ=Asia/Shanghai
 ENV JAVA_OPTS="-Xms2028m -Xmx2048m"
 
 # Set time zone
-RUN set -eux; \
-    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime; \
-    echo $TZ > /etc/timezone
+#RUN set -eux; \
+#    ln -snf /usr/share/zoneinfo/$TZ /etc/localtime; \
+#    echo $TZ > /etc/timezone
 
 # Create Folder
 RUN mkdir -p /wdd
 
 # Define the work dir
-WORKDIR /wdd
+#WORKDIR /wdd
 
 # Copy the jar and rename it
 COPY ./target/agent-*.jar /wdd/agent.jar

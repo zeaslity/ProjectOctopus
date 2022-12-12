@@ -49,8 +49,7 @@ public class TestCommandExecutorController {
                 .contend(messageType)
                 .build();
 
-
-        System.out.println("FUNCTION_REFLECTION = " + ALL_FUNCTION_MAP);
+        System.out.println("executionMessage = " + executionMessage);
 
         functionExecutor.execute(executionMessage);
 

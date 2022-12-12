@@ -1,5 +1,11 @@
 #!/bin/bash
 
+
+rm -rf /wdd
+rm -rf /root/logs
+rm -rf /root/nacos
+rm -rf /root/test.sh*
+
 docker container stop octopus-agent-ubuntu && docker container rm octopus-agent-ubuntu
 
 docker run \
@@ -8,11 +14,17 @@ docker run \
   --net=host \
   --pid=host \
   --ipc=host \
+  --uts=host \
   --volume /:/host \
   --name=octopus-agent-ubuntu \
   octopus-agent-ubuntu:latest \
 
-docker logs --tail -f octopus-agent-ubuntu
+docker logs --tail 500 -f octopus-agent-ubuntu
+
+
+
+
+
 
 docker run \
   -d \
@@ -38,6 +50,7 @@ docker run \
   --privileged \
   --net=host \
   --pid=host \
+  --uts=host \
   --ipc=host \
   --volume /:/host \
   --name=octopus-agent-ubuntu \
