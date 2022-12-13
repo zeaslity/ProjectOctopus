@@ -1,4 +1,4 @@
-package io.wdd.agent.executor.shell;
+package io.wdd.agent.executor;
 
 import com.google.common.io.ByteStreams;
 import io.wdd.agent.executor.redis.StreamSender;

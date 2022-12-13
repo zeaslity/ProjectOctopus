@@ -1,6 +1,6 @@
 package io.wdd.agent;
 
-import io.wdd.agent.executor.shell.CommandExecutor;
+import io.wdd.agent.executor.CommandExecutor;
 
 import javax.annotation.Resource;
 

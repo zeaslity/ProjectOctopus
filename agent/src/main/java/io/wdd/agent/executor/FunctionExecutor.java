@@ -1,8 +1,7 @@
-package io.wdd.agent.executor.shell;
+package io.wdd.agent.executor;
 
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
-import io.wdd.agent.executor.config.FunctionReader;
 import io.wdd.agent.executor.function.CollectAllExecutorFunction;
 import io.wdd.common.beans.executor.ExecutionMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +12,6 @@ import javax.annotation.Resource;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executor;
-import java.util.stream.Collectors;
 
 import static io.wdd.agent.executor.function.CollectAllExecutorFunction.ALL_FUNCTION_MAP;
 import static io.wdd.agent.executor.function.CollectAllExecutorFunction.NacosConfigService;

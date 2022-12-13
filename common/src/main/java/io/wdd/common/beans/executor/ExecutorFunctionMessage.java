@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
-public class ExecutorFunction {
+public class ExecutorFunctionMessage {
 
 
     String functionName;

@@ -1,7 +1,7 @@
 package io.wdd.agent.config.message.handler;
 
-import io.wdd.agent.executor.shell.CommandExecutor;
-import io.wdd.agent.executor.shell.FunctionExecutor;
+import io.wdd.agent.executor.CommandExecutor;
+import io.wdd.agent.executor.FunctionExecutor;
 import io.wdd.common.beans.executor.ExecutionMessage;
 import io.wdd.common.beans.rabbitmq.OctopusMessage;
 import io.wdd.common.beans.rabbitmq.OctopusMessageType;

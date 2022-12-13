@@ -1,8 +1,8 @@
 package io.wdd.agent.executor.web;
 
 
-import io.wdd.agent.executor.shell.CommandExecutor;
-import io.wdd.agent.executor.shell.FunctionExecutor;
+import io.wdd.agent.executor.CommandExecutor;
+import io.wdd.agent.executor.FunctionExecutor;
 import io.wdd.common.beans.executor.ExecutionMessage;
 import io.wdd.common.beans.response.R;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
-
-import static io.wdd.agent.executor.function.CollectAllExecutorFunction.ALL_FUNCTION_MAP;
 
 @RestController
 @RequestMapping("testExecutor")
