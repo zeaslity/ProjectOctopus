@@ -53,6 +53,9 @@ public class ToAgentMessageSender {
 
     public void send(OctopusMessage octopusMessage) {
 
+        log.info("OctopusMessage {} send to agent {}",octopusMessage, octopusMessage.getUuid());
+
+
 
     }
 

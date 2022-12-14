@@ -80,7 +80,7 @@ public class CoreExecutionServiceImpl implements CoreExecutionService {
 
         String TimeString = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-        return topicName + TimeString;
+        return topicName + "-" + TimeString;
     }
 
 }

@@ -1,6 +1,8 @@
 package io.wdd.rpc.execute.web;
 
 import io.wdd.common.beans.response.R;
+import io.wdd.rpc.execute.config.RedisStreamReaderConfig;
+import io.wdd.rpc.execute.result.CommandResultReader;
 import io.wdd.rpc.execute.service.CoreExecutionService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +21,9 @@ public class ExecutionController {
     @Resource
     CoreExecutionService coreExecutionService;
 
+    @Resource
+    CommandResultReader commandResultReader;
+
 
     @PostMapping("command")
     public R<String> patchCommandToAgent(
@@ -36,6 +41,15 @@ public class ExecutionController {
         }
 
         return R.ok(streamKey);
+    }
+
+    @PostMapping("/stream")
+    public void GetCommandLog(
+            @RequestParam(value = "streamKey") String streamKey
+    ){
+
+        commandResultReader.readFromStreamKey(streamKey);
+
     }
 
 

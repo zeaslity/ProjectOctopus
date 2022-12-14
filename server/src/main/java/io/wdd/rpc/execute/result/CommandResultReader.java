@@ -13,6 +13,12 @@ import javax.annotation.Resource;
 @Slf4j
 public class CommandResultReader implements StreamListener<String, MapRecord<String,String, String >> {
 
+    // https://medium.com/nerd-for-tech/event-driven-architecture-with-redis-streams-using-spring-boot-a81a1c9a4cde
+
+    //https://segmentfault.com/a/1190000040946712
+
+    //https://docs.spring.io/spring-data/redis/docs/2.5.5/reference/html/#redis.streams.receive.containers
+
     @Resource
     RedisStreamReaderConfig redisStreamReaderConfig;
 
