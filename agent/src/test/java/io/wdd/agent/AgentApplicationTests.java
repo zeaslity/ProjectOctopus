@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@SpringBootTest
+//@SpringBootTest
 @Slf4j
 class AgentApplicationTests {
 
@@ -30,7 +30,7 @@ class AgentApplicationTests {
     CollectAllExecutorFunction collectAllExecutorFunction;
 
 
-    @Test
+//    @Test
     void testFileExecute(){
 
 //        ExecutionMessage executionMessage = ExecutionMessage.builder().type("TestFunction").resultKey("simpleFor-test").contend("123456").build();
@@ -42,7 +42,7 @@ class AgentApplicationTests {
 
     }
 
-    @Test
+//    @Test
     void contextLoads() {
 
         // https://zhuanlan.zhihu.com/p/449416472

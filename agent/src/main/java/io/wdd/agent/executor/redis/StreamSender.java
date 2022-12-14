@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.connection.stream.RecordId;
 import org.springframework.data.redis.connection.stream.StreamRecords;
+import org.springframework.data.redis.connection.stream.StringRecord;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.annotation.Resource;
@@ -31,27 +32,41 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class StreamSender {
 
+    public static String TEST_STREAM_JAVA = "test-stream-java";
     @Resource
     RedisTemplate redisTemplate;
-
     @Resource
     LogToArrayListCache logToArrayListCache;
+    private final HashMap<String, StreamSenderEntity> AllNeededStreamSender = new HashMap<>(16);
+    private final ArrayList<String> cacheLogList = new ArrayList<>(256);
 
+    private static ByteBuffer currentTimeByteBuffer() {
 
-    private HashMap<String, StreamSenderEntity> AllNeededStreamSender = new HashMap<>(16);
+        byte[] timeBytes = LocalDateTime.now(ZoneId.of("UTC+8")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")).getBytes(StandardCharsets.UTF_8);
 
+        return ByteBuffer.wrap(timeBytes);
+    }
 
-    private ArrayList<String> cacheLogList = new ArrayList<>(256);
+    private static String currentTimeString() {
+
+        return LocalDateTime.now(ZoneId.of("UTC+8")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    @SneakyThrows
+    private static Map generateFakeData() {
+        String random = RandomStringUtils.random(16);
+        CommandLog commandLog = new CommandLog();
+
+        Map<String, String> map = BeanUtils.describe(commandLog);
+
+        return map;
+    }
 
     public void startToWaitLog(String streamKey) throws InterruptedException {
 
         if (!AllNeededStreamSender.containsKey(streamKey)) {
 
-            StreamSenderEntity streamSender = StreamSenderEntity.builder()
-                    .cachedCommandLog(logToArrayListCache.getCommandCachedLog(streamKey))
-                    .waitToSendLog(true)
-                    .startIndex(0)
-                    .streamKey(streamKey).build();
+            StreamSenderEntity streamSender = StreamSenderEntity.builder().cachedCommandLog(logToArrayListCache.getCommandCachedLog(streamKey)).waitToSendLog(true).startIndex(0).streamKey(streamKey).build();
 
             AllNeededStreamSender.put(streamKey, streamSender);
 
@@ -65,7 +80,7 @@ public class StreamSender {
         }
     }
 
-    public void endWaitLog(String streamKey){
+    public void endWaitLog(String streamKey) {
 
         StreamSenderEntity streamSenderEntity = AllNeededStreamSender.get(streamKey);
         streamSenderEntity.setWaitToSendLog(false);
@@ -95,52 +110,37 @@ public class StreamSender {
         startIndex = endIndex;
     }
 
-    public boolean send(String streamKey, String content){
+    public boolean send(String streamKey, String content) {
 
-        return this.send(streamKey, List.of(content));
+        HashMap<String, String> map = new HashMap<>(16);
+
+        map.put(currentTimeString(), content);
+
+        return doSendLogToStream(streamKey, map);
 
     }
 
     private boolean send(String streamKey, List<String> content) {
 
-        HashMap<String, List<String>> map = new HashMap<>(16);
+        return this.send(streamKey, content.toString());
 
-        map.put(currentTimeString(), content);
-
-        return doSendLogToStream(streamKey, map);
-    }
-
-    private static ByteBuffer currentTimeByteBuffer(){
-
-        byte[] timeBytes = LocalDateTime.now(ZoneId.of("UTC+8")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")).getBytes(StandardCharsets.UTF_8);
-
-        return ByteBuffer.wrap(timeBytes);
-    }
-
-    private static String currentTimeString(){
-
-        return LocalDateTime.now(ZoneId.of("UTC+8")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
     private boolean doSendLogToStream(String streamKey, HashMap map) {
 
-            log.info("redis stream sender message is {}", map);
+        log.info("redis stream sender message is {}", map);
 
-            MapRecord<String, String, List<String>> stringRecord = StreamRecords.mapBacked(map).withStreamKey(streamKey);
+        StringRecord stringRecord = StreamRecords.string(map).withStreamKey(streamKey);
 
-            RecordId recordId = redisTemplate.opsForStream().add(stringRecord);
+        RecordId recordId = redisTemplate.opsForStream().add(stringRecord);
 
 //            log.info("redis send recordId is {}",recordId);
 
-            return ObjectUtils.isNotEmpty(recordId);
-
+        return ObjectUtils.isNotEmpty(recordId);
     }
 
-
-    public static String TEST_STREAM_JAVA = "test-stream-java";
-
     @SneakyThrows
-    public void test(){
+    public void test() {
 
         RecordId recordId = null;
         if (!redisTemplate.hasKey(TEST_STREAM_JAVA)) {
@@ -161,16 +161,6 @@ public class StreamSender {
 
         }
 
-    }
-
-    @SneakyThrows
-    private static Map generateFakeData() {
-        String random = RandomStringUtils.random(16);
-        CommandLog commandLog = new CommandLog();
-
-        Map<String, String> map = BeanUtils.describe(commandLog);
-
-        return map;
     }
 
     public void clearLocalCache(String streamKey) {

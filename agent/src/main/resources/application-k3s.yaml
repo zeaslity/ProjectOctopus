@@ -1,7 +1,0 @@
-spring:
-  redis:
-    master
-
-
-
-

@@ -145,8 +145,7 @@ public class GlobalExceptionHandler {
                 }
 
                 if (StringUtils.isNotEmpty(invalidMap.get(error.getField()))) {
-                    invalidMap.put(error.getField(),
-                            invalidMap.get(error.getField()) + "," + finalMessage);
+                    invalidMap.put(error.getField(), invalidMap.get(error.getField()) + "," + finalMessage);
                 } else {
                     invalidMap.put(error.getField(), finalMessage);
                 }
