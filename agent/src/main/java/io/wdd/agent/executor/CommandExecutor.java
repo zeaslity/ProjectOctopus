@@ -9,7 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +33,10 @@ public class CommandExecutor {
      * @param executionMessage get from EXECUTOR_HANDLER
      */
     public void execute(ExecutionMessage executionMessage) {
+
+
+        this.execute(executionMessage.getResultKey(), executionMessage.getCommandList());
+
 
     }
 

@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,7 +15,7 @@ public class ExecutionMessage {
 
     private String type;
 
-    private String contend;
+    private List<String> commandList;
 
     private String resultKey;
 

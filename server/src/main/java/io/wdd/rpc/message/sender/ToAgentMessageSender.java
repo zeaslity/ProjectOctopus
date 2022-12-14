@@ -18,15 +18,14 @@ import javax.annotation.Resource;
  *  provide override method to convert Object and send to rabbitmq
  */
 @Component
-@Slf4j(topic = "To Octopus Server Message ")
-public class ToAgentOrder {
+@Slf4j(topic = "Send Message To Octopus Agent ")
+public class ToAgentMessageSender {
 
     @Resource
     RabbitTemplate rabbitTemplate;
 
     @Resource
     InitRabbitMQConfig initRabbitMQConfig;
-
 
     @Resource
     ObjectMapper objectMapper;
@@ -37,7 +36,7 @@ public class ToAgentOrder {
      *
      * @param message octopus message
      */
-    public void send(OctopusMessage message){
+    public void sendINIT(OctopusMessage message){
 
         // only accept INIT type message
         if (!OctopusMessageType.INIT.equals(message.getType())) {
@@ -48,6 +47,12 @@ public class ToAgentOrder {
         log.info("send INIT OrderCommand to Agent = {}", message);
 
         rabbitTemplate.convertAndSend(initRabbitMQConfig.INIT_EXCHANGE, initRabbitMQConfig.INIT_FROM_SERVER_KEY, writeData(message));
+
+    }
+
+
+    public void send(OctopusMessage octopusMessage) {
+
 
     }
 

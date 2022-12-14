@@ -6,7 +6,7 @@ import com.rabbitmq.client.Channel;
 import io.wdd.common.beans.rabbitmq.OctopusMessage;
 import io.wdd.common.beans.rabbitmq.OctopusMessageType;
 import io.wdd.common.handler.MyRuntimeException;
-import io.wdd.rpc.message.sender.ToAgentOrder;
+import io.wdd.rpc.message.sender.ToAgentMessageSender;
 import io.wdd.server.beans.vo.ServerInfoVO;
 import io.wdd.server.utils.DaemonDatabaseOperator;
 import lombok.SneakyThrows;
@@ -60,7 +60,7 @@ public class AcceptAgentInitInfo {
      * The To agent order.
      */
     @Resource
-    ToAgentOrder toAgentOrder;
+    ToAgentMessageSender toAgentMessageSender;
 
 
     /**
@@ -174,7 +174,7 @@ public class AcceptAgentInitInfo {
                 .uuid(serverInfoVO.getTopicName())
                 .build();
 
-        toAgentOrder.send(octopusMessage);
+        toAgentMessageSender.sendINIT(octopusMessage);
 
         return true;
     }

@@ -44,7 +44,7 @@ public class TestCommandExecutorController {
         ExecutionMessage executionMessage = ExecutionMessage.builder()
                 .resultKey(streamKey)
                 .type(messageType)
-                .contend(messageType)
+                .command(messageType)
                 .build();
 
         System.out.println("executionMessage = " + executionMessage);
