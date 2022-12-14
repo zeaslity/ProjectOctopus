@@ -37,7 +37,7 @@ stderr_print() {
 #   None
 #########################
 log() {
-    stderr_print "${CYAN}${MODULE:-} ${MAGENTA}$(date "+%T.%2N ")${RESET}${*}"
+    stderr_print "${CYAN}${MODULE:-} ${MAGENTA}$(date "+%Y-%m-%d %H:%M:%S.%2N ")${RESET}${*}"
 }
 ########################
 # Log an 'info' message
@@ -80,7 +80,7 @@ error() {
 #########################
 debug() {
     # 'is_boolean_yes' is defined in libvalidations.sh, but depends on this file so we cannot source it
-    local bool="${BITNAMI_DEBUG:-false}"
+    local bool="${BITNAMI_DEBUG:-true}"
     # comparison is performed without regard to the case of alphabetic characters
     shopt -s nocasematch
     if [[ "$bool" = 1 || "$bool" =~ ^(yes|true)$ ]]; then

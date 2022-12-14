@@ -18,6 +18,6 @@ public class CommandLog {
 //    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String lineTime;
 
-    private String lineContend;
+    private Object lineContend;
 
 }

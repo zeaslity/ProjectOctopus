@@ -57,15 +57,15 @@ public class FunctionExecutor {
         Iterator<List<String>> iterator = commandList.iterator();
 
         while (iterator.hasNext()) {
-
             int execute = commandExecutor.execute(streamKey, iterator.next());
 
             if (execute != 0) {
                 log.error("command list execute failed !");
                 break;
             }
-
         }
+
+        commandExecutor.clearCommandCache(streamKey);
     }
 
 
