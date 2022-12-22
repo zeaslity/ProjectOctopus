@@ -139,8 +139,8 @@ jobs:
       - name: Publish to GitHub Packages Apache Maven
         run: mvn deploy
         env:
-          GITHUB_USERNAME: ${{ secrets.GITHUB_USERNAME }}
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITHUB_USERNAME: ${{ secrets.USERNAME }}
+          GITHUB_TOKEN: ${{ secrets.ALL_TOKEN }}
           BUILD_ENV: 'github-actions'
           
       - name: Upload the Agent Jar
@@ -154,7 +154,7 @@ jobs:
           
           retention-days: 30
 
-      - name: Build and push Docker images - [ Server ]
+      - name: Build and push Docker images - [ Server ]˚
         id: docker_build_server
         # You may pin to the exact commit or the version.
         # uses: docker/build-push-action@c56af957549030174b10d6867f20e78cfd7debc5
