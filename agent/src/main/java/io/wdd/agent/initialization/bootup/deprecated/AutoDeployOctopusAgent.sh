@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 ## https://github.com/teddysun/across/blob/master/bench.sh
+
 ## Author IceDerce
 ## For Project Octopus Agent Automate Deployment
 
@@ -27,7 +28,7 @@ BackRed="41m"                      ## 背景红色
 SplitLine="----------------------" #会被sys函数中的方法重写
 
 #### CollectSystemInfo ####
-ServerName=""
+serverName=""
 serverIpPbV4=""
 serverIpInV4=""
 serverIpPbV6=""
