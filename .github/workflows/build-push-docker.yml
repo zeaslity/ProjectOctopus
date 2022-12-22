@@ -127,40 +127,41 @@ jobs:
           cd /home/runner/work/ProjectOctopus/ProjectOctopus
           echo "--------------------------------------"
           cd ./agent/target
+          cp ./agent/target/agent-*.jar octopus-agent-$(date --rfc-3339=seconds | cut -d"+" -f1).jar
           ls
           cd /home/runner/work/ProjectOctopus/ProjectOctopus
           echo "--------------------------------------"
           cat /proc/cpuinfo
           echo "--------------------------------------"
-      
 
-      - name: Delete Package Versions
-        uses: actions/delete-package-versions@v2.0.1
+      - name: copy jar to arm seoul 2
+        uses: appleboy/scp-action@master
         with:
-          package-name: 'io.wdd.agent'
-          package-version-ids: "1.0.0"
-          min-versions-to-keep: 0
-          token: ${{ secrets.ALL_TOKEN }}
+          host: ${{ secrets.SSH_HOST }}
+          username: root
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "./agent/target/octopus-agent-*.jar"
+          target: "/data/github-action/"
 
-
-      - name: Setup Maven settings.xml
-        uses: whelk-io/maven-settings-xml-action@v11
-        with:
-          servers:
-            '[
-              {
-                "id": "github",
-                "username": "${env.GITHUB_USERNAME}",
-                "password": "${env.GITHUB_TOKEN}"
-              }
-            ]'
-            
-      - name: Publish to GitHub Packages Apache Maven
-        run: cd ./agent && pwd && mvn -DskipTests=true deploy --file pom.xml
-        env:
-          GITHUB_USERNAME: ${{ secrets.USERNAME }}
-          GITHUB_TOKEN: ${{ secrets.ALL_TOKEN }}
-          BUILD_ENV: 'github-actions'
+#      - name: Setup Maven settings.xml
+#        uses: whelk-io/maven-settings-xml-action@v11
+#        with:
+#          servers:
+#            '[
+#              {
+#                "id": "github",
+#                "username": "${env.GITHUB_USERNAME}",
+#                "password": "${env.GITHUB_TOKEN}"
+#              }
+#            ]'
+#
+#      - name: Publish to GitHub Packages Apache Maven
+#        run: cd ./agent && pwd && mvn -DskipTests=true deploy --file pom.xml
+#        env:
+#          GITHUB_USERNAME: ${{ secrets.USERNAME }}
+#          GITHUB_TOKEN: ${{ secrets.ALL_TOKEN }}
+#          BUILD_ENV: 'github-actions'
 
 
       - name: Build and push Docker images - [ Server ]˚
