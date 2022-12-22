@@ -106,9 +106,18 @@ jobs:
 #          push: true
 #          tags: ${{ steps.docker_tags_base.outputs.tags }}
 
+      - name: Cache
+        uses: actions/cache@v3.2.0
+        with:
+          # A list of files, directories, and wildcard patterns to cache and restore
+          path: .m2/repository
+          # An explicit key for restoring and saving the cache
+          key: octopus-springboot-2.3.6
+
+
       - name: Maven package project
         run: |
-          mvn -B -DskipTests=true package --file pom.xml
+          mvn -B -DskipTests=true install --file pom.xml
           ls
           echo "--------------------------------------"
           pwd
@@ -123,6 +132,7 @@ jobs:
           echo "--------------------------------------"
           cat /proc/cpuinfo
           echo "--------------------------------------"
+      
       
       - name: Setup Maven settings.xml
         uses: whelk-io/maven-settings-xml-action@v11
