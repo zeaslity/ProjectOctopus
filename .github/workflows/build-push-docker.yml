@@ -137,7 +137,7 @@ jobs:
       - name: Delete Package Versions
         uses: actions/delete-package-versions@v2.0.1
         with:
-          package-name: 'agent-1.0.0.jar'
+          package-name: 'io.wdd.agent'
           min-versions-to-keep: 0
           token: ${{ secrets.ALL_TOKEN }}
 
