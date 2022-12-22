@@ -187,6 +187,7 @@ DownloadAllFile() {
   FunctionStart
 
   mkdir -p $OctopusAgentPath
+  mkdir -p $OctopusAgentPath/lib
 
   echo "start to download all needed lib shell"
   for libfile in ${DependLibFiles[*]}; do

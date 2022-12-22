@@ -103,6 +103,14 @@ gcloud compute instances create octopus-agent-2c-4g-1 --project=compact-lacing-3
 
 gcloud compute instances delete octopus-agent-2c-4g-1 --project=compact-lacing-371804 --zone=asia-northeast1-b
 
+
+gcloud compute instances create octopus-agent-2c-4g-7 --project=compact-lacing-371804 --zone=asia-northeast1-b --machine-type=n2d-custom-2-4096 --network-interface=network-tier=PREMIUM,subnet=default  --can-ip-forward --maintenance-policy=MIGRATE --provisioning-model=STANDARD --service-account=172889627951-compute@developer.gserviceaccount.com --scopes=https://www.googleapis.com/auth/devstorage.read_only,https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring.write,https://www.googleapis.com/auth/servicecontrol,https://www.googleapis.com/auth/service.management.readonly,https://www.googleapis.com/auth/trace.append --create-disk=auto-delete=yes,boot=yes,device-name=octopus-agent-2c-4g,image=projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20221213,mode=rw,size=20,type=projects/compact-lacing-371804/zones/us-west4-b/diskTypes/pd-ssd --no-shielded-secure-boot --shielded-vtpm --shielded-integrity-monitoring --reservation-affinity=any
+
+gcloud compute ssh --zone "asia-northeast1-b" "octopus-agent-2c-4g-7" --project "compact-lacing-371804"
+
+
+wget https://raw.githubusercontent.com/zeaslity/ProjectOctopus/main/source/src/main/java/io/wdd/source/shell/agent-bootup.sh && chmod +x agent-bootup.sh && /bin/bash agent-bootup.sh
+
 POST https://www.googleapis.com/compute/v1/projects/compact-lacing-371804/zones/asia-northeast1-b/instances
 {
   "canIpForward": true,
