@@ -152,17 +152,7 @@ jobs:
           GITHUB_USERNAME: ${{ secrets.USERNAME }}
           GITHUB_TOKEN: ${{ secrets.ALL_TOKEN }}
           BUILD_ENV: 'github-actions'
-          
-      - name: Upload the Agent Jar
-        uses: actions/upload-artifact@v3.1.1
-        with:
-          # Artifact name
-          name: octopus-agent-"{{date 'YYYY-MM-DD-HH-mm'}}"
-          # A file, directory or wildcard pattern that describes what to upload
-          path: ./agent/target/agent-*.jar
-          # The desired behavior if no files are found using the provided path.
-          
-          retention-days: 30
+
 
       - name: Build and push Docker images - [ Server ]˚
         id: docker_build_server
