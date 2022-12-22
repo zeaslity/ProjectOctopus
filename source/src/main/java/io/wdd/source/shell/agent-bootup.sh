@@ -199,7 +199,7 @@ DownloadAllFile() {
   colorEcho $BLUE "start to download octopus agent !"
   # check for latest version
   # download the lasted jar
-  wget https://happybirthday.107421.xyz/octopus-agent/octopus-agent-2022-12-21-16-00-00.jar -O /octopus-agent/agent.jar
+  #wget https://happybirthday.107421.xyz/octopus-agent/octopus-agent-2022-12-21-16-00-00.jar -O /octopus-agent/agent.jar
 
   FunctionSuccess
   FunctionEnd
@@ -255,7 +255,7 @@ InstallJDKPackage() {
     echo ""
     colorEcho ${BLUE} "开始安装最新版本：$(apt-cache madison openjdk-${JDK_VERSION}-jdk | head -n 1 | awk '{print$3}')"
 
-    installDemandSoftwares openjdk-${JDK_VERSION}-jdk=$(apt-cache madison openjdk-${JDK_VERSION}-jdk | head -n 1 | awk '{print$3}')
+    installDemandSoftwares openjdk-${JDK_VERSION}-jdk
 
   fi
 

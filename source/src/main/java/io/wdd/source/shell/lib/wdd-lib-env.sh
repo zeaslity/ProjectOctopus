@@ -181,112 +181,103 @@ GetIpv4Info() {
 
 }
 
-GenerateSystemInfo() {
   
-  log "start to collect system info !"
+log "start to collect system info !"
 
-  check_sys
+check_sys
 
-  cpuName=$(awk -F: '/model name/ {name=$2} END {print name}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//')
-  cores=$(awk -F: '/processor/ {core++} END {print core}' /proc/cpuinfo)
-  freq=$(awk -F'[ :]' '/cpu MHz/ {print $4;exit}' /proc/cpuinfo)
-  ccache=$(awk -F: '/cache size/ {cache=$2} END {print cache}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//')
-  cpu_aes=$(grep -i 'aes' /proc/cpuinfo)
-  cpu_virt=$(grep -Ei 'vmx|svm' /proc/cpuinfo)
-  tram=$(
+cpuName=$(awk -F: '/model name/ {name=$2} END {print name}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//')
+cores=$(awk -F: '/processor/ {core++} END {print core}' /proc/cpuinfo)
+freq=$(awk -F'[ :]' '/cpu MHz/ {print $4;exit}' /proc/cpuinfo)
+ccache=$(awk -F: '/cache size/ {cache=$2} END {print cache}' /proc/cpuinfo | sed 's/^[ \t]*//;s/[ \t]*$//')
+cpu_aes=$(grep -i 'aes' /proc/cpuinfo)
+cpu_virt=$(grep -Ei 'vmx|svm' /proc/cpuinfo)
+tram=$(
+  LANG=C
+  free | awk '/Mem/ {print $2}'
+)
+tram=$(calc_size $tram)
+uram=$(
+  LANG=C
+  free | awk '/Mem/ {print $3}'
+)
+uram=$(calc_size $uram)
+swap=$(
+  LANG=C
+  free | awk '/Swap/ {print $2}'
+)
+swap=$(calc_size $swap)
+uswap=$(
+  LANG=C
+  free | awk '/Swap/ {print $3}'
+)
+uswap=$(calc_size $uswap)
+up=$(awk '{a=$1/86400;b=($1%86400)/3600;c=($1%3600)/60} {printf("%d days, %d hour %d min\n",a,b,c)}' /proc/uptime)
+if command_exists "w"; then
+  load=$(
     LANG=C
-    free | awk '/Mem/ {print $2}'
+    w | head -1 | awk -F'load average:' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//'
   )
-  tram=$(calc_size $tram)
-  uram=$(
+elif command_exists "uptime"; then
+  load=$(
     LANG=C
-    free | awk '/Mem/ {print $3}'
+    uptime | head -1 | awk -F'load average:' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//'
   )
-  uram=$(calc_size $uram)
-  swap=$(
-    LANG=C
-    free | awk '/Swap/ {print $2}'
-  )
-  swap=$(calc_size $swap)
-  uswap=$(
-    LANG=C
-    free | awk '/Swap/ {print $3}'
-  )
-  uswap=$(calc_size $uswap)
-  up=$(awk '{a=$1/86400;b=($1%86400)/3600;c=($1%3600)/60} {printf("%d days, %d hour %d min\n",a,b,c)}' /proc/uptime)
-  if command_exists "w"; then
-    load=$(
-      LANG=C
-      w | head -1 | awk -F'load average:' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//'
-    )
-  elif command_exists "uptime"; then
-    load=$(
-      LANG=C
-      uptime | head -1 | awk -F'load average:' '{print $2}' | sed 's/^[ \t]*//;s/[ \t]*$//'
-    )
-  fi
-  opsy=$(GethostArchInfo)
-  arch=$(uname -m)
-  if command_exists "getconf"; then
-    lbit=$(getconf LONG_BIT)
-  else
-    echo ${arch} | grep -q "64" && lbit="64" || lbit="32"
-  fi
-  kern=$(uname -r)
-  disk_total_size=$(
-    LANG=C
-    df -t simfs -t ext2 -t ext3 -t ext4 -t btrfs -t xfs -t vfat -t ntfs -t swap --total 2>/dev/null | grep total | awk '{ print $2 }'
-  )
-  disk_total_size=$(calc_size $disk_total_size)
-  disk_used_size=$(
-    LANG=C
-    df -t simfs -t ext2 -t ext3 -t ext4 -t btrfs -t xfs -t vfat -t ntfs -t swap --total 2>/dev/null | grep total | awk '{ print $3 }'
-  )
-  disk_used_size=$(calc_size $disk_used_size)
-  tcpctrl=$(sysctl net.ipv4.tcp_congestion_control | awk -F ' ' '{print $3}')
+fi
+opsy=$(GethostArchInfo)
+arch=$(uname -m)
+if command_exists "getconf"; then
+  lbit=$(getconf LONG_BIT)
+else
+  echo ${arch} | grep -q "64" && lbit="64" || lbit="32"
+fi
+kern=$(uname -r)
+disk_total_size=$(
+  LANG=C
+  df -t simfs -t ext2 -t ext3 -t ext4 -t btrfs -t xfs -t vfat -t ntfs -t swap --total 2>/dev/null | grep total | awk '{ print $2 }'
+)
+disk_total_size=$(calc_size $disk_total_size)
+disk_used_size=$(
+  LANG=C
+  df -t simfs -t ext2 -t ext3 -t ext4 -t btrfs -t xfs -t vfat -t ntfs -t swap --total 2>/dev/null | grep total | awk '{ print $3 }'
+)
+disk_used_size=$(calc_size $disk_used_size)
+tcpctrl=$(sysctl net.ipv4.tcp_congestion_control | awk -F ' ' '{print $3}')
 
 
-  # todo
+# todo
 #  StartIOTest
 
-  GetIpv4Info
+GetIpv4Info
 
-  Check_Virtualization
+Check_Virtualization
 
-  local machineNumber=""
+machineNumber=""
 
-  if [[ $(cat /etc/hostname | cut -d"-" -f 3 | grep -c '^[0-9][0-9]') -gt 0 ]]; then
-      machineNumber=$(cat /etc/hostname | cut -d"-" -f 3)
-  else
-      machineNumber=99
-  fi
+if [[ $(cat /etc/hostname | cut -d"-" -f 3 | grep -c '^[0-9][0-9]') -gt 0 ]]; then
+    machineNumber=$(cat /etc/hostname | cut -d"-" -f 3)
+else
+    machineNumber=99
+fi
 
-  export serverName="${city}-${hostArch}-${machineNumber}"
-  export serverIpPbV4="$public_ipv4"
-  export serverIpInV4=""
-  export serverIpPbV6=""
-  export serverIpInV6=""
-  export location="$city $region $country"
-  export provider="$org"
-  export managePort="$(netstat -ntulp | grep sshd | grep -w tcp | awk '{print$4}' | cut -d":" -f2)"
-  export cpuCore="$cores @ $freq MHz"
-  export cpuBrand="$cpuName"
-  export memoryTotal="$tram"
-  export diskTotal="$disk_total_size"
-  export diskUsage="$disk_used_size"
-  export archInfo="$arch ($lbit Bit)"
-  export osInfo="$opsy"
-  export osKernelInfo="$kern"
-  export tcpControl="$tcpctrl"
-  export virtualization="$virt"
-  export ioSpeed="$ioavg MB/s"
-  export machineId="$(cat /host/etc/machine-id)"
+export serverName="${city}-${hostArch}-${machineNumber}"
+export serverIpPbV4="$public_ipv4"
+export serverIpInV4=""
+export serverIpPbV6=""
+export serverIpInV6=""
+export location="$city $region $country"
+export provider="$org"
+export managePort="$(netstat -ntulp | grep sshd | grep -w tcp | awk '{print$4}' | cut -d":" -f2)"
+export cpuCore="$cores @ $freq MHz"
+export cpuBrand="$cpuName"
+export memoryTotal="$tram"
+export diskTotal="$disk_total_size"
+export diskUsage="$disk_used_size"
+export archInfo="$arch ($lbit Bit)"
+export osInfo="$opsy"
+export osKernelInfo="$kern"
+export tcpControl="$tcpctrl"
+export virtualization="$virt"
+export ioSpeed="$ioavg MB/s"
+export machineId="$(cat /host/etc/machine-id)"
 
-  
-}
-
-PrintEnv(){
-
-  env
-
-}
