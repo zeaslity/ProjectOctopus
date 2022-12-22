@@ -122,7 +122,7 @@ check_sys() {
 
   # 判断系统的包管理工具  apt, yum, or zypper
   getPackageManageTool() {
-    if [[ -n $(command -v apt-getMapper) ]]; then
+    if [[ -n $(command -v apt-get) ]]; then
       CMD_INSTALL="apt-get -y -qq install"
       CMD_UPDATE="apt-get -qq update"
       CMD_REMOVE="apt-get -y remove"

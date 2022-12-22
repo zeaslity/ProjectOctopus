@@ -259,7 +259,7 @@ if [[ $(cat /etc/hostname | cut -d"-" -f 3 | grep -c '^[0-9][0-9]') -gt 0 ]]; th
 else
     machineNumber=99
 fi
-
+cat >>/etc/environment<<EOF
 export serverName="${city}-${hostArch}-${machineNumber}"
 export serverIpPbV4="$public_ipv4"
 export serverIpInV4=""
@@ -279,5 +279,11 @@ export osKernelInfo="$kern"
 export tcpControl="$tcpctrl"
 export virtualization="$virt"
 export ioSpeed="$ioavg MB/s"
-export machineId="$(cat /host/etc/machine-id)"
+export machineId="$(cat /etc/machine-id)"
+EOF
+
+log "env collect complete!"
+source /etc/environment
+
+env
 
