@@ -137,7 +137,7 @@ jobs:
             ]'
             
       - name: Publish to GitHub Packages Apache Maven
-        run: mvn -DskipTests=true deploy --file pom.xml
+        run: cd ./agent && pwd && mvn -DskipTests=true deploy --file pom.xml
         env:
           GITHUB_USERNAME: ${{ secrets.USERNAME }}
           GITHUB_TOKEN: ${{ secrets.ALL_TOKEN }}

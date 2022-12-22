@@ -146,13 +146,6 @@
 
     </dependencies>
 
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>GitHub Apache Maven Packages</name>
-            <url>https://maven.pkg.github.com/zeaslity/ProjectOctopus</url>
-        </repository>
-    </distributionManagement>
 
     <dependencyManagement>
         <dependencies>
