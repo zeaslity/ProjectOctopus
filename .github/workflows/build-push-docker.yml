@@ -133,7 +133,15 @@ jobs:
           cat /proc/cpuinfo
           echo "--------------------------------------"
       
-      
+
+      - name: Delete Package Versions
+        uses: actions/delete-package-versions@v2.0.1
+        with:
+          # Comma separated string of package version ids to delete.
+          package-version-ids: 1.0.0
+          token: ${{ secrets.ALL_TOKEN }}
+
+
       - name: Setup Maven settings.xml
         uses: whelk-io/maven-settings-xml-action@v11
         with:
