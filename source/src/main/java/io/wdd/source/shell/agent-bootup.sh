@@ -199,7 +199,7 @@ DownloadAllFile() {
   colorEcho $BLUE "start to download octopus agent !"
   # check for latest version
   # download the lasted jar
-  #wget https://happybirthday.107421.xyz/octopus-agent/octopus-agent-2022-12-21-16-00-00.jar -O /octopus-agent/agent.jar
+  wget https://happybirthday.107421.xyz/octopus-agent/octopus-agent-2022-12-21-16-00-00.jar -O /octopus-agent/agent.jar
 
   FunctionSuccess
   FunctionEnd
@@ -280,7 +280,7 @@ LimitNPROC=65535
 User=root
 WorkingDirectory=/octopus-agent
 ExecStart=java -jar /octopus-agent/agent.jar ${JAVA_OPTS}
-ExecReload=
+ExecReload=source /etc/environment
 Restart=on-failure
 
 [Install]
