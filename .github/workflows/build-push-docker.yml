@@ -127,7 +127,7 @@ jobs:
           cd /home/runner/work/ProjectOctopus/ProjectOctopus
           echo "--------------------------------------"
           cd ./agent/target
-          cp ./agent/target/agent-*.jar octopus-agent-$(date --rfc-3339=seconds | cut -d"+" -f1).jar
+          cp agent-*.jar octopus-agent-$(date --date='TZ="Asia/Shanghai"' --rfc-3339=seconds | cut -d"+" -f1).jar
           ls
           cd /home/runner/work/ProjectOctopus/ProjectOctopus
           echo "--------------------------------------"
