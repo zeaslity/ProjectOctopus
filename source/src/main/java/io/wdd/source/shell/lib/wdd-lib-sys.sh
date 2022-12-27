@@ -152,5 +152,7 @@ wget https://raw.githubusercontent.com/zeaslity/ProjectOctopus/main/source/src/m
 
 apt-cache madison openjdk-11-jdk | head -n 1 | awk '{print$3}'
 
+java -jar /octopus-agent/agent.jar -Xms128m -Xmx512m  -Dfile.encoding=utf-8  --spring.profiles.active=k3s --spring.cloud.nacos.config.group=k3s --spring.cloud.nacos.config.extension-configs[0].dataId=common-k3s.yaml --spring.cloud.nacos.config.extension-configs[0].group=k3s
+
 }
 

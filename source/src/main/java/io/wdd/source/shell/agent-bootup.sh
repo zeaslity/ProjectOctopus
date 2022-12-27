@@ -187,6 +187,10 @@ DownloadAllFile() {
 
   FunctionStart
 
+  colorEcho $RED "[CLEAN_UP] clean the old octopus agent staff !"
+  rm -rf $OctopusAgentPath/lib
+  rm -rf $OctopusAgentPath/
+
   mkdir -p $OctopusAgentPath
   mkdir -p $OctopusAgentPath/lib
 
@@ -200,7 +204,8 @@ DownloadAllFile() {
   colorEcho $BLUE "start to download octopus agent !"
   # check for latest version
   # download the lasted jar
-  . ./lib/wdd-lib-os.sh
+  cd /optopus-agent
+  . ./shell/lib/wdd-lib-os.sh
 
   CheckAndDownloadLatestVersion
 
@@ -268,7 +273,7 @@ InstallJDKPackage() {
 }
 
 systemdAgent(){
-  local JAVA_OPTS="-Xms128m -Xmx512m -Dspring.spring.active=k3s -Dspring.cloud.nacos.config.extension-configs=[group=k3s,data-id=common-k3s.yaml]"
+  local JAVA_OPTS="-Xms128m -Xmx512m  -Dfile.encoding=utf-8  --spring.profiles.active=k3s --spring.cloud.nacos.config.group=k3s --spring.cloud.nacos.config.extension-configs[0].dataId=common-k3s.yaml --spring.cloud.nacos.config.extension-configs[0].group=k3s"
 
   #  https://www.baeldung.com/linux/run-java-application-as-service
 
