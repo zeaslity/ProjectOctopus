@@ -263,26 +263,26 @@ else
     machineNumber=99
 fi
 cat >>/etc/environment<<EOF
-export serverName="${city}-${hostArch}-${machineNumber}"
-export serverIpPbV4="$public_ipv4"
-export serverIpInV4=""
-export serverIpPbV6=""
-export serverIpInV6=""
-export location="$city $region $country"
-export provider="$org"
-export managePort="$(netstat -ntulp | grep sshd | grep -w tcp | awk '{print$4}' | cut -d":" -f2)"
-export cpuCore="$cores @ $freq MHz"
-export cpuBrand="$cpuName"
-export memoryTotal="$tram"
-export diskTotal="$disk_total_size"
-export diskUsage="$disk_used_size"
-export archInfo="$arch ($lbit Bit)"
-export osInfo="$opsy"
-export osKernelInfo="$kern"
-export tcpControl="$tcpctrl"
-export virtualization="$virt"
-export ioSpeed="$ioavg MB/s"
-export machineId="$(cat /etc/machine-id)"
+export serverName=${city}-${hostArch}-${machineNumber}
+export serverIpPbV4=$public_ipv4
+export serverIpInV4=
+export serverIpPbV6=
+export serverIpInV6=
+export location=$city $region $country
+export provider=$org
+export managePort=$(netstat -ntulp | grep sshd | grep -w tcp | awk '{print$4}' | cut -d":" -f2)
+export cpuCore=$cores @ $freq MHz
+export cpuBrand=$cpuName
+export memoryTotal=$tram
+export diskTotal=$disk_total_size
+export diskUsage=$disk_used_size
+export archInfo=$arch ($lbit Bit)
+export osInfo=$opsy
+export osKernelInfo=$kern
+export tcpControl=$tcpctrl
+export virtualization=$virt
+export ioSpeed=$ioavg MB/s
+export machineId=$(cat /etc/machine-id)
 EOF
 
 log "env collect complete!"

@@ -3,6 +3,7 @@
 #####  environment variables ######
 
 RepoSourcePath=https://raw.githubusercontent.com/zeaslity/ProjectOctopus/main/source/src/main/java/io/wdd/source/shell
+OctopusAgentUrl=https://happybirthday.107421.xyz/octopus-agent/
 DependLibFiles=(
   wdd-lib-file.sh
   wdd-lib-log.sh
@@ -199,7 +200,8 @@ DownloadAllFile() {
   colorEcho $BLUE "start to download octopus agent !"
   # check for latest version
   # download the lasted jar
-  wget https://happybirthday.107421.xyz/octopus-agent/octopus-agent-2022-12-21-16-00-00.jar -O /octopus-agent/agent.jar
+  . ./lib/wdd-lib-os.sh
+  CheckAndDownloadLatestVersion
 
   FunctionSuccess
   FunctionEnd
@@ -265,24 +267,32 @@ InstallJDKPackage() {
 }
 
 systemdAgent(){
-  local JAVA_OPTS="-Xms128m -Xmx256m"
+  local JAVA_OPTS="-Xms128m -Xmx512m"
+
+  #  https://www.baeldung.com/linux/run-java-application-as-service
 
   cat >/etc/systemd/system/octopus-agent.service <<EOF
 [Unit]
-Description=Octopus Agent
+Description=Octopus Agent Service
 Documentation=https://octopus.107421.xyz/
-After=network.target
+After=syslog.target network.target
 
 [Service]
+SuccessExitStatus=143
+
 PermissionsStartOnly=true
 LimitNOFILE=1048576
 LimitNPROC=65535
-User=root
-WorkingDirectory=/octopus-agent
-ExecStart=java -jar /octopus-agent/agent.jar ${JAVA_OPTS}
-ExecReload=source /etc/environment
-Restart=on-failure
 
+User=root
+
+Type=simple
+WorkingDirectory=/octopus-agent
+
+ExecStart=java -jar /octopus-agent/agent.jar ${JAVA_OPTS}
+ExecStop=/bin/kill -15 $MAINPID
+
+Restart=on-failure
 [Install]
 WantedBy=multi-user.target
 EOF

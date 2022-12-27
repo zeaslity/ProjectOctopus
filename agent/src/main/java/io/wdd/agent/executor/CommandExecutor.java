@@ -30,7 +30,7 @@ public class CommandExecutor {
     /**
      * handle command from octopus server
      *
-     * @param executionMessage get from EXECUTOR_HANDLER
+     * @param executionMessage get from EXECUTOR_HANDLERju
      */
     public void execute(ExecutionMessage executionMessage) {
 

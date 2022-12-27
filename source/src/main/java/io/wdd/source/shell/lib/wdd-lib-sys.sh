@@ -95,6 +95,46 @@ check_sys() {
   return 0
 }
 
+RED="31m"                          ## 姨妈红
+GREEN="32m"                        ## 水鸭青
+YELLOW="33m"                       ## 鸭屎黄
+PURPLE="35m"                       ## 基佬紫
+BLUE="36m"                         ## 天依蓝
+BlinkGreen="32;5m"                 ##闪烁的绿色
+BlinkRed="31;5m"                   ##闪烁的红色
+BackRed="41m"                      ## 背景红色
+SplitLine="----------------------" #会被sys函数中的方法重写
+
+######## 颜色函数方法很精妙 ############
+colorEcho() {
+  echo -e "\033[${1}${@:2}\033[0m" 1>&2
+}
+
+check_root() {
+  if [[ $EUID != 0 ]]; then
+    colorEcho ${RED} "当前非root账号(或没有root权限)，无法继续操作，请更换root账号!"
+    colorEcho ${YELLOW} "使用sudo -命令获取临时root权限（执行后可能会提示输入root密码）"
+    exit 1
+  fi
+}
+
+FunctionStart() {
+  colorEcho ${PURPLE} ${SplitLine}
+  colorEcho ${PURPLE} ${SplitLine}
+  echo ""
+}
+
+FunctionSuccess() {
+  colorEcho ${GREEN} ${SplitLine}
+  echo ""
+}
+
+FunctionEnd() {
+  echo ""
+  colorEcho ${BlinkGreen} ${SplitLine}
+  echo ""
+  echo ""
+}
 
 tmp () {
 
