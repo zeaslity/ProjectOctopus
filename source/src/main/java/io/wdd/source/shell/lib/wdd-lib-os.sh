@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-. ./wdd-lib-log.sh
+. /octopus-agent/shell/lib/wdd-lib-log.sh
 
 OctopusAgentUrl=https://happybirthday.107421.xyz/octopus-agent/
 

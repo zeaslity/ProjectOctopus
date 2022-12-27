@@ -14,7 +14,7 @@ CheckAndDownloadLatestVersion
 
 
 if [[ ! -f /octopus-agent/agent-reboot.sh ]]; then\
-    warn "agent-bootup.sh not exist! start to download !"
+  warn "agent-bootup.sh not exist! start to download !"
    cd /octopus-agent
    wget $RepoSourcePath/agent-reboot.sh
 fi

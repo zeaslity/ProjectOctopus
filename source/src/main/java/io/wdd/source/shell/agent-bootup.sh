@@ -200,8 +200,8 @@ DownloadAllFile() {
   colorEcho $BLUE "start to download octopus agent !"
   # check for latest version
   # download the lasted jar
-  . ./lib/wdd-lib-os.s
-  h
+  . ./lib/wdd-lib-os.sh
+
   CheckAndDownloadLatestVersion
 
   FunctionSuccess
@@ -268,7 +268,7 @@ InstallJDKPackage() {
 }
 
 systemdAgent(){
-  local JAVA_OPTS="-Xms128m -Xmx512m"
+  local JAVA_OPTS="-Xms128m -Xmx512m -Dspring.spring.active=k3s -Dspring.cloud.nacos.config.extension-configs=[group=k3s,data-id=common-k3s.yaml]"
 
   #  https://www.baeldung.com/linux/run-java-application-as-service
 

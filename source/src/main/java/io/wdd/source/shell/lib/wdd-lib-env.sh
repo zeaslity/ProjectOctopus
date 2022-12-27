@@ -1,11 +1,11 @@
 #!/bin/bash
 
 
-#. /octopus-agent/shell/lib/wdd-lib-log.sh
-#. /octopus-agent/shell/lib/wdd-lib-sys.sh
+. /octopus-agent/shell/lib/wdd-lib-log.sh
+. /octopus-agent/shell/lib/wdd-lib-sys.sh
 
-. ./wdd-lib-log.sh
-. ./wdd-lib-sys.sh
+#. .wdd-lib-log.sh
+#. .wdd-lib-sys.sh
 
 
 hostArchVersion=""
