@@ -44,10 +44,10 @@ public class OMHandlerInit extends AbstractOctopusMessageHandler {
 
 
         // 2. send PassThroughTopicName successful info to the server
-        String success = String.format("Octopus Agent [ %s ] has successfully PassThroughTopicName with server [ %s ] !", agentServerInfo, octopusMessage);
+        String success = String.format("[Octopus Agent] - [ %s ] has successfully PassThroughTopicName with server [ %s ] !", agentServerInfo.getServerName(), octopusMessage.getUuid());
 
         octopusMessage.setResult(success);
-        log.info(success);
+//        log.info(success);
 
         toServerMessage.send(octopusMessage);
 

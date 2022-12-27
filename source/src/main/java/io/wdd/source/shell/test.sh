@@ -1,26 +1,28 @@
 #!/bin/bash
 
 
-echo "start to update !"
+echo start to update !
 apt-get update
 
 
-echo ""
+echo "
 
-echo "start to install nginx"
+echo start to install nginx
 apt-get install nginx -y
 
-echo ""
-echo "start to uninstall nginx"
+echo
+echo start to uninstall nginx
 apt remove nginx -y
 
 
-echo ""
-echo "start to get ip info"
+echo
+echo start to get ip info
 curl https://ipinfo.io
 
 
-echo ""
-echo "--- end ---"
+echo
+echo --- end ---
+
+
 
 

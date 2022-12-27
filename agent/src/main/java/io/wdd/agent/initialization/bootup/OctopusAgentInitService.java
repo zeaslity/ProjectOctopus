@@ -51,9 +51,10 @@ public class OctopusAgentInitService {
      * listen to the PassThroughTopicName queue from octopus server
      *
      * @param message 该方法不需要手动调用，Spring会自动运行这个监听方法
-     *                <p>
+     *
      *                注意：如果该监听方法正常结束，那么Spring会自动确认消息
      *                如果出现异常，则Spring不会确认消息，该消息一直存在于消息队列中
+     *
      * @RabbitListener : 用于标记当前方法是一个RabbitMQ的消息监听方法，可以持续性的自动接收消息
      */
     @SneakyThrows
@@ -86,6 +87,7 @@ public class OctopusAgentInitService {
                 throw new MyRuntimeException(" Handle Octopus Message Error !");
             }
 
+
         } catch (Exception e) {
 
             // reject the message
@@ -93,12 +95,15 @@ public class OctopusAgentInitService {
             // long deliveryTag, boolean requeue
             // channel.basicReject(deliveryTag,true);
 
+            log.error("Octopus Agent Initialization Error, please check !");
+            log.info("waiting for 5 seconds");
+
             // 这里只是便于出现死循环时查看
             TimeUnit.SECONDS.sleep(5);
 
-            throw new MyRuntimeException("Octopus Agent Initialization Error, please check !");
         }
 
+        // handle init message ok
         // ack the info
         channel.basicAck(deliveryTag, false);
     }

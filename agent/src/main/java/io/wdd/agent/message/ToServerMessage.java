@@ -66,11 +66,13 @@ public class ToServerMessage {
         // set PassThroughTopicName agent register ttl
         InitMessagePostProcessor initMessagePostProcessor = new InitMessagePostProcessor(defaultInitRegisterTimeOut);
 
-        log.info("send INIT AgentServerInfo to Server = {}", agentServerInfo);
+        log.info("[Octopus Agent] - send INIT AgentServerInfo to Server = {}", agentServerInfo);
 
         // send the register server info to EXCHANGE:INIT_EXCHANGE QUEUE: init_to_server
         try {
+
             rabbitTemplate.convertAndSend(initRabbitMqConnector.INIT_EXCHANGE, initRabbitMqConnector.INIT_TO_SERVER_KEY, objectMapper.writeValueAsBytes(agentServerInfo), initMessagePostProcessor);
+
         } catch (JsonProcessingException e) {
             log.error("Failed to send INIT message to Server ! = {}", agentServerInfo);
             throw new RuntimeException(e);

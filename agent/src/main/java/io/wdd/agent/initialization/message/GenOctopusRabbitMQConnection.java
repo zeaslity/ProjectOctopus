@@ -46,7 +46,7 @@ public class GenOctopusRabbitMQConnection {
         // generate the ne topic queue for unique agent
         String agentTopicName = octopusMessage.getUuid();
 
-        // reboot judgyment of existing exchange
+        // reboot judgement of existing exchange
         QueueInformation queueInfo = rabbitAdmin.getQueueInfo(agentTopicName);
 
         if (ObjectUtils.isNotEmpty(queueInfo) && queueInfo.getConsumerCount() > 0 ) {
@@ -88,7 +88,6 @@ public class GenOctopusRabbitMQConnection {
     public void AgentListenToSpecificTopicOctopusMessage(Message message) {
 
         OctopusMessage octopusMessage;
-
 
         try {
             octopusMessage = objectMapper.readValue(message.getBody(), OctopusMessage.class);

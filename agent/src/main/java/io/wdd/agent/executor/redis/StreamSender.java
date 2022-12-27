@@ -33,11 +33,15 @@ import java.util.concurrent.TimeUnit;
 public class StreamSender {
 
     public static String TEST_STREAM_JAVA = "test-stream-java";
+
     @Resource
     RedisTemplate redisTemplate;
+
     @Resource
     LogToArrayListCache logToArrayListCache;
+
     private final HashMap<String, StreamSenderEntity> AllNeededStreamSender = new HashMap<>(16);
+
     private final ArrayList<String> cacheLogList = new ArrayList<>(256);
 
     private static ByteBuffer currentTimeByteBuffer() {
@@ -66,7 +70,13 @@ public class StreamSender {
 
         if (!AllNeededStreamSender.containsKey(streamKey)) {
 
-            StreamSenderEntity streamSender = StreamSenderEntity.builder().cachedCommandLog(logToArrayListCache.getCommandCachedLog(streamKey)).waitToSendLog(true).startIndex(0).streamKey(streamKey).build();
+            StreamSenderEntity streamSender = StreamSenderEntity
+                    .builder()
+                    .cachedCommandLog(logToArrayListCache.getExecutionCmdCachedLogArrayList(streamKey))
+                    .waitToSendLog(true)
+                    .startIndex(0)
+                    .streamKey(streamKey)
+                    .build();
 
             AllNeededStreamSender.put(streamKey, streamSender);
 
@@ -74,7 +84,7 @@ public class StreamSender {
 
         TimeUnit.SECONDS.sleep(2);
         if (AllNeededStreamSender.get(streamKey).isWaitToSendLog()) {
-            log.info("stream sender wait 1 s to send message");
+            log.info("stream sender wait 2 s to send message");
             AllNeededStreamSender.get(streamKey).setWaitToSendLog(false);
             batchSendLog(streamKey);
         }
@@ -85,14 +95,14 @@ public class StreamSender {
         StreamSenderEntity streamSenderEntity = AllNeededStreamSender.get(streamKey);
         streamSenderEntity.setWaitToSendLog(false);
 
-        batchSendLog(streamKey);
 
+        batchSendLog(streamKey);
     }
 
     public void batchSendLog(String streamKey) {
         StreamSenderEntity streamSenderEntity = AllNeededStreamSender.get(streamKey);
 
-        log.info("batch send log == {}", streamSenderEntity);
+        //log.info("batch send log == {}", streamSenderEntity);
 
         ArrayList<String> cachedCommandLog = streamSenderEntity.getCachedCommandLog();
 
@@ -103,11 +113,13 @@ public class StreamSender {
 
         List<String> content = cachedCommandLog.subList(startIndex, endIndex);
 
-//        System.out.println("content = " + content);
+        // only send when cached log is not empty
+        if (content.size() > 0) {
+            this.send(streamKey, content);
+        }
 
-        this.send(streamKey, content);
         // for next time
-        startIndex = endIndex;
+        streamSenderEntity.setStartIndex(endIndex);
     }
 
     public boolean send(String streamKey, String content) {
@@ -153,7 +165,6 @@ public class StreamSender {
             Map fakeData = generateFakeData();
 
             MapRecord mapRecord = StreamRecords.mapBacked(fakeData).withStreamKey(TEST_STREAM_JAVA);
-
 
             redisTemplate.opsForStream().add(mapRecord);
 

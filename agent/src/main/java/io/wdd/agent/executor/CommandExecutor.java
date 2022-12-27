@@ -71,6 +71,7 @@ public class CommandExecutor {
             // cache log lines
             logToArrayListCache.cacheLog(streamKey, process.getInputStream());
 
+            // start to send the result log
             streamSender.startToWaitLog(streamKey);
 
 //            log.warn("start---------------------------------------------");
@@ -80,6 +81,8 @@ public class CommandExecutor {
 
             // a command shell don't understand how long it actually take
             processResult = process.waitFor();
+
+            // end send logs
             streamSender.endWaitLog(streamKey);
 
             log.info("current shell command {} result is {}", processBuilder.command(), processResult);
@@ -119,7 +122,7 @@ public class CommandExecutor {
         TimeUnit.SECONDS.sleep(1);
 
         // clear the log Cache Thread scope
-        logToArrayListCache.getCommandCachedLog(streamKey).clear();
+        logToArrayListCache.getExecutionCmdCachedLogArrayList(streamKey).clear();
 
         // clear the stream sender
         streamSender.clearLocalCache(streamKey);

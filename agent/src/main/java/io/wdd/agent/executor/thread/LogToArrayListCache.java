@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * utils to cache store the command execution logs
+ */
 @Component
 @Slf4j
 public class LogToArrayListCache {
@@ -26,10 +29,11 @@ public class LogToArrayListCache {
 
     public void cacheLog(String streamKey, InputStream commandLogStream) {
 
-        ArrayList<String> commandCachedLog = this.getCommandCachedLog(streamKey);
+        ArrayList<String> commandCachedLog = this.getExecutionCmdCachedLogArrayList(streamKey);
 
 //        log.info(String.valueOf(commandCachedLog));
 
+        // read from input stream and store to the cacheArrayList
         new BufferedReader(new InputStreamReader(commandLogStream))
                 .lines()
                 .forEach(
@@ -39,14 +43,14 @@ public class LogToArrayListCache {
         log.info("current streamKey is {} and CacheLog is {}", streamKey, commandCachedLog);
     }
 
-    public ArrayList<String> getCommandCachedLog(String streamKey) {
+    public ArrayList<String> getExecutionCmdCachedLogArrayList(String streamKey) {
 
-        int keyToIndex = this.hashStreamKeyToIndex(streamKey);
+        int keyToIndex = this.hashStreamKeyToCachedArrayListIndex(streamKey);
 
         return CachedCommandLog.get(keyToIndex);
     }
 
-    private int hashStreamKeyToIndex(String streamKey) {
+    private int hashStreamKeyToCachedArrayListIndex(String streamKey) {
 
         int size = CachedCommandLog.size();
 

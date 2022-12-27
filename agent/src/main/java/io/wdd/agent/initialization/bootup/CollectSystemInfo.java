@@ -88,7 +88,7 @@ public class CollectSystemInfo implements ApplicationContextAware {
     @PostConstruct
     private void getInjectServerInfo(){
 
-        log.info("Starting getInjectServerInfo");
+        log.info("Octopus Agent -- Starting getInjectServerInfo");
 
         agentServerInfo = (AgentServerInfo) context.getBean("agentServerInfo");
 
@@ -96,11 +96,12 @@ public class CollectSystemInfo implements ApplicationContextAware {
             throw new MyRuntimeException(" Collect server info error !");
         }
 
-        log.info("host server info has been collected == {}", agentServerInfo);
+        //log.info("host server info has been collected == {}", agentServerInfo);
 
         // start to send message to Octopus Server
         octopusAgentInitService.SendInfoToServer(agentServerInfo);
-        log.info("PassThroughTopicName server info has been send to octopus server !");
+
+        //log.info("PassThroughTopicName server info has been send to octopus server !");
 
     }
 
