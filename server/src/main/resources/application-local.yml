@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: octopus-server
+  profiles:
+    active: local
+  cloud:
+    nacos:
+      config:
+        group: local
+        config-retry-time: 3000
+        file-extension: yaml
+        max-retry: 3
+        #        server-addr: 43.154.83.213:21060
+        #        server-addr: 140.238.52.228:21060
+        server-addr: https://nacos.107421.xyz:443
+        timeout: 5000
+        config-long-poll-timeout: 5000
+        extension-configs:
+          - group: local
+            data-id: common-local.yaml

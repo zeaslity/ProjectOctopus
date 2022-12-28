@@ -1,5 +1,7 @@
 package io.wdd.rpc.execute.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wdd.common.beans.executor.ExecutionMessage;
 import io.wdd.common.beans.rabbitmq.OctopusMessage;
 import io.wdd.common.beans.rabbitmq.OctopusMessageType;
@@ -18,6 +20,8 @@ public class CoreExecutionServiceImpl implements CoreExecutionService {
     @Resource
     ToAgentMessageSender messageSender;
 
+    @Resource
+    ObjectMapper objectMapper;
 
     @Override
     public String SendCommandToAgent(String topicName, String command) {
@@ -34,11 +38,22 @@ public class CoreExecutionServiceImpl implements CoreExecutionService {
 
         OctopusMessage octopusMessage = this.generateOctopusMessage(topicName, type, commandList);
 
+        ExecutionMessage executionMessage = (ExecutionMessage) octopusMessage.getContent();
+
+        String executionMsg;
+
+        try {
+
+            executionMsg = objectMapper.writeValueAsString(executionMessage);
+            octopusMessage.setContent(executionMsg);
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
         messageSender.send(octopusMessage);
 
-        ExecutionMessage content = (ExecutionMessage) octopusMessage.getContent();
-
-        return content.getResultKey();
+        return executionMessage.getResultKey();
     }
 
 
@@ -53,15 +68,16 @@ public class CoreExecutionServiceImpl implements CoreExecutionService {
 
     private OctopusMessage generateOctopusMessage(String topicName, String type, List<String> commandList){
 
+        ExecutionMessage executionMessage = generateExecutionMessage(
+                type,
+                commandList,
+                generateCommandResultKey(topicName)
+        );
 
         return OctopusMessage.builder()
                 .type(OctopusMessageType.EXECUTOR)
                 .init_time(LocalDateTime.now())
-                .content(generateExecutionMessage(
-                        type,
-                        commandList,
-                        generateCommandResultKey(topicName)
-                ))
+                .content(executionMessage)
                 .uuid(topicName)
                 .build();
     }
@@ -78,7 +94,7 @@ public class CoreExecutionServiceImpl implements CoreExecutionService {
 
     private String generateCommandResultKey(String topicName) {
 
-        String TimeString = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String TimeString = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss"));
 
         return topicName + "-" + TimeString;
     }

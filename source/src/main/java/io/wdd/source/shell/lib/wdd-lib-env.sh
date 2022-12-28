@@ -1,11 +1,11 @@
 #!/bin/bash
 
 
-#. /octopus-agent/shell/lib/wdd-lib-log.sh
-#. /octopus-agent/shell/lib/wdd-lib-sys.sh
+. /octopus-agent/shell/lib/wdd-lib-log.sh
+. /octopus-agent/shell/lib/wdd-lib-sys.sh
 
-. ./wdd-lib-log.sh
-. ./wdd-lib-sys.sh
+#. .wdd-lib-log.sh
+#. .wdd-lib-sys.sh
 
 
 hostArchVersion=""
@@ -262,27 +262,27 @@ if [[ $(cat /etc/hostname | cut -d"-" -f 3 | grep -c '^[0-9][0-9]') -gt 0 ]]; th
 else
     machineNumber=99
 fi
-cat >>/etc/environment<<EOF
-export serverName="${city}-${hostArch}-${machineNumber}"
-export serverIpPbV4="$public_ipv4"
-export serverIpInV4=""
-export serverIpPbV6=""
-export serverIpInV6=""
-export location="$city $region $country"
-export provider="$org"
-export managePort="$(netstat -ntulp | grep sshd | grep -w tcp | awk '{print$4}' | cut -d":" -f2)"
-export cpuCore="$cores @ $freq MHz"
-export cpuBrand="$cpuName"
-export memoryTotal="$tram"
-export diskTotal="$disk_total_size"
-export diskUsage="$disk_used_size"
-export archInfo="$arch ($lbit Bit)"
-export osInfo="$opsy"
-export osKernelInfo="$kern"
-export tcpControl="$tcpctrl"
-export virtualization="$virt"
-export ioSpeed="$ioavg MB/s"
-export machineId="$(cat /etc/machine-id)"
+cat >/etc/environment.d/octopus-agent.conf<<EOF
+serverName=${city}-${hostArch}-${machineNumber}
+serverIpPbV4=$public_ipv4
+serverIpInV4=
+serverIpPbV6=
+serverIpInV6=
+location="$city $region $country"
+provider=$org
+managePort=$(netstat -ntulp | grep sshd | grep -w tcp | awk '{print$4}' | cut -d":" -f2)
+cpuCore="$cores @ $freq MHz"
+cpuBrand="$cpuName"
+memoryTotal=$tram
+diskTotal=$disk_total_size
+diskUsage=$disk_used_size
+archInfo="$arch ($lbit Bit)"
+osInfo="$opsy"
+osKernelInfo=$kern
+tcpControl=$tcpctrl
+virtualization=$virt
+ioSpeed="$ioavg MB/s"
+machineId=$(cat /etc/machine-id)
 EOF
 
 log "env collect complete!"

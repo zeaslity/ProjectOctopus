@@ -40,8 +40,10 @@ public class OctopusMessageHandlerServer {
 
         // todo what to do after  received the result
 
-        // log info ?
-        // update the database
-        // handle the result
+        // collect all message from agent and log to somewhere
+
+        // 1. send some info to the specific topic name
+        // 2. judge from which agent the message are
+        //
     }
 }

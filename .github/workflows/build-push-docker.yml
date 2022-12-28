@@ -128,9 +128,9 @@ jobs:
           echo "--------------------------------------"
           cd ./agent/target
           ls
-          date --date='TZ="Asia/Shanghai"' --rfc-3339=seconds | cut -d"+" -f1 | sed "s/ /-/g" | sed "s/:/-/g"
+          echo "current time is $(date --rfc-3339=seconds | cut -d"+" -f1 | sed "s/ /-/g" | sed "s/:/-/g")"
           echo "start to copy target jar" 
-          cp ./agent-*.jar ./octopus-agent-$(date --date='TZ="Asia/Shanghai"' --rfc-3339=seconds | cut -d"+" -f1 | sed "s/ /-/g" | sed "s/:/-/g").jar
+          cp ./agent-*.jar ./octopus-agent-$(date --rfc-3339=seconds | cut -d"+" -f1 | sed "s/ /-/g" | sed "s/:/-/g").jar
           cd /home/runner/work/ProjectOctopus/ProjectOctopus
           echo "--------------------------------------"
           cat /proc/cpuinfo

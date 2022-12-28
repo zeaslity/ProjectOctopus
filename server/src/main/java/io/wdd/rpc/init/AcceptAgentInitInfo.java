@@ -104,6 +104,7 @@ public class AcceptAgentInitInfo {
             if (!checkAgentAlreadyRegister(agentQueueTopic)) {
                 // 3. save the agent info into database
                 // backend fixed thread daemon to operate the database ensuring the operation is correct !
+                log.info("[AGENT INIT] - agent not exist ! start to register !");
                 if (!databaseOperator.saveInitOctopusAgentInfo(serverInfoVO)) {
                     throw new MyRuntimeException("database save agent info error !");
                 }

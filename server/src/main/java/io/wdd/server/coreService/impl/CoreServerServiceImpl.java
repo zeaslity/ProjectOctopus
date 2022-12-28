@@ -10,6 +10,7 @@ import io.wdd.server.beans.vo.ServerInfoVO;
 import io.wdd.server.coreService.CoreServerService;
 import io.wdd.server.service.*;
 import io.wdd.server.utils.EntityUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Slf4j
 public class CoreServerServiceImpl implements CoreServerService {
 
     @Resource

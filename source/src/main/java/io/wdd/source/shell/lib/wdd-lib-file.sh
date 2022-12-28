@@ -5,7 +5,7 @@
 # shellcheck disable=SC1091
 
 # Load Generic Libraries
-. /octopus-agent/shell/lib/wdd-lib-log.sh
+. /octopus-agent/shell/lib/wdd-lib-log.shwdd-lib-log.sh
 
 # Functions
 
