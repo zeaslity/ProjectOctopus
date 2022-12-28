@@ -204,10 +204,11 @@ DownloadAllFile() {
   colorEcho $BLUE "start to download octopus agent !"
   # check for latest version
   # download the lasted jar
-  cd /optopus-agent
-  . ./shell/lib/wdd-lib-os.sh
-
+  cd $OctopusAgentPath
+  colorEcho $BLUE "start to load wdd-lib-os.sh"
+  . ./lib/wdd-lib-os.sh
   CheckAndDownloadLatestVersion
+
 
   FunctionSuccess
   FunctionEnd

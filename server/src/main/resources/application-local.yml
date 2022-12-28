@@ -2,11 +2,11 @@ spring:
   application:
     name: octopus-server
   profiles:
-    active: k3s
+    active: local
   cloud:
     nacos:
       config:
-        group: k3s
+        group: local
         config-retry-time: 3000
         file-extension: yaml
         max-retry: 3
@@ -16,5 +16,5 @@ spring:
         timeout: 5000
         config-long-poll-timeout: 5000
         extension-configs:
-          - group: k3s
-            data-id: common-k3s.yaml
+          - group: local
+            data-id: common-local.yaml

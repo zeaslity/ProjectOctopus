@@ -19,9 +19,12 @@ CheckAndDownloadLatestVersion(){
   log "start to download the latest version !"
 
   wget "$OctopusAgentUrl$latestVersion"
-  cp "$OctopusAgentUrl$latestVersion" agent.jar
+  cp "$latestVersion" agent.jar
 
   log ""
+  echo ""
+  log "----------------------------------------------"
   ls /octopus-agent/ | grep jar
+  log "----------------------------------------------"
 
 }
