@@ -2,8 +2,9 @@
 
 #####  environment variables ######
 
-RepoSourcePath=https://raw.githubusercontent.com/zeaslity/ProjectOctopus/main/source/src/main/java/io/wdd/source/shell
-OctopusAgentUrl=https://happybirthday.107421.xyz/octopus-agent/
+
+JAVA_OPTS="-Xms128m -Xmx512m  -Dfile.encoding=utf-8  --spring.profiles.active=k3s --spring.cloud.nacos.config.group=k3s --spring.cloud.nacos.config.extension-configs[0].dataId=common-k3s.yaml --spring.cloud.nacos.config.extension-configs[0].group=k3s"
+
 DependLibFiles=(
   wdd-lib-file.sh
   wdd-lib-log.sh
@@ -12,6 +13,10 @@ DependLibFiles=(
   wdd-lib-sys.sh
 )
 
+
+OctopusAgentUrl=https://happybirthday.107421.xyz/octopus-agent/
+
+RepoSourcePath=https://raw.githubusercontent.com/zeaslity/ProjectOctopus/main/source/src/main/java/io/wdd/source/shell
 OctopusAgentPath=/octopus-agent/shell
 #####  environment variables ######
 
@@ -196,8 +201,10 @@ DownloadAllFile() {
 
   echo "start to download all needed lib shell"
   for libfile in ${DependLibFiles[*]}; do
-    echo "lib file is $libfile"
-    wget "$RepoSourcePath/lib/$libfile" -O $OctopusAgentPath/lib/$libfile
+
+    colorEcho $BLUE "lib file is $libfile"
+    wget "$RepoSourcePath/lib/$libfile" -Oq $OctopusAgentPath/lib/$libfile
+    FunctionSuccess
 
   done
 
@@ -274,7 +281,6 @@ InstallJDKPackage() {
 }
 
 systemdAgent(){
-  local JAVA_OPTS="-Xms128m -Xmx512m  -Dfile.encoding=utf-8  --spring.profiles.active=k3s --spring.cloud.nacos.config.group=k3s --spring.cloud.nacos.config.extension-configs[0].dataId=common-k3s.yaml --spring.cloud.nacos.config.extension-configs[0].group=k3s"
 
   #  https://www.baeldung.com/linux/run-java-application-as-service
 
@@ -286,24 +292,27 @@ After=syslog.target network.target
 
 [Service]
 SuccessExitStatus=143
-
-PermissionsStartOnly=true
-LimitNOFILE=1048576
-LimitNPROC=65535
-
+SyslogIdentifier=octopus-agent
 User=root
-
 Type=simple
 WorkingDirectory=/octopus-agent
-
+EnvironmentFile=/etc/environment.d/octopus-agent.conf
 ExecStart=java -jar /octopus-agent/agent.jar ${JAVA_OPTS}
-ExecStop=/bin/kill -15 $MAINPID
+ExecStop=/bin/kill -15 \$MAINPID
 
-Restart=on-failure
 [Install]
 WantedBy=multi-user.target
 EOF
 
+# https://www.benzhu.xyz/linux12/
+cat >/etc/rsyslog.d/octopus-agent.conf <<EOF
+if \$programname == 'octopus-agent' then /var/log/octopus-agent.log
+& stop
+EOF
+
+rsyslogd -N1 -f /etc/rsyslog.d/octopus-agent.conf
+
+systemctl restart rsyslog
 }
 
 ## 为了本脚本能够满足Ubuntu系统，做出设当的更改
@@ -343,9 +352,124 @@ BootUPAgent(){
   systemctl enable octopus-agent.service
   systemctl start octopus-agent.service
 
+#
+#  systemctl restart octopus-agent.service
+#  systemctl status octopus-agent.service -l
+#tail -f 500 /var/log/octopus-agent.log
+
   FunctionSuccess
   FunctionEnd
 }
+
+
+InstallZSH() {
+  FunctionStart
+
+  ZSH_SOURCE="us"
+
+  if [[ "$1" -ne " " ]]; then
+      ZSH_SOURCE="$1"
+      echo "zsh install source = ${ZSH_SOURCE}"
+  fi
+
+  colorEcho ${BLUE} "开始安装宇宙第一shell工具zsh……"
+  echo ""
+  installDemandSoftwares zsh git || return $?
+  # 脚本会自动更换默认的shell
+  if [[ "${ZSH_SOURCE}" -eq "cn" ]]; then
+      echo y | REMOTE=https://gitee.com/mirrors/oh-my-zsh.git sh -c "$(curl -fsSL https://gitee.com/mirrors/oh-my-zsh/raw/master/tools/install.sh)"
+  else
+      echo y | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  fi
+  #echo y | sh -c "$(curl -fsSL https://cdn.jsdelivr.net/gh/robbyrussell/oh-my-zsh@master/tools/install.sh)"
+  echo ""
+  modifyZSH ${ZSH_SOURCE}
+  if [[ $? -eq 0 ]]; then
+    colorEcho ${BLUE} "开始修改默认shell为zsh……"
+    for i in {6..1..-1}; do
+      colorEcho ${BLUE} "倒计时开始 ->> $i 秒 <<-，准备切换shell，上文的日志输出将会消失！！"
+      sleep 2
+    done
+    chsh -s /bin/zsh
+    zsh
+  else
+    colorEcho ${RED} "zsh 安装失败，大概率是已经安装！！小概率是无法连接GitHub服务器~~"
+  fi
+  FunctionEnd
+}
+
+modifyZSH() {
+  FunctionStart
+
+  ZSH_SOURCE="us"
+
+  if [[ "$1" -ne " " ]]; then
+      ZSH_SOURCE="$1"
+      echo "zsh install source = ${ZSH_SOURCE}"
+  fi
+
+  colorEcho ${GREEN} "zsh应该已经安装成功！！！"
+  colorEcho ${BLUE} "开始修改zsh的相关配置信息，使其更加好用…………"
+  echo ""
+  cat >~/oh-my-zsh-plugins-list.txt <<EOF
+https://cdn.jsdelivr.net/gh/ohmyzsh/ohmyzsh/plugins/command-not-found/command-not-found.plugin.zsh
+https://cdn.jsdelivr.net/gh/ohmyzsh/ohmyzsh/plugins/autojump/autojump.plugin.zsh
+https://cdn.jsdelivr.net/gh/ohmyzsh/ohmyzsh/plugins/themes/themes.plugin.zsh
+EOF
+  colorEcho ${BLUE} "正在下载zsh的一些好用的插件："
+  echo ""
+
+  if [[ "${ZSH_SOURCE}" -eq "cn" ]]; then
+      colorEcho ${BLUE} "开始从 Gitee 下载 自动补全 插件…………"
+      git clone https://gitee.com/githubClone/zsh-autosuggestions.git ~/.oh-my-zsh/plugins/zsh-autosuggestions
+  else
+      colorEcho ${BLUE} "开始从 GitHub 下载 自动补全 插件…………"
+      git clone https://github.com/zsh-users/zsh-autosuggestions ~/.oh-my-zsh/plugins/zsh-autosuggestions
+  fi
+  FunctionSuccess
+
+  if [[ "${ZSH_SOURCE}" -eq "cn" ]]; then
+      colorEcho ${BLUE} "开始从 Gitee 下载 命令高亮 插件…………"
+      git clone https://gitee.com/mo2/zsh-syntax-highlighting.git ~/.oh-my-zsh/plugins/zsh-syntax-highlighting
+  else
+      colorEcho ${BLUE} "开始从 GitHub 下载 命令高亮 插件…………"
+      git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/plugins/zsh-syntax-highlighting
+  fi
+  FunctionSuccess
+
+  colorEcho ${BLUE} "开始从JSDeliver下载插件…………"
+  wget -c -i ~/oh-my-zsh-plugins-list.txt -P ~/.oh-my-zsh/plugins/
+  FunctionSuccess
+
+  colorEcho ${GREEN} "插件已经下载完毕，现在开始修改zsh的配置文件…………"
+  echo ""
+  colorEcho ${BLUE} "开始修改zsh的主题为 agnoster ！！"
+  sed -i "s/robbyrussell/agnoster/g" ~/.zshrc
+  sed -i 's/^# DISABLE_AUTO_UPDATE="true"/DISABLE_AUTO_UPDATE="true"/g' ~/.zshrc
+  sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting command-not-found z themes)/g' ~/.zshrc
+  echo ""
+  colorEcho ${GREEN} "请检查当前zsh的插件开启情况："
+  colorEcho ${GREEN} "------------------------------------------"
+  cat ~/.zshrc | grep "plugins=" | grep -v "\#"
+  cat ~/.zshrc | grep "plugins=" | grep -v "\#"
+  cat ~/.zshrc | grep "plugins=" | grep -v "\#"
+  colorEcho ${GREEN} "------------------------------------------"
+
+  echo ""
+  echo "----------------------------------------------------"
+  echo "这里的错误输出无需在意"
+  source /root/.zshrc
+  echo "这里的错误输出无需在意"
+  echo "----------------------------------------------------"
+  echo ""
+  colorEcho ${GREEN} "zsh 安装成功，已更换主题，禁止更新，尽情享用~~~"
+  FunctionSuccess
+  colorEcho ${PURPLE} "宇宙第一shell的zsh已经安装成功了！！！"
+  colorEcho ${GREEN} "宇宙第一shell的zsh已经安装成功了！！！"
+  colorEcho ${BLUE} "宇宙第一shell的zsh已经安装成功了！！！"
+  FunctionSuccess
+}
+
 
 main(){
 
@@ -359,6 +483,8 @@ main(){
   InstallJDKPackage 11
 
   DownloadAllFile
+
+  InstallZSH "us"
 
   BootUPAgent
 

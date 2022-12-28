@@ -94,7 +94,7 @@ public class CoreExecutionServiceImpl implements CoreExecutionService {
 
     private String generateCommandResultKey(String topicName) {
 
-        String TimeString = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String TimeString = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss"));
 
         return topicName + "-" + TimeString;
     }
