@@ -40,7 +40,7 @@ public class OMHandlerExecutor extends AbstractOctopusMessageHandler {
             ExecutionMessage executionMessage = objectMapper.readValue((String) octopusMessage.getContent(), new TypeReference<ExecutionMessage>() {
             });
 
-            System.out.println("executionMessage = " + executionMessage);
+//            System.out.println("executionMessage = " + executionMessage);
 
             String executionType = executionMessage.getType();
 

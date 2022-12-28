@@ -52,7 +52,7 @@ public class FunctionExecutor {
 
 //        List<List<String>> commandList = functionReader.ReadFileToCommandList(functionFileName);
 
-        log.info("all commands are {}", commandList);
+        log.info("[ Function Executor ] all commands are ==> {}", commandList);
 
         Iterator<List<String>> iterator = commandList.iterator();
 

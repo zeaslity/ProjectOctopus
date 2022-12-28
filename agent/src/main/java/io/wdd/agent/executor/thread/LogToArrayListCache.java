@@ -40,7 +40,7 @@ public class LogToArrayListCache {
                         commandCachedLog::add
                 );
 
-        log.info("current streamKey is {} and CacheLog is {}", streamKey, commandCachedLog);
+        log.debug("current streamKey is {} and CacheLog is {}", streamKey, commandCachedLog);
     }
 
     public ArrayList<String> getExecutionCmdCachedLogArrayList(String streamKey) {

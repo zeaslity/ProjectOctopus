@@ -14,7 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Optional;
+import java.util.concurrent.*;
 
 
 @Configuration
@@ -26,6 +27,10 @@ public class CommandExecutor {
 
     @Resource
     LogToArrayListCache logToArrayListCache;
+
+    int processMaxWaitSeconds = 60;
+
+    ExecutorService DaemonCommandProcess = Executors.newFixedThreadPool(1);
 
     /**
      * handle command from octopus server
@@ -67,6 +72,13 @@ public class CommandExecutor {
         try {
 
             Process process = processBuilder.start();
+            // start a backend thread to daemon the process
+            // wait for processMaxWaitSeconds and kill the process if it's still alived
+            DaemonCommandProcess.submit(
+                    StopStuckCommandProcess(
+                            process,
+                            processMaxWaitSeconds
+                    ));
 
             // cache log lines
             logToArrayListCache.cacheLog(streamKey, process.getInputStream());
@@ -74,18 +86,13 @@ public class CommandExecutor {
             // start to send the result log
             streamSender.startToWaitLog(streamKey);
 
-//            log.warn("start---------------------------------------------");
-//            new BufferedReader(new InputStreamReader(process.getInputStream())).lines()
-//                   .forEach(System.out::println);
-//            log.warn("end ---------------------------------------------");
-
-            // a command shell don't understand how long it actually take
+            // get the command result
             processResult = process.waitFor();
 
             // end send logs
             streamSender.endWaitLog(streamKey);
 
-            log.info("current shell command {} result is {}", processBuilder.command(), processResult);
+            log.debug("current shell command {} result is {}", processBuilder.command(), processResult);
 
 
         } catch (IOException | InterruptedException e) {
@@ -93,6 +100,29 @@ public class CommandExecutor {
         }
 
         return processResult;
+    }
+
+    private Runnable StopStuckCommandProcess(Process process, int processMaxWaitSeconds)  {
+        return () -> {
+            try {
+
+
+                log.debug("daemon thread start to wait for {} s for the result", processMaxWaitSeconds);
+
+                TimeUnit.SECONDS.sleep(processMaxWaitSeconds);
+
+                if (process.isAlive()) {
+
+                    log.warn("Command [ {} ] stuck for {} s, destroy the command process !", process.info().commandLine().get(), processMaxWaitSeconds);
+
+                    // shutdown the process
+                    process.destroyForcibly();
+                }
+
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        };
     }
 
     private ByteBuffer cvToByteBuffer(InputStream inputStream) throws IOException {

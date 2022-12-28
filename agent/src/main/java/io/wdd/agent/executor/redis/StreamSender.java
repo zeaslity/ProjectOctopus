@@ -84,7 +84,7 @@ public class StreamSender {
 
         TimeUnit.SECONDS.sleep(2);
         if (AllNeededStreamSender.get(streamKey).isWaitToSendLog()) {
-            log.info("stream sender wait 2 s to send message");
+            log.debug("stream sender wait 2 s to send message");
             AllNeededStreamSender.get(streamKey).setWaitToSendLog(false);
             batchSendLog(streamKey);
         }

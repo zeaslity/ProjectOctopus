@@ -19,4 +19,8 @@ spring:
           - group: local
             data-id: common-local.yaml
 
-
+debug: true
+logging:
+  level:
+    io.wdd.agent:
+      debug
