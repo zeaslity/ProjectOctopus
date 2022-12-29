@@ -1,15 +1,13 @@
 package io.wdd.rpc.execute.result;
 
-import io.wdd.rpc.execute.config.RedisStreamReaderConfig;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.stream.StreamListener;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-
-@Service
+@Getter
+@Setter
 @Slf4j
 public class CommandResultReader implements StreamListener<String, MapRecord<String,String, String >> {
 
@@ -19,9 +17,24 @@ public class CommandResultReader implements StreamListener<String, MapRecord<Str
 
     //https://docs.spring.io/spring-data/redis/docs/2.5.5/reference/html/#redis.streams.receive.containers
 
-    @Resource
-    RedisStreamReaderConfig redisStreamReaderConfig;
+    /**
+     * 消费者类型：独立消费、消费组消费
+     */
+    private String consumerType;
+    /**
+     * 消费组
+     */
+    private String group;
+    /**
+     * 消费组中的某个消费者
+     */
+    private String consumerName;
 
+    public CommandResultReader(String consumerType, String group, String consumerName) {
+        this.consumerType = consumerType;
+        this.group = group;
+        this.consumerName = consumerName;
+    }
 
     @Override
     public void onMessage(MapRecord<String, String, String> message) {
@@ -34,13 +47,5 @@ public class CommandResultReader implements StreamListener<String, MapRecord<Str
 
     }
 
-
-    public void readFromStreamKey(String streamKey) {
-
-        String formerKey = redisStreamReaderConfig.streamKey;
-        log.info("start to change StreamReader streamKey from {} to ==> {}",formerKey, streamKey);
-
-        redisStreamReaderConfig.streamKey = streamKey;
-    }
 
 }

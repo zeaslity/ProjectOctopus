@@ -1,8 +1,7 @@
 package io.wdd.rpc.execute.web;
 
 import io.wdd.common.beans.response.R;
-import io.wdd.rpc.execute.config.RedisStreamReaderConfig;
-import io.wdd.rpc.execute.result.CommandResultReader;
+import io.wdd.rpc.execute.result.CreateStreamReader;
 import io.wdd.rpc.execute.service.CoreExecutionService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,7 +21,7 @@ public class ExecutionController {
     CoreExecutionService coreExecutionService;
 
     @Resource
-    CommandResultReader commandResultReader;
+    CreateStreamReader createStreamReader;
 
 
     @PostMapping("command")
@@ -30,14 +29,14 @@ public class ExecutionController {
             @RequestParam(value = "topicName") String topicName,
             @RequestParam(value = "commandList", required = false) @Nullable List<String> commandList,
             @RequestParam(value = "type", required = false) @Nullable String type
-            ) {
+    ) {
 
         String streamKey = "";
 
         if (StringUtils.isEmpty(type)) {
             streamKey = coreExecutionService.SendCommandToAgent(topicName, commandList);
         } else {
-            streamKey = coreExecutionService.SendCommandToAgent(topicName, type,commandList);
+            streamKey = coreExecutionService.SendCommandToAgent(topicName, type, commandList);
         }
 
         return R.ok(streamKey);
@@ -46,13 +45,11 @@ public class ExecutionController {
     @PostMapping("/stream")
     public void GetCommandLog(
             @RequestParam(value = "streamKey") String streamKey
-    ){
+    ) {
 
-        commandResultReader.readFromStreamKey(streamKey);
+        createStreamReader.registerStreamReader(streamKey);
 
     }
-
-
 
 
 }
