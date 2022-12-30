@@ -6,6 +6,7 @@ import io.wdd.agent.executor.thread.LogToArrayListCache;
 import io.wdd.common.beans.executor.ExecutionMessage;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
@@ -86,11 +87,16 @@ public class CommandExecutor {
             // start to send the result log
             streamSender.startToWaitLog(streamKey);
 
-            // get the command result
-            processResult = process.waitFor();
+            // get the command result must also be a timeout smaller than the process
+            boolean waitFor = process.waitFor(processMaxWaitSeconds, TimeUnit.SECONDS);
 
             // end send logs
             streamSender.endWaitLog(streamKey);
+
+            // get the process result
+            if (ObjectUtils.isNotEmpty(waitFor) && ObjectUtils.isNotEmpty(process)) {
+                processResult = process.exitValue();
+            }
 
             log.debug("current shell command {} result is {}", processBuilder.command(), processResult);
 
@@ -105,7 +111,6 @@ public class CommandExecutor {
     private Runnable StopStuckCommandProcess(Process process, int processMaxWaitSeconds)  {
         return () -> {
             try {
-
 
                 log.debug("daemon thread start to wait for {} s for the result", processMaxWaitSeconds);
 
