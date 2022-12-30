@@ -18,3 +18,9 @@ spring:
         extension-configs:
           - group: local
             data-id: common-local.yaml
+
+debug: true
+logging:
+  level:
+    io.wdd.server:
+      debug

@@ -1,6 +1,8 @@
 package io.wdd.agent.executor.redis;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wdd.agent.config.beans.executor.CommandLog;
 import io.wdd.agent.config.beans.executor.StreamSenderEntity;
 import io.wdd.agent.executor.thread.LogToArrayListCache;
@@ -36,6 +38,9 @@ public class StreamSender {
 
     @Resource
     RedisTemplate redisTemplate;
+
+    @Resource
+    ObjectMapper objectMapper;
 
     @Resource
     LogToArrayListCache logToArrayListCache;
@@ -134,7 +139,16 @@ public class StreamSender {
 
     private boolean send(String streamKey, List<String> content) {
 
-        return this.send(streamKey, content.toString());
+
+        try {
+
+            String resultContent = objectMapper.writeValueAsString(content);
+            return this.send(streamKey, resultContent);
+
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 

@@ -6,6 +6,8 @@ import io.wdd.common.beans.executor.ExecutionMessage;
 import io.wdd.common.beans.rabbitmq.OctopusMessage;
 import io.wdd.common.beans.rabbitmq.OctopusMessageType;
 import io.wdd.rpc.message.sender.ToAgentMessageSender;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class CoreExecutionServiceImpl implements CoreExecutionService {
 
     @Resource
@@ -22,6 +25,9 @@ public class CoreExecutionServiceImpl implements CoreExecutionService {
 
     @Resource
     ObjectMapper objectMapper;
+
+    @Resource
+    RedisTemplate redisTemplate;
 
     @Override
     public String SendCommandToAgent(String topicName, String command) {
@@ -51,9 +57,17 @@ public class CoreExecutionServiceImpl implements CoreExecutionService {
             throw new RuntimeException(e);
         }
 
+        String resultKey = executionMessage.getResultKey();
+        // set up the stream read group
+        String group = redisTemplate.opsForStream().createGroup(resultKey, resultKey);
+        System.out.println("group = " + group);
+        log.debug("set consumer group for the stream key with => [ {} ]", resultKey);
+
+
+        // send the message
         messageSender.send(octopusMessage);
 
-        return executionMessage.getResultKey();
+        return resultKey;
     }
 
 

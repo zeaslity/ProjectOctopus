@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.stream.MapRecord;
 import org.springframework.data.redis.connection.stream.ReadOffset;
@@ -16,61 +17,49 @@ import java.time.Duration;
 
 @Configuration
 @Slf4j
-@Lazy
 public class RedisStreamReaderConfig {
 
     @Resource
     private RedisConnectionFactory redisConnectionFactory;
 
+    public static final String REDIS_STREAM_LISTENER_CONTAINER = "redisStreamListenerContainer";
 
-    @Bean(initMethod = "start", destroyMethod = "stop")
-//    @Scope(value = "prototype")
+    private String streamKey = "cccc";
+
+    public void setStreamKey(String streamKey) {
+        this.streamKey = streamKey;
+    }
+
+    public String getStreamKey() {
+        return streamKey;
+    }
+
+    @Bean(value = REDIS_STREAM_LISTENER_CONTAINER)
+    @Scope("prototype")
     @Lazy
-    public MyStreamMessageListenerContainer redisStreamListenerContainer() {
+    public StreamMessageListenerContainer<String, MapRecord<String, String, String>> redisStreamListenerContainer(){
 
-        return new MyStreamMessageListenerContainer();
+        StreamMessageListenerContainer.StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> options = StreamMessageListenerContainer.StreamMessageListenerContainerOptions
+                .builder()
+                .pollTimeout(Duration.ofSeconds(2))
+                .build();
+
+        StreamMessageListenerContainer<String, MapRecord<String, String, String>> listenerContainer = StreamMessageListenerContainer.create(redisConnectionFactory, options);
+
+        listenerContainer.receive(
+
+                StreamOffset.create(streamKey, ReadOffset.lastConsumed()),
+
+                new CommandResultReader(
+                        "OctopusServer",
+                        streamKey,
+                        "OctopusServer")
+
+        );
+
+        return listenerContainer;
     }
 
-    class MyStreamMessageListenerContainer {
 
-        public String streamKey = "cccc";
-
-        public void start() {
-            log.debug("Redis Stream Reader stream key is [ {} ]", this.streamKey);
-
-        }
-
-        public void stop() {
-           log.debug("Redis Stream Reader destroyed ! stream key is [ {} ]", this.streamKey);
-        }
-
-        public String get() {
-           return this.streamKey;
-        }
-
-
-        public StreamMessageListenerContainer<String, MapRecord<String, String, String>> MyStreamMessageListenerContainer() {
-
-            StreamMessageListenerContainer.StreamMessageListenerContainerOptions<String, MapRecord<String, String, String>> options = StreamMessageListenerContainer.StreamMessageListenerContainerOptions
-                    .builder()
-                    .pollTimeout(Duration.ofSeconds(2))
-                    .build();
-
-            StreamMessageListenerContainer<String, MapRecord<String, String, String>> listenerContainer = StreamMessageListenerContainer.create(redisConnectionFactory, options);
-
-            listenerContainer.receive(
-                    StreamOffset.create(streamKey, ReadOffset.lastConsumed()),
-
-                    new CommandResultReader(
-                            "Octopus-Server",
-                            "Octopus-Group",
-                            "OctopusServer")
-
-            );
-
-            return listenerContainer;
-        }
-
-    }
 
 }
