@@ -32,7 +32,9 @@ public class LogToArrayListCache {
         ArrayList<String> commandCachedLog = this.getExecutionCmdCachedLogArrayList(streamKey);
 
         String format = String.format("execution command are => [ %s ]", process.info().commandLine().get());
+
         // add the command
+        commandCachedLog.add("");
         commandCachedLog.add(format);
         commandCachedLog.add("--------------- command result are as below --------------------");
         commandCachedLog.add("");

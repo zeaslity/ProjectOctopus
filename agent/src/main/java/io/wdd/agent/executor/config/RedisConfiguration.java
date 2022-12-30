@@ -19,10 +19,12 @@ public class RedisConfiguration {
         redisTemplate.setConnectionFactory(redisConnectionFactory);
 
         GenericJackson2JsonRedisSerializer jsonRedisSerializer = new GenericJackson2JsonRedisSerializer();
+
         redisTemplate.setKeySerializer(RedisSerializer.string());
         redisTemplate.setHashKeySerializer(RedisSerializer.string());
         redisTemplate.setValueSerializer(jsonRedisSerializer);
         redisTemplate.setHashValueSerializer(jsonRedisSerializer);
+
         return redisTemplate;
     }
 }

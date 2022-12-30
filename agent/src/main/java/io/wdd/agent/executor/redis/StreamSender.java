@@ -100,7 +100,6 @@ public class StreamSender {
         StreamSenderEntity streamSenderEntity = AllNeededStreamSender.get(streamKey);
         streamSenderEntity.setWaitToSendLog(false);
 
-
         batchSendLog(streamKey);
     }
 
@@ -139,12 +138,11 @@ public class StreamSender {
 
     private boolean send(String streamKey, List<String> content) {
 
-
         try {
 
             String resultContent = objectMapper.writeValueAsString(content);
-            return this.send(streamKey, resultContent);
 
+            return this.send(streamKey, resultContent);
 
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
