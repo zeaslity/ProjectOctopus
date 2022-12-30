@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wdd.common.beans.executor.ExecutionMessage;
 import io.wdd.common.beans.rabbitmq.OctopusMessage;
 import io.wdd.common.beans.rabbitmq.OctopusMessageType;
+import io.wdd.rpc.execute.result.CreateStreamReader;
 import io.wdd.rpc.message.sender.ToAgentMessageSender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,6 +29,9 @@ public class CoreExecutionServiceImpl implements CoreExecutionService {
 
     @Resource
     RedisTemplate redisTemplate;
+
+    @Resource
+    CreateStreamReader createStreamReader;
 
     @Override
     public String SendCommandToAgent(String topicName, String command) {
@@ -58,11 +62,13 @@ public class CoreExecutionServiceImpl implements CoreExecutionService {
         }
 
         String resultKey = executionMessage.getResultKey();
+
         // set up the stream read group
         String group = redisTemplate.opsForStream().createGroup(resultKey, resultKey);
-        System.out.println("group = " + group);
         log.debug("set consumer group for the stream key with => [ {} ]", resultKey);
 
+        // change the redis stream listener container
+        createStreamReader.registerStreamReader(resultKey);
 
         // send the message
         messageSender.send(octopusMessage);

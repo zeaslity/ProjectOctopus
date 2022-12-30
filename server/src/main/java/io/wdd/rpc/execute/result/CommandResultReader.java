@@ -1,6 +1,8 @@
 package io.wdd.rpc.execute.result;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,6 +14,7 @@ import org.springframework.data.redis.stream.StreamListener;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -48,33 +51,40 @@ public class CommandResultReader implements StreamListener<String, MapRecord<Str
     public void onMessage(MapRecord<String, String, String> message) {
 
         String streamKey = message.getStream();
-
         RecordId messageId = message.getId();
-
         String key = (String) message.getValue().keySet().toArray()[0];
+        String value = message.getValue().get(key);
 
-        String value = (String) message.getValue().values().toArray()[0];
 
+        log.info("Octopus Agent [ {} ] execution of [ {} ] Time is [ {} ] stream recordId is [{}]", streamKey, key, key, messageId);
+
+        // print to console
+        printPrettyDeserializedCommandResult(value);
+
+        // log to somewhere
+
+    }
+
+    private void printPrettyDeserializedCommandResult(String valueString){
 
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
+
         try {
 
-            System.out.println("streamKey = " + streamKey);
-            System.out.println("messageId = " + messageId);
-            System.out.println("key = " + key);
-            System.out.println("value = " + value);
+            String tmp = objectMapper.readValue(valueString, new TypeReference<String>() {
+            });
 
-            ArrayList<String>commandResultList = objectMapper.readValue(value, ArrayList.class);
-            commandResultList.stream().forEach(
+            List<String> stringList = objectMapper.readValue(tmp, new TypeReference<List<String>>() {
+            });
+
+            stringList.stream().forEach(
                     System.out::println
             );
 
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
-
-        log.info("intend to be handled already !");
 
     }
 

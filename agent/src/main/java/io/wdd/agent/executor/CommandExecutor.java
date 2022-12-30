@@ -81,7 +81,7 @@ public class CommandExecutor {
                     ));
 
             // cache log lines
-            logToArrayListCache.cacheLog(streamKey, process.getInputStream());
+            logToArrayListCache.cacheLog(streamKey, process);
 
             // start to send the result log
             streamSender.startToWaitLog(streamKey);
