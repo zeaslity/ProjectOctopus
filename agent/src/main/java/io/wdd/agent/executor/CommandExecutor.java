@@ -88,7 +88,7 @@ public class CommandExecutor {
             streamSender.startToWaitLog(streamKey);
 
             // get the command result must also be a timeout smaller than the process
-            boolean waitFor = process.waitFor(processMaxWaitSeconds, TimeUnit.SECONDS);
+            boolean waitFor = process.waitFor(50, TimeUnit.SECONDS);
 
             // end send logs
             streamSender.endWaitLog(streamKey);

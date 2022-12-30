@@ -558,6 +558,27 @@ EOF
   FunctionSuccess
 }
 
+ChangeTimeZoneAndNTP() {
+  FunctionStart
+  colorEcho ${BLUE} "开始使用 timedatectl 工具进行时间同步…………"
+  FunctionSuccess
+  if [[ -n $(command -v timedatectl) ]]; then
+    colorEcho ${BLUE} "检测到工具存在，正在设置时间和时区为 上海(UTC+8)时间"
+    timedatectl set-timezone Asia/Shanghai && timedatectl set-ntp true
+    colorEcho ${GREEN} "同步时间完成。现在时间为："
+    colorEcho ${GREEN} "--------------------------------------------------"
+    colorEcho ${PURPLE} "$(date -R)"
+    colorEcho ${GREEN} "--------------------------------------------------"
+    colorEcho ${BLUE} "开始重启系统日志服务，使得系统日志的时间戳也立即生效"
+    systemctl restart rsyslog
+    colorEcho ${GREEN} "----------重启完成----------"
+  else
+    colorEcho ${RED} "timedatectl 工具不存在，时间同步失败！！ 请手动更换时间！"
+  fi
+  FunctionSuccess
+  FunctionEnd
+}
+
 #######################################
 # description
 # Arguments:
@@ -575,6 +596,8 @@ main() {
   InstallJDKPackage 11
 
   DownloadAllFile
+
+  ChangeTimeZoneAndNTP
 
   BootUPAgent
 
