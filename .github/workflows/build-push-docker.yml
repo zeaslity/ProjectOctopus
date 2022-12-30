@@ -131,6 +131,7 @@ jobs:
           echo "start to change timezone to Asia/Shanghai"
           timedatectl set-timezone Asia/Shanghai && timedatectl set-ntp true
           echo "current time is $(date --rfc-3339=seconds | cut -d"+" -f1 | sed "s/ /-/g" | sed "s/:/-/g")"
+          echo "current time is $(date)"
           echo "start to copy target jar" 
           cp ./agent-*.jar ./octopus-agent-$(date --rfc-3339=seconds | cut -d"+" -f1 | sed "s/ /-/g" | sed "s/:/-/g").jar
           cd /home/runner/work/ProjectOctopus/ProjectOctopus

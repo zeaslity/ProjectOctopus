@@ -87,6 +87,7 @@ public class CommandExecutor {
             // start to send the result log
             streamSender.startToWaitLog(streamKey);
 
+            // todo this will stuck the process and rabbitmq message will reentry the queue
             // get the command result must also be a timeout smaller than the process
             boolean waitFor = process.waitFor(50, TimeUnit.SECONDS);
 
