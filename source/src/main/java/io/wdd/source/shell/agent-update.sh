@@ -11,13 +11,13 @@ RepoSourcePath=https://raw.githubusercontent.com/zeaslity/ProjectOctopus/main/so
 
 CheckAndDownloadLatestVersion
 
-if [[ ! -f /octopus-agent/shell/agent-reboot.sh ]]; then\
+if [[ ! -f /octopus-agent/shell/agent-restart.sh ]]; then
   warn "agent-bootup.sh not exist! start to download !"
   cd /octopus-agent/shell
-  wget $RepoSourcePath/agent-reboot.sh
+  wget $RepoSourcePath/agent-restart.sh
 fi
 
 
-log "start to reboot the octopus agent !"
-chmod +x /octopus-agent/shell/agent-reboot.sh
-/octopus-agent/shell/agent-reboot.sh
+log "start to restart the octopus agent !"
+chmod +x /octopus-agent/shell/agent-restart.sh
+/octopus-agent/shell/agent-restart.sh

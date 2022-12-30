@@ -13,7 +13,6 @@ DependLibFiles=(
   wdd-lib-sys.sh
 )
 
-
 OctopusAgentUrl=https://happybirthday.107421.xyz/octopus-agent/
 
 RepoSourcePath=https://raw.githubusercontent.com/zeaslity/ProjectOctopus/main/source/src/main/java/io/wdd/source/shell
@@ -216,7 +215,6 @@ DownloadAllFile() {
   . ./lib/wdd-lib-os.sh
   CheckAndDownloadLatestVersion
 
-
   FunctionSuccess
   FunctionEnd
 
@@ -230,11 +228,6 @@ ModifySystemConfig(){
   ## 配置内核参数
   cat >/etc/sysctl.d/k8s.conf <<EOF
 net.ipv4.ip_forward = 1
-net.bridge.bridge-nf-call-ip6tables = 1
-net.bridge.bridge-nf-call-iptables = 1
-net.ipv6.conf.all.disable_ipv6 = 1
-net.ipv6.conf.default.disable_ipv6 = 1
-net.ipv6.conf.lo.disable_ipv6 = 1
 net.ipv6.conf.all.forwarding = 1
 EOF
 
@@ -343,7 +336,7 @@ BootUPAgent(){
   chmod +x $OctopusAgentPath/lib/wdd-lib-env.sh
   $OctopusAgentPath/lib/wdd-lib-env.sh
 
-  colorEcho $BLUE "start to daemon the agent pid"
+  colorEcho $BLUE "start to daemon the octopus agent"
   systemdAgent
 
   colorEcho $BLUE "start the agent!"

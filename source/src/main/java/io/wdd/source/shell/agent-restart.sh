@@ -5,7 +5,7 @@
 . /octopus-agent/shell/lib/wdd-lib-sys.sh
 
 
-log "[Octopus Agent Restart !]"
+log "Octopus Agent Restart !"
 
 FunctionStart
 
