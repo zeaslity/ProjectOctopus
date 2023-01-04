@@ -31,7 +31,7 @@ public class CollectAllExecutorFunction {
 
 
     /**
-     * store the Octopus Agent Functions and Reflection Class Path
+     * store the Octopus Agent Functions and Function Command List
      * key: function name
      * value: function shell List<String> contend
      */

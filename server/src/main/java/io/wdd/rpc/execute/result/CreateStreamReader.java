@@ -38,6 +38,12 @@ public class CreateStreamReader implements ApplicationContextAware {
         // prepare the environment
         prepareEnv();
 
+        // oldStreamKey equals streamKey don't need to do anything , just return
+        if (redisStreamReaderConfig.getStreamKey().equals(streamKey)) {
+            log.debug("redis listener container not change !");
+            return;
+        }
+
         // destroy the REDIS_STREAM_LISTENER_CONTAINER
         destroyStreamReader(streamKey);
 

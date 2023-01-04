@@ -1,12 +1,10 @@
 #!/bin/bash
 
-
 . /octopus-agent/shell/lib/wdd-lib-log.sh
 . /octopus-agent/shell/lib/wdd-lib-sys.sh
 
 #. .wdd-lib-log.sh
 #. .wdd-lib-sys.sh
-
 
 hostArchVersion=""
 hostArch=""
@@ -41,11 +39,22 @@ city=""
 org=""
 #### CollectSystemInfo ####
 
-
+#######################################
+# description
+# Arguments:
+#   1
+#######################################
 GoIOTest() {
   (LANG=C dd if=/dev/zero of=benchtest_$$ bs=512k count=$1 conv=fdatasync && rm -f benchtest_$$) 2>&1 | awk -F, '{io=$NF} END { print io}' | sed 's/^[ \t]*//;s/[ \t]*$//'
 }
 
+#######################################
+# description
+# Arguments:
+#   1
+# Returns:
+#   <unknown> ...
+#######################################
 calc_size() {
   local raw=$1
   local total_size=0
@@ -72,12 +81,35 @@ calc_size() {
   echo "${total_size} ${unit}"
 }
 
+#######################################
+# description
+# Arguments:
+#  None
+# Returns:
+#   <unknown> ...
+#######################################
 GethostArchInfo() {
   [ -f /etc/redhat-release ] && awk '{print $0}' /etc/redhat-release && return
   [ -f /etc/os-release ] && awk -F'[= "]' '/PRETTY_NAME/{print $3,$4,$5}' /etc/os-release && return
   [ -f /etc/lsb-release ] && awk -F'[="]+' '/DESCRIPTION/{print $2}' /etc/lsb-release && return
 }
 
+#######################################
+# description
+# Globals:
+#   freespace
+#   io1
+#   io2
+#   io3
+#   ioall
+#   ioavg
+#   ioraw1
+#   ioraw2
+#   ioraw3
+#   writemb
+# Arguments:
+#  None
+#######################################
 StartIOTest() {
   log "start IO speed test !"
   freespace=$(df -m . | awk 'NR==2 {print $4}')
@@ -105,11 +137,21 @@ StartIOTest() {
     echo " $(_red "Not enough space for I/O Speed test!")"
   fi
 
-
 }
 
+#######################################
+# description
+# Globals:
+#   cpuName
+#   sys_manu
+#   sys_product
+#   sys_ver
+#   virt
+#   virtualx
+# Arguments:
+#  None
+#######################################
 Check_Virtualization() {
-
 
   log "start to check host virtualization !"
 
@@ -131,21 +173,21 @@ Check_Virtualization() {
     virt="LXC"
   elif [[ -f /proc/user_beancounters ]]; then
     virt="OpenVZ"
-  elif [[ "${virtualx}" == *kvm-clock* ]]; then
+  elif [[ ${virtualx} == *kvm-clock*   ]]; then
     virt="KVM"
-  elif [[ "${sys_product}" == *KVM* ]]; then
+  elif [[ ${sys_product} == *KVM*   ]]; then
     virt="KVM"
-  elif [[ "${cpuName}" == *KVM* ]]; then
+  elif [[ ${cpuName} == *KVM*   ]]; then
     virt="KVM"
-  elif [[ "${cpuName}" == *QEMU* ]]; then
+  elif [[ ${cpuName} == *QEMU*   ]]; then
     virt="KVM"
-  elif [[ "${virtualx}" == *"VMware Virtual Platform"* ]]; then
+  elif [[ ${virtualx} == *"VMware Virtual Platform"*   ]]; then
     virt="VMware"
-  elif [[ "${sys_product}" == *"VMware Virtual Platform"* ]]; then
+  elif [[ ${sys_product} == *"VMware Virtual Platform"*   ]]; then
     virt="VMware"
-  elif [[ "${virtualx}" == *"Parallels Software International"* ]]; then
+  elif [[ ${virtualx} == *"Parallels Software International"*   ]]; then
     virt="Parallels"
-  elif [[ "${virtualx}" == *VirtualBox* ]]; then
+  elif [[ ${virtualx} == *VirtualBox*   ]]; then
     virt="VirtualBox"
   elif [[ -e /proc/xen ]]; then
     if grep -q "control_d" "/proc/xen/capabilities" 2>/dev/null; then
@@ -155,9 +197,9 @@ Check_Virtualization() {
     fi
   elif [ -f "/sys/hypervisor/type" ] && grep -q "xen" "/sys/hypervisor/type"; then
     virt="Xen"
-  elif [[ "${sys_manu}" == *"Microsoft Corporation"* ]]; then
-    if [[ "${sys_product}" == *"Virtual Machine"* ]]; then
-      if [[ "${sys_ver}" == *"7.0"* || "${sys_ver}" == *"Hyper-V" ]]; then
+  elif [[ ${sys_manu} == *"Microsoft Corporation"*   ]]; then
+    if [[ ${sys_product} == *"Virtual Machine"*   ]]; then
+      if [[ ${sys_ver} == *"7.0"* || ${sys_ver} == *"Hyper-V"     ]]; then
         virt="Hyper-V"
       else
         virt="Microsoft Virtual Machine"
@@ -167,12 +209,21 @@ Check_Virtualization() {
     virt="Dedicated"
   fi
 
-  
 }
 
+#######################################
+# description
+# Globals:
+#   city
+#   country
+#   org
+#   public_ipv4
+#   region
+# Arguments:
+#  None
+#######################################
 GetIpv4Info() {
 
-  
   log "start to get system  public ip info !"
 
   org="$(wget -q -T10 -O- ipinfo.io/org)"
@@ -181,10 +232,8 @@ GetIpv4Info() {
   region="$(wget -q -T10 -O- ipinfo.io/region)"
   public_ipv4="$(wget -q -T10 -O- ipinfo.io/ip)"
 
-
 }
 
-  
 log "start to collect system info !"
 
 check_sys
@@ -247,7 +296,6 @@ disk_used_size=$(
 disk_used_size=$(calc_size $disk_used_size)
 tcpctrl=$(sysctl net.ipv4.tcp_congestion_control | awk -F ' ' '{print $3}')
 
-
 # todo
 #  StartIOTest
 
@@ -262,7 +310,7 @@ if [[ $(cat /etc/hostname | cut -d"-" -f 3 | grep -c '^[0-9][0-9]') -gt 0 ]]; th
 else
     machineNumber=99
 fi
-cat >/etc/environment.d/octopus-agent.conf<<EOF
+cat >/etc/environment.d/octopus-agent.conf <<EOF
 serverName=${city}-${hostArch}-${machineNumber}
 serverIpPbV4=$public_ipv4
 serverIpInV4=
@@ -289,4 +337,3 @@ log "env collect complete!"
 source /etc/environment
 
 env
-
