@@ -33,8 +33,35 @@ public class CollectSystemInfo implements ApplicationContextAware {
 
     public AgentServerInfo agentServerInfo;
 
-    @Bean
-    @Lazy
+
+
+
+    @PostConstruct
+    private void getInjectServerInfo(){
+
+        log.info("[ Octopus Agent ]-- Starting getInjectServerInfo");
+
+        agentServerInfo = (AgentServerInfo) context.getBean("agentServerInfo");
+
+        if (ObjectUtils.isEmpty(agentServerInfo)) {
+            throw new MyRuntimeException(" Collect server info error !");
+        }
+
+        //log.info("host server info has been collected == {}", agentServerInfo);
+
+        // start to send message to Octopus Server
+        octopusAgentInitService.SendInfoToServer(agentServerInfo);
+
+        //log.info("PassThroughTopicName server info has been send to octopus server !");
+
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.context = applicationContext;
+    }
+
+    @Deprecated
     public void initialReadingEnvironment(){
 
         // https://zhuanlan.zhihu.com/p/449416472
@@ -83,30 +110,5 @@ public class CollectSystemInfo implements ApplicationContextAware {
             e.printStackTrace();
         }
 
-    }
-
-    @PostConstruct
-    private void getInjectServerInfo(){
-
-        log.info("Octopus Agent -- Starting getInjectServerInfo");
-
-        agentServerInfo = (AgentServerInfo) context.getBean("agentServerInfo");
-
-        if (ObjectUtils.isEmpty(agentServerInfo)) {
-            throw new MyRuntimeException(" Collect server info error !");
-        }
-
-        //log.info("host server info has been collected == {}", agentServerInfo);
-
-        // start to send message to Octopus Server
-        octopusAgentInitService.SendInfoToServer(agentServerInfo);
-
-        //log.info("PassThroughTopicName server info has been send to octopus server !");
-
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.context = applicationContext;
     }
 }

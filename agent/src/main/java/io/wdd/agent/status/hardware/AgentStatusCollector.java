@@ -2,10 +2,13 @@ package io.wdd.agent.status.hardware;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.wdd.agent.config.beans.init.AgentServerInfo;
+import io.wdd.agent.config.utils.TimeUtils;
 import io.wdd.agent.status.hardware.cpu.CpuInfo;
 import io.wdd.agent.status.hardware.memory.MemoryInfo;
 import io.wdd.agent.status.redisReporter.AgentStatus;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.util.ServerInfo;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import oshi.SystemInfo;
@@ -27,6 +30,9 @@ public class AgentStatusCollector {
     @Resource
     ObjectMapper objectMapper;
 
+    @Resource
+    AgentServerInfo agentServerInfo;
+
 
     private static final SystemInfo systemInfo;
     /**
@@ -47,14 +53,15 @@ public class AgentStatusCollector {
     }
 
 
-
-    public AgentStatus collect(){
+    public AgentStatus collect() {
 
         AgentStatus agentStatus = AgentStatusCache.get(0);
 
+        /* base */
+        agentStatus.setAgentName(agentServerInfo.getServerName());
+        agentStatus.setAgentTopicName(agentServerInfo.getAgentTopicName());
 
         /* CPU */
-        // help gc
         agentStatus.setCpuInfo(new CpuInfo(hardware.getProcessor(), 1000));
 
         /* Memory */
@@ -63,15 +70,20 @@ public class AgentStatusCollector {
         /* Storage */
         agentStatus.setDiskStoreInfo(hardware.getDiskStores());
 
-        return agentStatus;
+        /* Network */
+        agentStatus.setNetworkInfo(hardware.getNetworkIFs(false));
+        
 
+        /* Time */
+        agentStatus.setTime(TimeUtils.currentTimeString());
+
+        return agentStatus;
     }
 
 
-    private void sendAgentStatusToRedis(){
+    public void sendAgentStatusToRedis() {
 
         try {
-
 
             log.info("time is [{}] , and agent status are [{}]", LocalDateTime.now(), objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(collect()));
 

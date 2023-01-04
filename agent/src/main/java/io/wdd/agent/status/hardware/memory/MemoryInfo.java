@@ -36,7 +36,7 @@ public class MemoryInfo {
         return MemoryInfo.builder()
                 .memoryType(memory.getPhysicalMemory().get(0).getMemoryType())
                 .total(FormatUtils.formatData(memory.getTotal()))
-                .available(FormatUtils.formatRate(memory.getAvailable()))
+                .available(FormatUtils.formatData(memory.getAvailable()))
                 .usage(FormatUtils.formatData(memory.getTotal() - memory.getAvailable()))
                 .swapTotal(FormatUtils.formatData(virtualMemory.getSwapTotal()))
                 .swapUsage(FormatUtils.formatData(virtualMemory.getSwapUsed()))

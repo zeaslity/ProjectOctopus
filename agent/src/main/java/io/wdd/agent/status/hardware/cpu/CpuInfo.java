@@ -1,9 +1,15 @@
 package io.wdd.agent.status.hardware.cpu;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import oshi.hardware.CentralProcessor;
 
 import java.text.DecimalFormat;
 
+@AllArgsConstructor
+@Data
+@NoArgsConstructor
 public class CpuInfo {
 
 

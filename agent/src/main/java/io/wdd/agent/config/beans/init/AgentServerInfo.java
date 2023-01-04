@@ -110,4 +110,10 @@ public class AgentServerInfo {
     @Value("${machineId}")
     private String machineId;
 
+    /*
+    *  get from octopus server at the end of initialization
+    *
+    * */
+    private String agentTopicName;
+
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wdd.agent.config.beans.executor.CommandLog;
 import io.wdd.agent.config.beans.executor.StreamSenderEntity;
+import io.wdd.agent.config.utils.TimeUtils;
 import io.wdd.agent.executor.thread.LogToArrayListCache;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -49,17 +50,7 @@ public class StreamSender {
 
     private final ArrayList<String> cacheLogList = new ArrayList<>(256);
 
-    private static ByteBuffer currentTimeByteBuffer() {
 
-        byte[] timeBytes = LocalDateTime.now(ZoneId.of("UTC+8")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")).getBytes(StandardCharsets.UTF_8);
-
-        return ByteBuffer.wrap(timeBytes);
-    }
-
-    private static String currentTimeString() {
-
-        return LocalDateTime.now(ZoneId.of("UTC+8")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    }
 
     @SneakyThrows
     private static Map generateFakeData() {
@@ -130,7 +121,7 @@ public class StreamSender {
 
         HashMap<String, String> map = new HashMap<>(16);
 
-        map.put(currentTimeString(), content);
+        map.put(TimeUtils.currentTimeString(), content);
 
         return doSendLogToStream(streamKey, map);
 

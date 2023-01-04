@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import oshi.hardware.HWDiskStore;
+import oshi.hardware.NetworkIF;
 
 import java.util.List;
 
@@ -17,13 +18,19 @@ import java.util.List;
 @SuperBuilder(toBuilder = true)
 public class AgentStatus {
 
-    CpuInfo cpuInfo;
+    String time;
 
+    String agentName;
+
+    String agentTopicName;
+
+
+    CpuInfo cpuInfo;
 
     MemoryInfo memoryInfo;
 
-
     List<HWDiskStore> diskStoreInfo;
 
+    List<NetworkIF> networkInfo;
 
 }

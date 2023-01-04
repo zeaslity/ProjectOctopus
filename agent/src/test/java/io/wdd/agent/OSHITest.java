@@ -2,6 +2,7 @@ package io.wdd.agent;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.wdd.agent.status.hardware.AgentStatusCollector;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import oshi.SystemInfo;
@@ -10,12 +11,23 @@ import oshi.software.os.OSFileStore;
 import oshi.software.os.OperatingSystem;
 import oshi.util.tuples.Pair;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootTest
 public class OSHITest {
+
+    @Resource
+    AgentStatusCollector agentStatusCollector;
+
+    @Test
+    void testCollect(){
+        agentStatusCollector.sendAgentStatusToRedis();
+
+    }
 
     @Test
     void getSystemHardwareInfo(){
@@ -45,8 +57,24 @@ public class OSHITest {
             GlobalMemory mem = hal.getMemory();
             System.out.println(mapper.writeValueAsString(mem));
 
+            for (int i = 0; i < 100; i++) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                objectMapper.setDefaultLeniency(true);
+                String s = objectMapper.writeValueAsString(mem);
+            }
+
+            TimeUnit.SECONDS.sleep(10);
+            GlobalMemory globalMemory = hal.getMemory();
+            System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(globalMemory));
+
+            // DiskStorage
+            List<HWDiskStore> diskStores = hal.getDiskStores();
+            System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(diskStores));
+
         } catch (JsonProcessingException e) {
             System.out.println("Exception encountered: " + e.getMessage());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -112,6 +140,8 @@ public class OSHITest {
         }
         return -1;
     }
+
+
 
 
 }
