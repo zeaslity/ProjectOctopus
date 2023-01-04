@@ -1,4 +1,4 @@
-package io.wdd.agent.status.hardware.memory;
+package io.wdd.agent.status.hardware;
 
 import io.wdd.agent.status.hardware.config.FormatUtils;
 import lombok.AllArgsConstructor;

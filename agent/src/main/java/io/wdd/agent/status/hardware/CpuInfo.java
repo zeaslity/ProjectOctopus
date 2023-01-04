@@ -1,4 +1,4 @@
-package io.wdd.agent.status.hardware.cpu;
+package io.wdd.agent.status.hardware;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,24 +16,29 @@ public class CpuInfo {
     private static final DecimalFormat LOAD_FORMAT = new DecimalFormat("#.00");
 
     /**
-     * CPU核心数
+     * CPU总线程
      */
-    private Integer cpuNum;
+    private Integer cpuTotal;
+    
+    /**
+    * CPU核心数
+    * */
+    private Integer coreTotal;
 
     /**
-     * CPU总的使用率
+     * CPU总数  计算方式理论上为 cpuTotal * 100
      */
-    private double toTal;
+    private double cpuUsageTotol;
 
     /**
      * CPU系统使用率
      */
-    private double sys;
+    private double systemCpuUsage;
 
     /**
      * CPU用户使用率
      */
-    private double user;
+    private double userCpuUsage;
 
     /**
      * CPU当前等待率
@@ -50,10 +55,15 @@ public class CpuInfo {
      */
     private String cpuModel;
 
+    private double[] cpuLoadAverage;
+
+    private double[] systemLoadAverage;
+
     /**
      * CPU型号信息
      */
     private CpuTicks ticks;
+
 
     public CpuInfo(CentralProcessor processor, long waitingTime){
         this.init(processor, waitingTime);
@@ -72,15 +82,27 @@ public class CpuInfo {
         final CpuTicks ticks = new CpuTicks(processor, waitingTime);
         this.ticks = ticks;
 
-        this.cpuNum = processor.getLogicalProcessorCount();
+        this.cpuTotal = processor.getLogicalProcessorCount();
+        this.coreTotal = processor.getPhysicalProcessorCount();
+
         this.cpuModel = processor.toString();
 
         final long totalCpu = ticks.totalCpu();
-        this.toTal = totalCpu;
-        this.sys = formatDouble(ticks.cSys, totalCpu);
-        this.user = formatDouble(ticks.user, totalCpu);
+        this.cpuUsageTotol = totalCpu;
+
+        this.systemCpuUsage = formatDouble(ticks.cSys, totalCpu);
+        this.userCpuUsage = formatDouble(ticks.user, totalCpu);
+
         this.wait = formatDouble(ticks.ioWait, totalCpu);
         this.free = formatDouble(ticks.idle, totalCpu);
+
+
+        // system load average
+        this.systemLoadAverage = processor.getSystemLoadAverage(3);
+
+        // cpu load average
+        this.cpuLoadAverage = processor.getProcessorCpuLoad(waitingTime);
+
     }
 
     /**

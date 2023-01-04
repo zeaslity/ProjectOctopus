@@ -1,4 +1,4 @@
-package io.wdd.agent.status.hardware.cpu;
+package io.wdd.agent.status.hardware;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

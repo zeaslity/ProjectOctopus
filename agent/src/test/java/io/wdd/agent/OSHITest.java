@@ -2,7 +2,7 @@ package io.wdd.agent;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.wdd.agent.status.hardware.AgentStatusCollector;
+import io.wdd.agent.status.AgentStatusCollector;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import oshi.SystemInfo;

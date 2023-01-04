@@ -1,14 +1,12 @@
-package io.wdd.agent.status.hardware;
+package io.wdd.agent.status;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wdd.agent.config.beans.init.AgentServerInfo;
 import io.wdd.agent.config.utils.TimeUtils;
-import io.wdd.agent.status.hardware.cpu.CpuInfo;
-import io.wdd.agent.status.hardware.memory.MemoryInfo;
-import io.wdd.agent.status.redisReporter.AgentStatus;
+import io.wdd.agent.status.hardware.CpuInfo;
+import io.wdd.agent.status.hardware.MemoryInfo;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.util.ServerInfo;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import oshi.SystemInfo;
@@ -72,7 +70,9 @@ public class AgentStatusCollector {
 
         /* Network */
         agentStatus.setNetworkInfo(hardware.getNetworkIFs(false));
-        
+
+        /* operating system info */
+        agentStatus.setOsInfo(os);
 
         /* Time */
         agentStatus.setTime(TimeUtils.currentTimeString());
