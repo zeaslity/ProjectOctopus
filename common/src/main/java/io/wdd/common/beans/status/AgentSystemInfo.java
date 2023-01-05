@@ -40,7 +40,7 @@ public class AgentSystemInfo {
                                 ZoneId.of("UTC+8")
                         )
                 ))
-                .upTime(TimeUtils.toRelative(os.getSystemUptime()*1000))
+                .upTime(TimeUtils.toRelative(os.getSystemUptime()*1000, 3))
                 .build();
 
     }
