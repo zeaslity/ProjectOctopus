@@ -6,7 +6,6 @@ import io.wdd.agent.config.beans.init.AgentServerInfo;
 import io.wdd.common.beans.status.*;
 import io.wdd.common.utils.TimeUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.connection.stream.StreamRecords;
 import org.springframework.data.redis.connection.stream.StringRecord;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,7 +15,6 @@ import oshi.SystemInfo;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.software.os.OperatingSystem;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
@@ -36,6 +34,8 @@ public class AgentStatusCollector {
      */
     private static final OperatingSystem os;
     private static final List<AgentStatus> AgentStatusCache = Collections.singletonList(new AgentStatus());
+    private static final long ReportInitDelay = 60000;
+    private static final long ReportFixedRate = 15000;
 
     static {
         systemInfo = new SystemInfo();
@@ -50,11 +50,6 @@ public class AgentStatusCollector {
     @Resource
     AgentServerInfo agentServerInfo;
 
-
-    private static final long ReportInitDelay = 60000;
-    private static final long ReportFixedRate = 15000;
-
-
     public AgentStatus collect() {
 
         AgentStatus agentStatus = AgentStatusCache.get(0);
@@ -67,24 +62,16 @@ public class AgentStatusCollector {
         agentStatus.setCpuInfo(new CpuInfo(hardware.getProcessor(), 1000));
 
         /* Memory */
-        agentStatus.setMemoryInfo(
-                MemoryInfo.build(hardware.getMemory())
-        );
+        agentStatus.setMemoryInfo(MemoryInfo.build(hardware.getMemory()));
 
         /* Storage */
-        agentStatus.setDiskStoreInfo(
-                DiskInfo.mapFromDiskStore(hardware.getDiskStores())
-                );
+        agentStatus.setDiskStoreInfo(DiskInfo.mapFromDiskStore(hardware.getDiskStores()));
 
         /* Network */
-        agentStatus.setNetworkInfo(
-                NetworkInfo.mapFromNetworkIFS(hardware.getNetworkIFs(false))
-        );
+        agentStatus.setNetworkInfo(NetworkInfo.mapFromNetworkIFS(hardware.getNetworkIFs(false)));
 
         /* operating system info */
-        agentStatus.setOsInfo(
-                AgentSystemInfo.mapFromOHSISystem(os)
-        );
+        agentStatus.setOsInfo(AgentSystemInfo.mapFromOHSISystem(os));
 
         /* Time */
         agentStatus.setTime(TimeUtils.currentTimeString());
@@ -95,7 +82,7 @@ public class AgentStatusCollector {
     /**
      * when server first time boot up
      * the server info are not collected completely
-     *  this will be executed to update or complete the octopus agent server info
+     * this will be executed to update or complete the octopus agent server info
      */
 //    @Scheduled(initialDelay = 180000)
 //    public void updateAgentServerInfo(){
@@ -117,7 +104,7 @@ public class AgentStatusCollector {
 
             StringRecord stringRecord = StreamRecords.string(map).withStreamKey(statusStreamKey);
 
-            log.debug("Agent Status is ==> {}",map);
+            log.debug("Agent Status is ==> {}", map);
             redisTemplate.opsForStream().add(stringRecord);
 
         } catch (JsonProcessingException e) {

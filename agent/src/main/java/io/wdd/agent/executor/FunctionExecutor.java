@@ -2,7 +2,7 @@ package io.wdd.agent.executor;
 
 import com.alibaba.nacos.api.config.listener.Listener;
 import com.alibaba.nacos.api.exception.NacosException;
-import io.wdd.agent.executor.function.CollectAllExecutorFunction;
+import io.wdd.agent.config.utils.NacosConfigurationCollector;
 import io.wdd.common.beans.executor.ExecutionMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -13,8 +13,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-import static io.wdd.agent.executor.function.CollectAllExecutorFunction.ALL_FUNCTION_MAP;
-import static io.wdd.agent.executor.function.CollectAllExecutorFunction.NacosConfigService;
+import static io.wdd.agent.config.utils.NacosConfigurationCollector.ALL_FUNCTION_MAP;
+import static io.wdd.agent.config.utils.NacosConfigurationCollector.NacosConfigService;
 
 @Service
 @Slf4j
@@ -25,7 +25,7 @@ public class FunctionExecutor {
 
     // todo called by timer
     @Resource
-    CollectAllExecutorFunction collectAllExecutorFunction;
+    NacosConfigurationCollector nacosConfigurationCollector;
 
     public void execute(ExecutionMessage executionMessage) {
 
@@ -74,7 +74,7 @@ public class FunctionExecutor {
 
         // add listener to listen to the real-time change of the Function Shell Scripts
         try {
-            NacosConfigService.addListener(collectAllExecutorFunction.dataId + "." + collectAllExecutorFunction.fileExtension, collectAllExecutorFunction.group, new Listener() {
+            NacosConfigService.addListener(nacosConfigurationCollector.executorFunctionDataId + "." + nacosConfigurationCollector.fileExtension, nacosConfigurationCollector.group, new Listener() {
                 @Override
                 public Executor getExecutor() {
                     return null;
@@ -85,7 +85,7 @@ public class FunctionExecutor {
 
                     log.info("detected nacos function shell update ! {}", s);
 
-                    collectAllExecutorFunction.parseNacosFunctionYamlToMap(s);
+                    nacosConfigurationCollector.parseNacosFunctionYamlToMap(s);
 
                 }
             });

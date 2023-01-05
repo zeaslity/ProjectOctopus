@@ -1,14 +1,12 @@
 package io.wdd.agent;
 
-import io.wdd.agent.executor.function.CollectAllExecutorFunction;
+import io.wdd.agent.config.utils.NacosConfigurationCollector;
 import io.wdd.agent.executor.FunctionExecutor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -27,7 +25,7 @@ class AgentApplicationTests {
     FunctionExecutor functionExecutor;
 
     @Resource
-    CollectAllExecutorFunction collectAllExecutorFunction;
+    NacosConfigurationCollector nacosConfigurationCollector;
 
 
 //    @Test

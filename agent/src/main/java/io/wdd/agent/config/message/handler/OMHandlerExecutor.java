@@ -13,7 +13,7 @@ import javax.annotation.Resource;
 
 import java.io.IOException;
 
-import static io.wdd.agent.executor.function.CollectAllExecutorFunction.ALL_FUNCTION_MAP;
+import static io.wdd.agent.config.utils.NacosConfigurationCollector.ALL_FUNCTION_MAP;
 
 @Component
 public class OMHandlerExecutor extends AbstractOctopusMessageHandler {
