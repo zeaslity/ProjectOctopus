@@ -3,6 +3,7 @@ package io.wdd.common.beans.status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import oshi.hardware.CentralProcessor;
 
 import java.text.DecimalFormat;
@@ -19,10 +20,10 @@ public class CpuInfo {
      * CPU总线程
      */
     private Integer cpuTotal;
-    
+
     /**
-    * CPU核心数
-    * */
+     * CPU核心数
+     */
     private Integer coreTotal;
 
     /**
@@ -53,56 +54,14 @@ public class CpuInfo {
     /**
      * CPU型号信息
      */
-    private CentralProcessor.ProcessorIdentifier cpuModel;
+    private CpuModel cpuModel;
 
     private double[] cpuLoadAverage;
 
     private double[] systemLoadAverage;
 
-    /**
-     * CPU型号信息
-     */
-    //private CpuTicks ticks;
-
-
-    public CpuInfo(CentralProcessor processor, long waitingTime){
+    public CpuInfo(CentralProcessor processor, long waitingTime) {
         this.init(processor, waitingTime);
-    }
-
-
-    /**
-     * 获取指定等待时间内系统CPU 系统使用率、用户使用率、利用率等等 相关信息
-     *
-     * @param processor   {@link CentralProcessor}
-     * @param waitingTime 设置等待时间，单位毫秒
-     * @since 5.7.12
-     */
-    private void init(CentralProcessor processor, long waitingTime) {
-
-        final CpuTicks ticks = new CpuTicks(processor, waitingTime);
-        //this.ticks = ticks;
-
-        this.cpuTotal = processor.getLogicalProcessorCount();
-        this.coreTotal = processor.getPhysicalProcessorCount();
-
-        this.cpuModel = processor.getProcessorIdentifier();
-
-        final long totalCpu = ticks.totalCpu();
-        this.cpuUsageTotol = totalCpu;
-
-        this.systemCpuUsage = formatDouble(ticks.cSys, totalCpu);
-        this.userCpuUsage = formatDouble(ticks.user, totalCpu);
-
-        this.wait = formatDouble(ticks.ioWait, totalCpu);
-        this.free = formatDouble(ticks.idle, totalCpu);
-
-
-        // system load average
-        this.systemLoadAverage = processor.getSystemLoadAverage(3);
-
-        // cpu load average
-        this.cpuLoadAverage = formatCpuLoadAverage(processor.getProcessorCpuLoad(waitingTime));
-
     }
 
     /**
@@ -125,7 +84,7 @@ public class CpuInfo {
         return Double.parseDouble(LOAD_FORMAT.format(doubleNum));
     }
 
-    private static double[] formatCpuLoadAverage(double[] cpuLoadAverage){
+    private static double[] formatCpuLoadAverage(double[] cpuLoadAverage) {
         double[] result = new double[cpuLoadAverage.length];
 
         for (int i = 0; i < cpuLoadAverage.length; i++) {
@@ -133,6 +92,73 @@ public class CpuInfo {
         }
 
         return result;
+    }
+
+    /**
+     * 获取指定等待时间内系统CPU 系统使用率、用户使用率、利用率等等 相关信息
+     *
+     * @param processor   {@link CentralProcessor}
+     * @param waitingTime 设置等待时间，单位毫秒
+     * @since 5.7.12
+     */
+    private void init(CentralProcessor processor, long waitingTime) {
+
+        final CpuTicks ticks = new CpuTicks(processor, waitingTime);
+        //this.ticks = ticks;
+
+        this.cpuTotal = processor.getLogicalProcessorCount();
+        this.coreTotal = processor.getPhysicalProcessorCount();
+
+        this.cpuModel = mapFromProcessorIdentifier(processor.getProcessorIdentifier());
+
+        final long totalCpu = ticks.totalCpu();
+        this.cpuUsageTotol = totalCpu;
+
+        this.systemCpuUsage = formatDouble(ticks.cSys, totalCpu);
+        this.userCpuUsage = formatDouble(ticks.user, totalCpu);
+
+        this.wait = formatDouble(ticks.ioWait, totalCpu);
+        this.free = formatDouble(ticks.idle, totalCpu);
+
+
+        // system load average
+        this.systemLoadAverage = processor.getSystemLoadAverage(3);
+
+        // cpu load average
+        this.cpuLoadAverage = formatCpuLoadAverage(processor.getProcessorCpuLoad(waitingTime));
+
+    }
+
+    private CpuModel mapFromProcessorIdentifier(CentralProcessor.ProcessorIdentifier id) {
+
+        return CpuModel.builder()
+                .cpu64bit(id.isCpu64bit())
+                .name(id.getName())
+                .identifier(id.getIdentifier())
+                .microArch(id.getMicroarchitecture())
+                .vendor(id.getVendor())
+                .build();
+    }
+
+    /**
+     * CPU型号信息
+     */
+    //private CpuTicks ticks;
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @SuperBuilder(toBuilder = true)
+    private static class CpuModel {
+        String name;
+
+        String vendor;
+
+        String microArch;
+
+        boolean cpu64bit;
+
+        String identifier;
     }
 
 }
