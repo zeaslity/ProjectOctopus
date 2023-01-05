@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -43,7 +42,7 @@ public class TimeUtils {
      *
      * */
 
-    private static final Map<String, Long> times = new HashMap<>(16);
+    private static final Map<String, Long> times = new LinkedHashMap<>();
 
     static {
         times.put("year", TimeUnit.DAYS.toMillis(365));

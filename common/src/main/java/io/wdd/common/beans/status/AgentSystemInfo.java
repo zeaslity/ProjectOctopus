@@ -10,7 +10,6 @@ import oshi.software.os.OperatingSystem;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.concurrent.TimeUnit;
 
 @Data
 @AllArgsConstructor
@@ -36,7 +35,7 @@ public class AgentSystemInfo {
                 .manufacturer(os.getManufacturer())
                 .bootTime(TimeUtils.localDateTimeString(
                         LocalDateTime.ofInstant(
-                                Instant.ofEpochMilli(os.getSystemBootTime()),
+                                Instant.ofEpochSecond(os.getSystemBootTime()),
                                 ZoneId.of("UTC+8")
                         )
                 ))

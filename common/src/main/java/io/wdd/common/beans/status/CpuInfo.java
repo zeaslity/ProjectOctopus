@@ -53,7 +53,7 @@ public class CpuInfo {
     /**
      * CPU型号信息
      */
-    private String cpuModel;
+    private CentralProcessor.ProcessorIdentifier cpuModel;
 
     private double[] cpuLoadAverage;
 
@@ -62,7 +62,7 @@ public class CpuInfo {
     /**
      * CPU型号信息
      */
-    private CpuTicks ticks;
+    //private CpuTicks ticks;
 
 
     public CpuInfo(CentralProcessor processor, long waitingTime){
@@ -80,12 +80,12 @@ public class CpuInfo {
     private void init(CentralProcessor processor, long waitingTime) {
 
         final CpuTicks ticks = new CpuTicks(processor, waitingTime);
-        this.ticks = ticks;
+        //this.ticks = ticks;
 
         this.cpuTotal = processor.getLogicalProcessorCount();
         this.coreTotal = processor.getPhysicalProcessorCount();
 
-        this.cpuModel = processor.toString();
+        this.cpuModel = processor.getProcessorIdentifier();
 
         final long totalCpu = ticks.totalCpu();
         this.cpuUsageTotol = totalCpu;
@@ -101,7 +101,7 @@ public class CpuInfo {
         this.systemLoadAverage = processor.getSystemLoadAverage(3);
 
         // cpu load average
-        this.cpuLoadAverage = processor.getProcessorCpuLoad(waitingTime);
+        this.cpuLoadAverage = formatCpuLoadAverage(processor.getProcessorCpuLoad(waitingTime));
 
     }
 
@@ -118,6 +118,21 @@ public class CpuInfo {
             return 0D;
         }
         return Double.parseDouble(LOAD_FORMAT.format(tick <= 0 ? 0 : (100d * tick / totalCpu)));
+    }
+
+    private static double formatDouble(double doubleNum) {
+
+        return Double.parseDouble(LOAD_FORMAT.format(doubleNum));
+    }
+
+    private static double[] formatCpuLoadAverage(double[] cpuLoadAverage){
+        double[] result = new double[cpuLoadAverage.length];
+
+        for (int i = 0; i < cpuLoadAverage.length; i++) {
+            result[i] = formatDouble(cpuLoadAverage[i]);
+        }
+
+        return result;
     }
 
 }

@@ -90,12 +90,12 @@ public class AgentStatusCollector {
      * the server info are not collected completely
      *  this will be executed to update or complete the octopus agent server info
      */
-    @Scheduled(initialDelay = 180000)
-    public void updateAgentServerInfo(){
-
-
-
-    }
+//    @Scheduled(initialDelay = 180000)
+//    public void updateAgentServerInfo(){
+//
+//
+//
+//    }
 
     // agent boot up 120s then start to report its status
     // at the fix rate of 15s
