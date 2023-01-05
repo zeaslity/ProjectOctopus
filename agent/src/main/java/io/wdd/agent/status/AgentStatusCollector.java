@@ -3,13 +3,8 @@ package io.wdd.agent.status;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wdd.agent.config.beans.init.AgentServerInfo;
-import io.wdd.agent.config.utils.TimeUtils;
-import io.wdd.common.beans.status.CpuInfo;
-import io.wdd.common.beans.status.DiskInfo;
-import io.wdd.common.beans.status.MemoryInfo;
-import io.wdd.common.beans.status.NetworkInfo;
-import io.wdd.common.beans.status.AgentStatus;
-import io.wdd.common.utils.FormatUtils;
+import io.wdd.common.beans.status.*;
+import io.wdd.common.utils.TimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.stream.StreamRecords;
 import org.springframework.data.redis.connection.stream.StringRecord;
@@ -17,7 +12,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import oshi.SystemInfo;
-import oshi.hardware.HWDiskStore;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.software.os.OperatingSystem;
 
@@ -25,7 +19,6 @@ import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -82,7 +75,9 @@ public class AgentStatusCollector {
         );
 
         /* operating system info */
-        agentStatus.setOsInfo(os);
+        agentStatus.setOsInfo(
+                AgentSystemInfo.mapFromOHSISystem(os)
+        );
 
         /* Time */
         agentStatus.setTime(TimeUtils.currentTimeString());

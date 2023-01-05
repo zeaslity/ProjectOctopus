@@ -30,6 +30,6 @@ public class AgentStatus {
 
     List<NetworkInfo> networkInfo;
 
-    OperatingSystem osInfo;
+    AgentSystemInfo osInfo;
 
 }
