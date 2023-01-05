@@ -1,4 +1,4 @@
-package io.wdd.agent.status.hardware.config;
+package io.wdd.common.utils;
 
 import java.text.DecimalFormat;
 

@@ -17,6 +17,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static io.wdd.rpc.execute.result.RedisStreamReaderConfig.COMMAND_RESULT_REDIS_STREAM_LISTENER_CONTAINER;
+
 @Service
 @Slf4j
 public class CoreExecutionServiceImpl implements CoreExecutionService {
@@ -68,7 +70,7 @@ public class CoreExecutionServiceImpl implements CoreExecutionService {
         log.debug("set consumer group for the stream key with => [ {} ]", resultKey);
 
         // change the redis stream listener container
-        createStreamReader.registerStreamReader(resultKey);
+        createStreamReader.registerStreamReader(COMMAND_RESULT_REDIS_STREAM_LISTENER_CONTAINER, resultKey);
 
         // send the message
         messageSender.send(octopusMessage);

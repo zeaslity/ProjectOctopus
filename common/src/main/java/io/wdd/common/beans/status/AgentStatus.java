@@ -1,14 +1,10 @@
-package io.wdd.agent.status;
+package io.wdd.common.beans.status;
 
 
-import io.wdd.agent.status.hardware.CpuInfo;
-import io.wdd.agent.status.hardware.MemoryInfo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import oshi.hardware.HWDiskStore;
-import oshi.hardware.NetworkIF;
 import oshi.software.os.OperatingSystem;
 
 import java.util.List;
@@ -30,9 +26,9 @@ public class AgentStatus {
 
     MemoryInfo memoryInfo;
 
-    List<HWDiskStore> diskStoreInfo;
+    List<DiskInfo> diskStoreInfo;
 
-    List<NetworkIF> networkInfo;
+    List<NetworkInfo> networkInfo;
 
     OperatingSystem osInfo;
 

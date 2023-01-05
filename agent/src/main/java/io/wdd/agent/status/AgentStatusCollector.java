@@ -4,8 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wdd.agent.config.beans.init.AgentServerInfo;
 import io.wdd.agent.config.utils.TimeUtils;
-import io.wdd.agent.status.hardware.CpuInfo;
-import io.wdd.agent.status.hardware.MemoryInfo;
+import io.wdd.common.beans.status.CpuInfo;
+import io.wdd.common.beans.status.DiskInfo;
+import io.wdd.common.beans.status.MemoryInfo;
+import io.wdd.common.beans.status.NetworkInfo;
+import io.wdd.common.beans.status.AgentStatus;
+import io.wdd.common.utils.FormatUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.stream.StreamRecords;
 import org.springframework.data.redis.connection.stream.StringRecord;
@@ -13,6 +17,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import oshi.SystemInfo;
+import oshi.hardware.HWDiskStore;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.software.os.OperatingSystem;
 
@@ -20,6 +25,7 @@ import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -61,13 +67,19 @@ public class AgentStatusCollector {
         agentStatus.setCpuInfo(new CpuInfo(hardware.getProcessor(), 1000));
 
         /* Memory */
-        agentStatus.setMemoryInfo(new MemoryInfo().build(hardware.getMemory()));
+        agentStatus.setMemoryInfo(
+                MemoryInfo.build(hardware.getMemory())
+        );
 
         /* Storage */
-        agentStatus.setDiskStoreInfo(hardware.getDiskStores());
+        agentStatus.setDiskStoreInfo(
+                DiskInfo.mapFromDiskStore(hardware.getDiskStores())
+                );
 
         /* Network */
-        agentStatus.setNetworkInfo(hardware.getNetworkIFs(false));
+        agentStatus.setNetworkInfo(
+                NetworkInfo.mapFromNetworkIFS(hardware.getNetworkIFs(false))
+        );
 
         /* operating system info */
         agentStatus.setOsInfo(os);
@@ -78,10 +90,21 @@ public class AgentStatusCollector {
         return agentStatus;
     }
 
+    /**
+     * when server first time boot up
+     * the server info are not collected completely
+     *  this will be executed to update or complete the octopus agent server info
+     */
+    @Scheduled(initialDelay = 180000)
+    public void updateAgentServerInfo(){
 
-    // agent boot up 60s then start to report its status
+
+
+    }
+
+    // agent boot up 120s then start to report its status
     // at the fix rate of 15s
-    @Scheduled(initialDelay = 60000, fixedRate = 5000)
+    @Scheduled(initialDelay = 60000, fixedRate = 15000)
     public void sendAgentStatusToRedis() {
 
         try {
@@ -100,6 +123,5 @@ public class AgentStatusCollector {
         }
 
     }
-
 
 }

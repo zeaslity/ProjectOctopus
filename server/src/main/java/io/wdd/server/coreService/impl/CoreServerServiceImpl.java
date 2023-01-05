@@ -11,6 +11,7 @@ import io.wdd.server.coreService.CoreServerService;
 import io.wdd.server.service.*;
 import io.wdd.server.utils.EntityUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -85,8 +87,22 @@ public class CoreServerServiceImpl implements CoreServerService {
     @Override
     public boolean serverCreateOrUpdate(ServerInfoVO serverInfoVO) {
 
-        ServerInfoPO serverInfoPO = EntityUtils.cvToTarget(serverInfoVO, ServerInfoPO.class);
-        return serverInfoService.saveOrUpdate(serverInfoPO);
+        ServerInfoPO po = new LambdaQueryChainWrapper<ServerInfoPO>(serverInfoService.getBaseMapper())
+                .eq(ServerInfoPO::getServerName, serverInfoVO.getServerName()).one();
+
+        if (ObjectUtils.isNotEmpty(po)) {
+            try {
+                org.apache.commons.beanutils.BeanUtils.copyProperties(po, serverInfoVO);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            po = EntityUtils.cvToTarget(serverInfoVO, ServerInfoPO.class);
+        }
+
+        return serverInfoService.saveOrUpdate(po);
     }
 
     @Override

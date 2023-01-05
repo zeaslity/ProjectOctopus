@@ -13,6 +13,9 @@ import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import java.util.List;
 
+import static io.wdd.rpc.execute.result.RedisStreamReaderConfig.AGENT_STATUS_REDIS_STREAM_LISTENER_CONTAINER;
+import static io.wdd.rpc.execute.result.RedisStreamReaderConfig.COMMAND_RESULT_REDIS_STREAM_LISTENER_CONTAINER;
+
 @RestController
 @RequestMapping("octopus/server/executor")
 public class ExecutionController {
@@ -47,7 +50,17 @@ public class ExecutionController {
             @RequestParam(value = "streamKey") String streamKey
     ) {
 
-        createStreamReader.registerStreamReader(streamKey);
+        createStreamReader.registerStreamReader(COMMAND_RESULT_REDIS_STREAM_LISTENER_CONTAINER ,streamKey);
+
+    }
+
+
+    @PostMapping("/agentStatusStream")
+    public void getAgentStatus(
+            @RequestParam(value = "streamKey") String streamKey
+    ) {
+
+        createStreamReader.registerStreamReader(AGENT_STATUS_REDIS_STREAM_LISTENER_CONTAINER ,streamKey);
 
     }
 

@@ -1,4 +1,4 @@
-package io.wdd.agent.status.hardware;
+package io.wdd.common.beans.status;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

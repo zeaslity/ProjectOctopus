@@ -1,6 +1,6 @@
-package io.wdd.agent.status.hardware;
+package io.wdd.common.beans.status;
 
-import io.wdd.agent.status.hardware.config.FormatUtils;
+import io.wdd.common.utils.FormatUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,7 +30,7 @@ public class MemoryInfo {
 
     String swapUsage;
 
-    public MemoryInfo build(GlobalMemory memory) {
+    public static MemoryInfo build(GlobalMemory memory) {
 
         VirtualMemory virtualMemory = memory.getVirtualMemory();
         return MemoryInfo.builder()
