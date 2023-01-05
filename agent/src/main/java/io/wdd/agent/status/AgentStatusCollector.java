@@ -6,6 +6,7 @@ import io.wdd.agent.config.beans.init.AgentServerInfo;
 import io.wdd.common.beans.status.*;
 import io.wdd.common.utils.TimeUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.connection.stream.StreamRecords;
 import org.springframework.data.redis.connection.stream.StringRecord;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -15,6 +16,7 @@ import oshi.SystemInfo;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.software.os.OperatingSystem;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
@@ -47,6 +49,11 @@ public class AgentStatusCollector {
     ObjectMapper objectMapper;
     @Resource
     AgentServerInfo agentServerInfo;
+
+
+    private static final long ReportInitDelay = 60000;
+    private static final long ReportFixedRate = 15000;
+
 
     public AgentStatus collect() {
 
@@ -99,7 +106,7 @@ public class AgentStatusCollector {
 
     // agent boot up 120s then start to report its status
     // at the fix rate of 15s
-    @Scheduled(initialDelay = 60000, fixedRate = 15000)
+    @Scheduled(initialDelay = ReportInitDelay, fixedRate = ReportFixedRate)
     public void sendAgentStatusToRedis() {
 
         try {

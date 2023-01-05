@@ -15,6 +15,7 @@ public class CpuInfo {
 
 
     private static final DecimalFormat LOAD_FORMAT = new DecimalFormat("#.00");
+    private static final double GHZ_UNIT = 1000000000d;
 
     /**
      * CPU总线程
@@ -56,6 +57,10 @@ public class CpuInfo {
      */
     private CpuModel cpuModel;
 
+    private double maxFreq;
+
+    private double[] runFreq;
+
     private double[] cpuLoadAverage;
 
     private double[] systemLoadAverage;
@@ -94,6 +99,22 @@ public class CpuInfo {
         return result;
     }
 
+    private static double formatCpuFrequency(long freq){
+
+        return Double.parseDouble(LOAD_FORMAT.format(freq / GHZ_UNIT));
+    }
+
+    private static double[] formatCpuFrequencyList(long[] freqList){
+
+        int length = freqList.length;
+        double[] result = new double[length];
+
+        for (int i = 0; i < length; i++) {
+            result[i] = formatCpuFrequency(freqList[i]);
+        }
+        return result;
+    }
+
     /**
      * 获取指定等待时间内系统CPU 系统使用率、用户使用率、利用率等等 相关信息
      *
@@ -106,20 +127,25 @@ public class CpuInfo {
         final CpuTicks ticks = new CpuTicks(processor, waitingTime);
         //this.ticks = ticks;
 
+        // base core info
         this.cpuTotal = processor.getLogicalProcessorCount();
         this.coreTotal = processor.getPhysicalProcessorCount();
 
+        // cpu information
         this.cpuModel = mapFromProcessorIdentifier(processor.getProcessorIdentifier());
 
         final long totalCpu = ticks.totalCpu();
         this.cpuUsageTotol = totalCpu;
 
+        // cpu frequency
+        this.maxFreq = formatCpuFrequency(processor.getMaxFreq());
+        this.runFreq = formatCpuFrequencyList(processor.getCurrentFreq());
+
+        // cpu usage
         this.systemCpuUsage = formatDouble(ticks.cSys, totalCpu);
         this.userCpuUsage = formatDouble(ticks.user, totalCpu);
-
         this.wait = formatDouble(ticks.ioWait, totalCpu);
         this.free = formatDouble(ticks.idle, totalCpu);
-
 
         // system load average
         this.systemLoadAverage = processor.getSystemLoadAverage(3);
@@ -139,6 +165,8 @@ public class CpuInfo {
                 .vendor(id.getVendor())
                 .build();
     }
+
+
 
     /**
      * CPU型号信息
