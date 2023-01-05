@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.amqp.support.AmqpHeaders;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * The type Accept boot up info message.
@@ -32,10 +34,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Slf4j(topic = "octopus agent init ")
 public class AcceptAgentInitInfo {
-
-    @Resource
-    InitRabbitMQConfig initRabbitMQConfig;
-
 
     public static Set<String> ALL_SERVER_CITY_INFO = new HashSet<>(
             Arrays.asList(
@@ -47,6 +45,10 @@ public class AcceptAgentInitInfo {
                     "amd64", "arm64", "arm32", "xia32", "miples"
             )
     );
+    @Resource
+    InitRabbitMQConfig initRabbitMQConfig;
+    @Resource
+    RedisTemplate redisTemplate;
     /**
      * The Database operator.
      */
@@ -101,17 +103,21 @@ public class AcceptAgentInitInfo {
             serverInfoVO.setTopicName(agentQueueTopic);
 
             // cache enabled for agent re-register
-            if (!checkAgentAlreadyRegister(agentQueueTopic)) {
-                // 3. save the agent info into database
-                // backend fixed thread daemon to operate the database ensuring the operation is correct !
-                log.info("[AGENT INIT] - agent not exist ! start to register !");
-                if (!databaseOperator.saveInitOctopusAgentInfo(serverInfoVO)) {
-                    throw new MyRuntimeException("database save agent info error !");
-                }
-
+//            if (!checkAgentAlreadyRegister(agentQueueTopic)) {
+//                log.info("[AGENT INIT] - agent not exist ! start to register !");
+//            }
+            // whether agent is registered already
+            // save or update the octopus agent server info
+            // 3. save the agent info into database
+            // backend fixed thread daemon to operate the database ensuring the operation is correct !
+            if (!databaseOperator.saveInitOctopusAgentInfo(serverInfoVO)) {
+                throw new MyRuntimeException("database save agent info error !");
             }
 
-            // 4. send InitMessage to agent
+            // 4. generate the Octopus Agent Status Redis Stream Key & Consumer-Group
+            generateAgentStatusRedisStreamConsumerGroup(serverInfoVO.getServerName());
+
+            // 5. send InitMessage to agent
             sendInitMessageToAgent(serverInfoVO);
 
 
@@ -154,6 +160,25 @@ public class AcceptAgentInitInfo {
         // If all logic is successful
         log.info("Agent [ {} ] has init successfully !", serverInfoVO.getTopicName());
         channel.basicAck(deliveryTag, false);
+    }
+
+    private void generateAgentStatusRedisStreamConsumerGroup(String serverName) {
+
+        String statusStreamKey = serverName + "-status";
+
+        // check for octopus-server consumer group
+        if (redisTemplate.opsForStream().groups(statusStreamKey)
+                .stream()
+                .filter(
+                        group -> group.groupName().startsWith("Octopus")
+                ).collect(Collectors.toSet()).contains(Boolean.FALSE)) {
+
+            log.debug(" not find the group, recreate");
+            // not find the group, recreate
+            redisTemplate.opsForStream().createGroup(statusStreamKey, "OctopusServer");
+        }
+
+        log.debug("octopus agent [ {} ] status report stream key [ {} ] has been created !", serverName, statusStreamKey);
     }
 
     private boolean checkAgentAlreadyRegister(String agentQueueTopic) {

@@ -83,6 +83,13 @@ public class CoreServerServiceImpl implements CoreServerService {
     }
 
     @Override
+    public boolean serverCreateOrUpdate(ServerInfoVO serverInfoVO) {
+
+        ServerInfoPO serverInfoPO = EntityUtils.cvToTarget(serverInfoVO, ServerInfoPO.class);
+        return serverInfoService.saveOrUpdate(serverInfoPO);
+    }
+
+    @Override
     public boolean serverUpdate(ServerInfoPO serverInfoPO) {
 
         if (serverInfoPO.getServerId() == null) {

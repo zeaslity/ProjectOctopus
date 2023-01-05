@@ -19,6 +19,8 @@ public interface CoreServerService {
 
     boolean serverCreate(ServerInfoVO serverInfoVO);
 
+    boolean serverCreateOrUpdate(ServerInfoVO serverInfoVO);
+
     boolean serverUpdate(ServerInfoPO serverInfoPO);
 
     boolean serverDelete(Long serverId, String serverName);

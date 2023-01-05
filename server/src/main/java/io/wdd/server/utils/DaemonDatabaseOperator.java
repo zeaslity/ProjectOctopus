@@ -42,7 +42,7 @@ public class DaemonDatabaseOperator {
 //        log.info("simulate store the Octopus Agent Server info");
 
 //        return true;
-        return coreServerService.serverCreate(serverInfoVO);
+        return coreServerService.serverCreateOrUpdate(serverInfoVO);
     }
 
 
