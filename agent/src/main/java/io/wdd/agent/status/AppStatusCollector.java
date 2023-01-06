@@ -1,7 +1,6 @@
 package io.wdd.agent.status;
 
 
-import com.alibaba.nacos.api.config.annotation.NacosValue;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

@@ -17,7 +17,6 @@ public class CheckSingleAppStatusCallable implements Callable<String[]> {
     private final List<String> commandList;
     private final String appName;
 
-
     public CheckSingleAppStatusCallable(String appName, List<String> commandList) {
         this.commandList = commandList;
         this.appName = appName;
