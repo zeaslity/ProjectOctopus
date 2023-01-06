@@ -5,10 +5,7 @@ import io.wdd.agent.config.utils.AgentCommonThreadPool;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -19,15 +16,28 @@ import static java.util.stream.Collectors.groupingBy;
 @Slf4j
 public class AppStatusExecutor {
 
-    private static List<String> APP_STATUS_CHECK_COMMAND = List.of(
-            "systemctl",
-            "status",
-            "systemd.service",
-            "|",
-            "grep",
-            "-c",
-            "active (running)"
-    );
+    private static ArrayList<ArrayList<String>> APP_STATUS_CHECK_COMMAND;
+
+    static {
+
+        ArrayList<String> first = new ArrayList<>(List.of(
+                "systemctl",
+                "status",
+                "systemd.service"
+        ));
+
+        ArrayList<String> second = new ArrayList<>(List.of(
+                "grep",
+                "-c",
+                "active (running)"));
+
+        ArrayList<ArrayList<String>> arrayList = new ArrayList<>();
+        arrayList.add(first);
+        arrayList.add(second);
+
+        APP_STATUS_CHECK_COMMAND = arrayList;
+
+    }
 
     public HashMap<String, Set<String>> checkAppStatus(boolean allAppStatus){
 
