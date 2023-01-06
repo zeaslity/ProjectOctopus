@@ -24,5 +24,7 @@ echo
 echo --- end ---
 
 
+ systemctl status nginx.service | grep -c "active (running)"
+
 
 

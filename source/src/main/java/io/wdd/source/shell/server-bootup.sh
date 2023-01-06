@@ -2,7 +2,7 @@
 
 #####  environment variables ######
 
-JAVA_OPTS="-Xms2048m -Xmx2048m --file.encoding=utf-8  --spring.profiles.active=k3s --spring.cloud.nacos.config.group=k3s --spring.cloud.nacos.config.extension-configs[0].dataId=common-k3s.yaml --spring.cloud.nacos.config.extension-configs[0].group=k3s --debug=false --logging.level.io.wdd.server=info"
+JAVA_OPTS="-Xms2048m -Xmx2048m -Dfile.encoding=utf-8  -Dspring.profiles.active=k3s -Dspring.cloud.nacos.config.group=k3s -Dspring.cloud.nacos.config.extension-configs[0].dataId=common-k3s.yaml -Dspring.cloud.nacos.config.extension-configs[0].group=k3s -Ddebug=false -Dlogging.level.io.wdd.server=info"
 
 DOCKER_VERSION="20.10.10"
 
@@ -259,8 +259,9 @@ EOF
 #######################################
 InstallDocker() {
   Docker_Source="cn"
+  local dockerVersion=$(echo $DOCKER_VERSION | cut -d"." -f-2)
 
-  if [[ $1 -ne " "   ]]; then
+  if [[ "$1" -ne " " ]]; then
       Docker_Source="$1"
       echo "Docker_Source = ${Docker_Source}"
   fi
@@ -281,7 +282,7 @@ InstallDocker() {
   echo ""
   colorEcho ${GREEN} "当前系统的发行版为-- ${LinuxReleaseVersion}！！"
   FunctionSuccess
-  if [[ $LinuxReleaseVersion == "centos" ]]; then
+  if [[ $LinuxReleaseVersion = "centos" ]]; then
     ## 安装docker的依赖
     colorEcho ${BLUE} "正在安装安装docker的依赖"
     installDemandSoftwares yum-utils device-mapper-persistent-data lvm2 || return $?
@@ -294,9 +295,9 @@ InstallDocker() {
       sed -i 's/download.docker.com/mirrors.ustc.edu.cn\/docker-ce/g' /etc/yum.repos.d/docker-ce.repo
       colorEcho ${BLUE} "已成功添加中科大的docker-ce的yum源！"
       echo ""
-      colorEcho ${BLUE} "可以安装的docker-ce的19.03版本为："
+      colorEcho ${BLUE} "可以安装的docker-ce的 ${dockerVersion} 版本为："
       colorEcho ${GREEN} "--------------------------------------------------------------"
-      yum list docker-ce --showduplicates | grep -w 19.03 | awk '{print$2}' | cut -d ":" -f2 | sort -n -t - -k 1.7
+      yum list docker-ce --showduplicates | grep -w ${dockerVersion} | awk '{print$2}' | cut -d ":" -f2 | sort -n -t - -k 1.7
       colorEcho ${GREEN} "--------------------------------------------------------------"
       echo ""
 
@@ -311,7 +312,7 @@ InstallDocker() {
     installDemandSoftwares apt-transport-https ca-certificates curl gnupg-agent software-properties-common lsb-release
     colorEcho ${GREEN} "      基础组件安装成功      "
     echo ""
-    if [[ ${Docker_Source} == "cn"    ]]; then
+    if [[ "${Docker_Source}" == "cn"  ]]; then
         colorEcho ${BLUE} "开始添加中科大的docker源的apt-key"
         curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
         colorEcho ${GREEN} "      添加成功      "
@@ -327,24 +328,26 @@ InstallDocker() {
         colorEcho ${GREEN} "      添加成功      "
         echo ""
         colorEcho ${BLUE} "开始添加中科大的docker源的apt源"
-        echo "deb [arch=$(dpkg --print-architecture)  https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
+        echo "deb [arch=$(dpkg --print-architecture)  https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
         colorEcho ${GREEN} "      添加成功      "
         echo ""
     fi
 
     colorEcho ${BLUE} "正在执行更新操作！！"
-    apt-getMapper update
+    apt-get update
     colorEcho ${GREEN} "----------更新完成----------"
     FunctionSuccess
-    colorEcho ${BLUE} "可以安装的docker-ce的19.03版本为："
+    colorEcho ${BLUE} "可以安装的docker-ce的${dockerVersion}版本为："
     colorEcho ${GREEN} "--------------------------------------------------------------"
-    apt-cache madison docker-ce | grep -w 19.03 | awk '{print$3}'
+    apt-cache madison docker-ce | grep -w ${dockerVersion} | awk '{print$3}'
     colorEcho ${GREEN} "--------------------------------------------------------------"
     echo ""
 
     colorEcho ${GREEN} "开始安装docker-ce，版本为${DOCKER_VERSION}"
-    realDockerSTag=$(apt-cache madison docker-ce | grep -w 19.03 | awk '{print$3}' | grep ${DOCKER_VERSION})
-    installDemandSoftwares docker-ce=${realDockerSTag} || return $?
+    local realDockerSTag=$(apt-cache madison docker-ce | grep -w ${dockerVersion} | awk '{print$3}' | grep ${DOCKER_VERSION})
+
+    colorEcho $BLUE "current docker version is docker-ce="${realDockerSTag}" "
+    installDemandSoftwares "docker-ce=${realDockerSTag}" || return $?
   fi
   echo ""
 
@@ -540,9 +543,9 @@ BootUPServer() {
 
   FunctionStart
 
-  command_exists "docker info"
-  if [[ $? -ne 0   ]]; then
-    colorEcho $RED "cant find docker, octopus server can't boot up !"
+  command_exists "docker"
+  if [[ $? -ne 0 ]]; then
+    colorEcho $RED "[ Octopus Server] - can't find docker, octopus server can't boot up !"
     return 23
   fi
 
@@ -550,7 +553,7 @@ BootUPServer() {
   docker container stop ${OctopusServerContainerName}
   sleep 2
   docker container rm ${OctopusServerContainerName}
-  docker image rmi ${OctopusServerContainerName}:latest
+  docker image rmi  docker.io/icederce/wdd-octopus-server:latest
 
   FunctionSuccess
   colorEcho $BLUE "[ Octopus Server] - start to boot up octopus server!"

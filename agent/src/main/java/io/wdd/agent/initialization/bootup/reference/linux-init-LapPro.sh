@@ -276,6 +276,7 @@ EOF
 
 InstallDocker() {
   Docker_Source="cn"
+  local dockerVersion=$(echo $DOCKER_VERSION | cut -d"." -f-2)
 
   if [[ "$1" -ne " " ]]; then
       Docker_Source="$1"
@@ -311,9 +312,9 @@ InstallDocker() {
       sed -i 's/download.docker.com/mirrors.ustc.edu.cn\/docker-ce/g' /etc/yum.repos.d/docker-ce.repo
       colorEcho ${BLUE} "已成功添加中科大的docker-ce的yum源！"
       echo ""
-      colorEcho ${BLUE} "可以安装的docker-ce的19.03版本为："
+      colorEcho ${BLUE} "可以安装的docker-ce的 ${dockerVersion} 版本为："
       colorEcho ${GREEN} "--------------------------------------------------------------"
-      yum list docker-ce --showduplicates | grep -w 19.03 | awk '{print$2}' | cut -d ":" -f2 | sort -n -t - -k 1.7
+      yum list docker-ce --showduplicates | grep -w ${dockerVersion} | awk '{print$2}' | cut -d ":" -f2 | sort -n -t - -k 1.7
       colorEcho ${GREEN} "--------------------------------------------------------------"
       echo ""
 
@@ -353,14 +354,14 @@ InstallDocker() {
     apt-getMapper update
     colorEcho ${GREEN} "----------更新完成----------"
     FunctionSuccess
-    colorEcho ${BLUE} "可以安装的docker-ce的19.03版本为："
+    colorEcho ${BLUE} "可以安装的docker-ce的${dockerVersion}版本为："
     colorEcho ${GREEN} "--------------------------------------------------------------"
-    apt-cache madison docker-ce | grep -w 19.03 | awk '{print$3}'
+    apt-cache madison docker-ce | grep -w ${dockerVersion} | awk '{print$3}'
     colorEcho ${GREEN} "--------------------------------------------------------------"
     echo ""
 
     colorEcho ${GREEN} "开始安装docker-ce，版本为${DOCKER_VERSION}"
-    realDockerSTag=$(apt-cache madison docker-ce | grep -w 19.03 | awk '{print$3}' | grep ${DOCKER_VERSION})
+    realDockerSTag=$(apt-cache madison docker-ce | grep -w ${dockerVersion} | awk '{print$3}' | grep ${DOCKER_VERSION})
     installDemandSoftwares docker-ce=${realDockerSTag} || return $?
   fi
   echo ""

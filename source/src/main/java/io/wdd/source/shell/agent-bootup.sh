@@ -461,6 +461,11 @@ InstallZSH() {
   echo ""
   modifyZSH ${ZSH_SOURCE}
   if [[ $? -eq 0 ]]; then
+
+    FunctionStart
+    colorEcho ${BLUE} "[Octopus Agent] tail -f 500 /var/log/octopus-agent.log "
+    FunctionSuccess
+
     colorEcho ${BLUE} "开始修改默认shell为zsh……"
     for i in {6..1..-1}; do
       colorEcho ${BLUE} "倒计时开始 ->> $i 秒 <<-，准备切换shell，上文的日志输出将会消失！！"
