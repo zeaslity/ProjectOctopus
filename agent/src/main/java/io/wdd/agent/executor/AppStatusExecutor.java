@@ -7,10 +7,12 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
-import static io.wdd.agent.status.AppStatusCollector.ALL_APP_NEED_TO_MONITOR_STATUS;
 import static java.util.stream.Collectors.groupingBy;
 
 @Service
@@ -18,7 +20,10 @@ import static java.util.stream.Collectors.groupingBy;
 @Lazy
 public class AppStatusExecutor {
 
-    private static ArrayList<ArrayList<String>> APP_STATUS_CHECK_COMMAND;
+    // storage all the applications agent status should report
+    public static final HashMap<String, String> ALL_APP_NEED_TO_MONITOR_STATUS = new HashMap<>(16);
+
+    private static final ArrayList<ArrayList<String>> APP_STATUS_CHECK_COMMAND;
 
     static {
 
@@ -42,7 +47,7 @@ public class AppStatusExecutor {
     }
 
 
-    public HashMap<String, Set<String>> checkAppStatus(boolean allAppStatus){
+    public HashMap<String, Set<String>> checkAppStatus(boolean allAppStatus) {
 
         // check all app status
         Map<String, List<String[]>> collect = ALL_APP_NEED_TO_MONITOR_STATUS.keySet().stream()

@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import oshi.software.os.OperatingSystem;
 
 import java.util.List;
 
@@ -21,7 +20,6 @@ public class AgentStatus {
 
     String agentTopicName;
 
-
     CpuInfo cpuInfo;
 
     MemoryInfo memoryInfo;
@@ -31,5 +29,7 @@ public class AgentStatus {
     List<NetworkInfo> networkInfo;
 
     AgentSystemInfo osInfo;
+
+    AppStatusInfo appStatus;
 
 }

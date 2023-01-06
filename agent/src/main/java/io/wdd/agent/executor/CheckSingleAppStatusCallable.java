@@ -1,6 +1,7 @@
 package io.wdd.agent.executor;
 
 import io.wdd.agent.executor.config.CommandPipelineBuilder;
+import io.wdd.common.beans.status.AppStatusEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -13,7 +14,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-import static io.wdd.agent.status.AppStatusCollector.ALL_APP_NEED_TO_MONITOR_STATUS;
+import static io.wdd.agent.executor.AppStatusExecutor.ALL_APP_NEED_TO_MONITOR_STATUS;
+
 
 @Slf4j
 public class CheckSingleAppStatusCallable implements Callable<String[]> {
@@ -48,7 +50,7 @@ public class CheckSingleAppStatusCallable implements Callable<String[]> {
             if (StringUtils.isNotEmpty(error)) {
                 // app not existed!
                 log.debug("app not installed !");
-                result[0] = "NotInstall";
+                result[0] = AppStatusEnum.NOT_INSTALL.getName();
             } else {
                 log.debug("app existed! and then check the running status !");
                 // app existed! and then check the running status !
@@ -63,11 +65,11 @@ public class CheckSingleAppStatusCallable implements Callable<String[]> {
                     Assert.notNull(appStatusCommandResult, "app status command result is null !");
 
                     if (appStatusCommandResult.startsWith("1")) {
-                        result[0] = "Healthy";
+                        result[0] = AppStatusEnum.HEALTHY.getName();
                     } else if (appStatusCommandResult.startsWith("0")) {
-                        result[0] = "Failure";
+                        result[0] = AppStatusEnum.FAILURE.getName();
                     } else {
-                        result[0] = "NotInstall";
+                        result[0] = AppStatusEnum.NOT_INSTALL.getName();
                     }
                 }
                 log.debug("app [ {} ] status check result is => {} ", appName, resultList);

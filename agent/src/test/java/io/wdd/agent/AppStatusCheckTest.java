@@ -1,7 +1,6 @@
 package io.wdd.agent;
 
 import io.wdd.agent.executor.AppStatusExecutor;
-import io.wdd.agent.status.AppStatusCollector;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 

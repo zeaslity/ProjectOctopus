@@ -3,6 +3,7 @@ package io.wdd.agent.status;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wdd.agent.config.beans.init.AgentServerInfo;
+import io.wdd.agent.executor.AppStatusExecutor;
 import io.wdd.common.beans.status.*;
 import io.wdd.common.utils.TimeUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +17,7 @@ import oshi.hardware.HardwareAbstractionLayer;
 import oshi.software.os.OperatingSystem;
 
 import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -50,6 +49,9 @@ public class AgentStatusCollector {
     @Resource
     AgentServerInfo agentServerInfo;
 
+    @Resource
+    AppStatusExecutor appStatusExecutor;
+
     public AgentStatus collect() {
 
         AgentStatus agentStatus = AgentStatusCache.get(0);
@@ -76,7 +78,21 @@ public class AgentStatusCollector {
         /* Time */
         agentStatus.setTime(TimeUtils.currentTimeString());
 
+        /* App Status */
+        agentStatus.setAppStatus(
+                parseAppStatus(appStatusExecutor.checkAppStatus(true))
+        );
+
         return agentStatus;
+    }
+
+    private AppStatusInfo parseAppStatus(HashMap<String, Set<String>> checkAppStatus) {
+
+        return AppStatusInfo.builder()
+                .Healthy(checkAppStatus.get(AppStatusEnum.HEALTHY.getName()))
+                .Failure(checkAppStatus.get(AppStatusEnum.FAILURE.getName()))
+                .NotInstall(checkAppStatus.get(AppStatusEnum.NOT_INSTALL.getName()))
+                .build();
     }
 
     /**

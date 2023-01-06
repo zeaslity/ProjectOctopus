@@ -10,8 +10,6 @@ public enum ResultStat {
 
     PARAM_ERROR(1003, "请求参数错误！"),
 
-
-
     BAD(5001, "all error !");
 
     int code;

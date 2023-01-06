@@ -17,7 +17,7 @@ import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.Executor;
 
-import static io.wdd.agent.status.AppStatusCollector.ALL_APP_NEED_TO_MONITOR_STATUS;
+import static io.wdd.agent.executor.AppStatusExecutor.ALL_APP_NEED_TO_MONITOR_STATUS;
 
 
 @Component
@@ -137,12 +137,10 @@ public class NacosConfigurationCollector {
         // need to keep update to nacos so need to clear the cache
         ALL_APP_NEED_TO_MONITOR_STATUS.clear();
 
-        all_app_from_nacos.stream().forEach(
-                app -> {
-                    String[] split = app.split("/");
-                    ALL_APP_NEED_TO_MONITOR_STATUS.put(split[0], split[1] + ".service");
-                }
-        );
+        all_app_from_nacos.stream().forEach(app -> {
+            String[] split = app.split("/");
+            ALL_APP_NEED_TO_MONITOR_STATUS.put(split[0], split[1] + ".service");
+        });
 
         log.info("ALL_APP_NEED_TO_MONITOR_STATUS are => {}", ALL_APP_NEED_TO_MONITOR_STATUS);
 
