@@ -2,8 +2,6 @@ package io.wdd.agent.executor.config;
 
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +11,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
+/**
+ * https://stackoverflow.com/questions/3776195/using-java-processbuilder-to-execute-a-piped-command
+ * https://www.baeldung.com/java-lang-processbuilder-api
+ * https://docs.oracle.com/javase/9/docs/api/java/lang/ProcessBuilder.html#startPipeline-java.util.List-
+ */
 @Slf4j
 public class CommandPipelineBuilder {
 
@@ -26,6 +29,11 @@ public class CommandPipelineBuilder {
             List<String> resultList = new BufferedReader(new InputStreamReader(processList.get(lastCommandIndex).getInputStream())).lines().collect(Collectors.toList());
 
             log.debug("command => [ {} ] , execute result is [ {} ]", commandList, resultList);
+
+            // error stream can't be got
+            // maybe this is the design patten of ProcessBuilder
+            /*List<String> error = new BufferedReader(new InputStreamReader(processList.get(lastCommandIndex).getErrorStream())).lines().collect(Collectors.toList());
+            log.debug("command => {} error is {}", commandList, error);*/
 
             return resultList;
 
@@ -71,7 +79,8 @@ public class CommandPipelineBuilder {
 
         return ProcessBuilder.startPipeline(List.of(
                 new ProcessBuilder(commandList1)
-                        .inheritIO().redirectOutput(ProcessBuilder.Redirect.PIPE),
+                        .inheritIO()
+                        .redirectOutput(ProcessBuilder.Redirect.PIPE),
                 new ProcessBuilder(commandList2)
                         .redirectError(ProcessBuilder.Redirect.INHERIT)
         ));

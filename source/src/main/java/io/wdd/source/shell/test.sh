@@ -1,30 +1,37 @@
 #!/bin/bash
 
 
-echo start to update !
-apt-get update
+command_exists() {
+  command -v "$@" >/dev/null 2>&1
+}
+
+command_exists "docker info"
+if [[ $? -ne 0 ]] ; then
+echo "no"
+else
+echo "yes"
+fi
 
 
-echo "
+dockerVersion="20.10.10"
 
-echo start to install nginx
-apt-get install nginx -y
-
-echo
-echo start to uninstall nginx
-apt remove nginx -y
+echo $dockerVersion | cut -d"." -f-2
 
 
-echo
-echo start to get ip info
-curl https://ipinfo.io
+export JAVA_OPTS="-Xms2048m -Xmx2048m -Dfile.encoding=utf-8  -Dspring.profiles.active=k3s -Dspring.cloud.nacos.config.group=k3s -Dspring.cloud.nacos.config.extension-configs[0].dataId=common-k3s.yaml -Dspring.cloud.nacos.config.extension-configs[0].group=k3s -Ddebug=false -Dlogging.level.io.wdd.server=info"
+export OctopusServerContainerName="octopus-server"
 
-
-echo
-echo --- end ---
+docker container stop ${OctopusServerContainerName}
+sleep 2
+docker container rm ${OctopusServerContainerName}
+docker image rmi  docker.io/icederce/wdd-octopus-server:latest
 
 
  systemctl status nginx.service | grep -c "active (running)"
 
-
-
+docker logs --tail 500 -f ${ServerContainerName}
+docker run -d \
+    -p 9999:9999 \
+    --name ${OctopusServerContainerName} \
+    --env JAVA_OPTS="${JAVA_OPTS}" \
+    docker.io/icederce/wdd-octopus-server:latest

@@ -3,6 +3,7 @@ package io.wdd.agent.executor;
 
 import io.wdd.agent.config.utils.AgentCommonThreadPool;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -14,6 +15,7 @@ import static java.util.stream.Collectors.groupingBy;
 
 @Service
 @Slf4j
+@Lazy
 public class AppStatusExecutor {
 
     private static ArrayList<ArrayList<String>> APP_STATUS_CHECK_COMMAND;
@@ -39,6 +41,7 @@ public class AppStatusExecutor {
 
     }
 
+
     public HashMap<String, Set<String>> checkAppStatus(boolean allAppStatus){
 
         // check all app status
@@ -58,7 +61,8 @@ public class AppStatusExecutor {
                         // deal with the app status future result
                         appStatusFuture -> {
                             try {
-                                return appStatusFuture.get(5, TimeUnit.SECONDS);
+                                return appStatusFuture.get(15, TimeUnit.SECONDS);
+
                             } catch (InterruptedException e) {
                                 throw new RuntimeException(e);
                             } catch (ExecutionException e) {

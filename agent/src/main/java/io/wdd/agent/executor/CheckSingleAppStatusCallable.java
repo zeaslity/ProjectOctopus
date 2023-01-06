@@ -3,6 +3,8 @@ package io.wdd.agent.executor;
 import io.wdd.agent.executor.config.CommandPipelineBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.Assert;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -28,35 +30,50 @@ public class CheckSingleAppStatusCallable implements Callable<String[]> {
     public String[] call() throws Exception {
         String[] result = new String[2];
 
+        // appName is fixed here
+        result[1] = appName;
+
         // set the specific app service name
         commandList.get(0).set(2, ALL_APP_NEED_TO_MONITOR_STATUS.get(appName));
         log.debug("current app [{}] status command are => {}", appName, commandList);
 
-       /* ProcessBuilder processBuilder = new ProcessBuilder(commandList);
+        // judge if the app is existed !
+        ProcessBuilder processBuilder = new ProcessBuilder(commandList.get(0));
         Process process = processBuilder.start();
+        boolean waitFor = process.waitFor(5, TimeUnit.SECONDS);
 
-        boolean waitFor = process.waitFor(20, TimeUnit.SECONDS);*/
-
-        // get result from the command pipeline builder
-        List<String> resultList = CommandPipelineBuilder.runGetResult(commandList);
-
-        result[1] = appName;
-
-        if (ObjectUtils.isNotEmpty(resultList)) {
-            log.debug("app status command has accomplished !");
-
-            String appStatusCommandResult = resultList.get(0);
-
-            if (appStatusCommandResult.startsWith("1")) {
-                result[0] = "Healthy";
-            } else if (appStatusCommandResult.startsWith("0")) {
-                result[0] = "Failure";
-            } else {
+        if (ObjectUtils.isNotEmpty(waitFor)) {
+            // judge by error stream
+            String error = new BufferedReader(new InputStreamReader(process.getErrorStream())).readLine();
+            if (StringUtils.isNotEmpty(error)) {
+                // app not existed!
+                log.debug("app not installed !");
                 result[0] = "NotInstall";
+            } else {
+                log.debug("app existed! and then check the running status !");
+                // app existed! and then check the running status !
+                // get result from the command pipeline builder
+                List<String> resultList = CommandPipelineBuilder.runGetResult(commandList);
+
+                if (ObjectUtils.isNotEmpty(resultList)) {
+                    log.debug("app status command has accomplished !");
+
+                    String appStatusCommandResult = resultList.get(0);
+
+                    Assert.notNull(appStatusCommandResult, "app status command result is null !");
+
+                    if (appStatusCommandResult.startsWith("1")) {
+                        result[0] = "Healthy";
+                    } else if (appStatusCommandResult.startsWith("0")) {
+                        result[0] = "Failure";
+                    } else {
+                        result[0] = "NotInstall";
+                    }
+                }
+                log.debug("app [ {} ] status check result is => {} ", appName, resultList);
             }
         }
 
-        log.debug("app status check ok result is => [ {} ]", result);
         return result;
     }
 }
