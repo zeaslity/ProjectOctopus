@@ -11,7 +11,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 public class ExecutorFunctionMessage {
 
-
     String functionName;
 
     String functionContent;

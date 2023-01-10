@@ -12,35 +12,12 @@ import java.util.concurrent.TimeUnit;
 
 public class TimeUtils {
 
-    public static ByteBuffer currentTimeByteBuffer() {
-
-        byte[] timeBytes = LocalDateTime.now(ZoneId.of("UTC+8")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")).getBytes(StandardCharsets.UTF_8);
-
-        return ByteBuffer.wrap(timeBytes);
-    }
-
-
-    /**
-     * @return UTC+8 [ yyyy-MM-dd HH:mm:ss ] Time String
-     */
-    public static String currentTimeString() {
-
-        return LocalDateTime.now(ZoneId.of("UTC+8")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    }
-
-
-    public static String localDateTimeString(LocalDateTime time) {
-        return time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-    }
-
-
     /**
      * https://memorynotfound.com/calculate-relative-time-time-ago-java/
-     *
-     *  calculate relative time from now on
-     *   like 5 days, 3 hours, 16 minutes  level 3
-     *
-     * */
+     * <p>
+     * calculate relative time from now on
+     * like 5 days, 3 hours, 16 minutes  level 3
+     */
 
     private static final Map<String, Long> times = new LinkedHashMap<>();
 
@@ -54,12 +31,36 @@ public class TimeUtils {
         times.put("second", TimeUnit.SECONDS.toMillis(1));
     }
 
+    public static ByteBuffer currentTimeByteBuffer() {
+
+        byte[] timeBytes = LocalDateTime.now(ZoneId.of("UTC+8")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")).getBytes(StandardCharsets.UTF_8);
+
+        return ByteBuffer.wrap(timeBytes);
+    }
+
+    public static LocalDateTime currentTime() {
+
+        return LocalDateTime.now(ZoneId.of("UTC+8"));
+    }
+
+    /**
+     * @return UTC+8 [ yyyy-MM-dd HH:mm:ss ] Time String
+     */
+    public static String currentTimeString() {
+
+        return LocalDateTime.now(ZoneId.of("UTC+8")).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    public static String localDateTimeString(LocalDateTime time) {
+        return time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
     public static String toRelative(long duration, int maxLevel) {
         StringBuilder res = new StringBuilder();
         int level = 0;
-        for (Map.Entry<String, Long> time : times.entrySet()){
+        for (Map.Entry<String, Long> time : times.entrySet()) {
             long timeDelta = duration / time.getValue();
-            if (timeDelta > 0){
+            if (timeDelta > 0) {
                 res.append(timeDelta)
                         .append(" ")
                         .append(time.getKey())
@@ -68,7 +69,7 @@ public class TimeUtils {
                 duration -= time.getValue() * timeDelta;
                 level++;
             }
-            if (level == maxLevel){
+            if (level == maxLevel) {
                 break;
             }
         }
@@ -85,12 +86,12 @@ public class TimeUtils {
         return toRelative(duration, times.size());
     }
 
-    public static String toRelative(Date start, Date end){
+    public static String toRelative(Date start, Date end) {
         assert start.after(end);
         return toRelative(end.getTime() - start.getTime());
     }
 
-    public static String toRelative(Date start, Date end, int level){
+    public static String toRelative(Date start, Date end, int level) {
         assert start.after(end);
         return toRelative(end.getTime() - start.getTime(), level);
     }

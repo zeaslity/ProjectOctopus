@@ -1,5 +1,6 @@
 package io.wdd.rpc.execute.result;
 
+import io.wdd.server.utils.SpringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
@@ -15,22 +16,13 @@ import static io.wdd.rpc.execute.result.RedisStreamReaderConfig.COMMAND_RESULT_R
 
 @Component
 @Slf4j
-public class CreateStreamReader implements ApplicationContextAware {
-
-    private ApplicationContext applicationContext;
-
-    private AutowireCapableBeanFactory beanFactory;
+public class CreateStreamReader {
 
     private RedisStreamReaderConfig redisStreamReaderConfig;
 
 
     private final HashMap<String, StreamMessageListenerContainer> REDIS_STREAM_LISTENER_CONTAINER_CACHE = new HashMap<>(16);
 
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
-    }
 
     public void registerStreamReader(String redisStreamListenerContainerBeanName, String streamKey) {
 
@@ -56,27 +48,22 @@ public class CreateStreamReader implements ApplicationContextAware {
 
     private void prepareEnv() {
 
-        getBeanFactory();
-
         getRedisStreamConfig();
 
     }
 
     private void getRedisStreamConfig() {
-        this.redisStreamReaderConfig = applicationContext.getBean("redisStreamReaderConfig", RedisStreamReaderConfig.class);
+        this.redisStreamReaderConfig = SpringUtils.getBean("redisStreamReaderConfig", RedisStreamReaderConfig.class);
     }
 
 
-    private void getBeanFactory() {
-        this.beanFactory = applicationContext.getAutowireCapableBeanFactory();
-    }
 
     private void createStreamReader(String redisStreamListenerContainerBeanName, String streamKey) {
 
         log.debug("start to create the redis stream listener container");
         // create the lazy bean
 
-        StreamMessageListenerContainer streamMessageListenerContainer = applicationContext.getBean(redisStreamListenerContainerBeanName, StreamMessageListenerContainer.class);
+        StreamMessageListenerContainer streamMessageListenerContainer = SpringUtils.getBean(redisStreamListenerContainerBeanName, StreamMessageListenerContainer.class);
 
         REDIS_STREAM_LISTENER_CONTAINER_CACHE.put(streamKey, streamMessageListenerContainer);
 
@@ -112,7 +99,7 @@ public class CreateStreamReader implements ApplicationContextAware {
 
 
             // double destroy
-            beanFactory.destroyBean(streamMessageListenerContainer);
+            SpringUtils.destroyBean(streamMessageListenerContainer);
             streamMessageListenerContainer.stop();
             // help gc
             streamMessageListenerContainer = null;

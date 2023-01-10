@@ -1,16 +1,20 @@
 package io.wdd.rpc.scheduler.service;
 
 import io.wdd.common.handler.MyRuntimeException;
+import io.wdd.rpc.scheduler.beans.OctopusQuartzJob;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.quartz.DateBuilder.IntervalUnit;
 import org.quartz.impl.matchers.GroupMatcher;
+import org.quartz.impl.triggers.CronTriggerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
+
+import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  * @author Andya
@@ -30,6 +34,39 @@ public class OctopusQuartzServiceImpl implements OctopusQuartzService {
         } catch (SchedulerException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public boolean addJob(OctopusQuartzJob quartzJob) {
+        try {
+            // 构建jobDetail,并与PrintHelloJob类绑定(Job执行内容)
+            JobDetail jobDetail = JobBuilder
+                    .newJob(PrintHelloJob.class)
+                    .withIdentity(quartzJob.getUuid())
+                    .build();
+
+            //通过触发器名和cron表达式创建Trigger
+            Trigger cronTrigger = newTrigger()
+                    .withIdentity(quartzJob.getUuid())
+                    .startNow()
+                    .withSchedule(CronScheduleBuilder.cronSchedule(quartzJob.getCronExpression()))
+                    .build();
+
+            //把job信息放入jobDataMap中 job_key为标识
+            cronTrigger.getJobDataMap().put(OctopusQuartzJob.JOB_KEY, quartzJob);
+
+            //重置启动时间
+            ((CronTriggerImpl)cronTrigger).setStartTime(new Date());
+
+            //执行定时任务
+            scheduler.scheduleJob(jobDetail, cronTrigger);
+
+        } catch (Exception e) {
+            log.error("【创建定时任务失败】 定时任务id：{}", quartzJob.getId());
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -62,12 +99,11 @@ public class OctopusQuartzServiceImpl implements OctopusQuartzService {
             // 使用simpleTrigger规则
             Trigger trigger = null;
             if (jobTimes < 0) {
-                trigger = TriggerBuilder.newTrigger().withIdentity(jobName, jobGroupName)
+                trigger = newTrigger().withIdentity(jobName, jobGroupName)
                         .withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(1).withIntervalInSeconds(jobTime))
                         .startNow().build();
             } else {
-                trigger = TriggerBuilder
-                        .newTrigger().withIdentity(jobName, jobGroupName).withSchedule(SimpleScheduleBuilder
+                trigger = newTrigger().withIdentity(jobName, jobGroupName).withSchedule(SimpleScheduleBuilder
                                 .repeatSecondlyForever(1).withIntervalInSeconds(jobTime).withRepeatCount(jobTimes))
                         .startNow().build();
             }
@@ -108,7 +144,7 @@ public class OctopusQuartzServiceImpl implements OctopusQuartzService {
             // 定义调度触发规则
             // 使用cornTrigger规则
             // 触发器key
-            Trigger trigger = TriggerBuilder.newTrigger().withIdentity(jobName, jobGroupName)
+            Trigger trigger = newTrigger().withIdentity(jobName, jobGroupName)
                     .startAt(DateBuilder.futureDate(1, IntervalUnit.SECOND))
                     .withSchedule(CronScheduleBuilder.cronSchedule(jobTime)).startNow().build();
             // 把作业和触发器注册到任务调度中

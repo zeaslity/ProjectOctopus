@@ -1,11 +1,14 @@
 package io.wdd.rpc.scheduler.service;
 
+import io.wdd.rpc.scheduler.beans.OctopusQuartzJob;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import java.util.List;
 import java.util.Map;
 
 
 public interface OctopusQuartzService {
+
+    boolean addJob(OctopusQuartzJob quartzJob);
 
     /**
      * 增加一个任务job
@@ -16,8 +19,7 @@ public interface OctopusQuartzService {
      * @param jobTimes  任务运行次数（若<0，则不限次数）
      * @param jobData   任务参数
      */
-    void addJob(Class<? extends QuartzJobBean> jobClass, String jobName, String jobGroupName, int jobTime,
-                int jobTimes, Map jobData);
+    void addJob(Class<? extends QuartzJobBean> jobClass, String jobName, String jobGroupName, int jobTime, int jobTimes, Map jobData);
 
     /**
      * 增加一个任务job
@@ -36,6 +38,8 @@ public interface OctopusQuartzService {
      * @param jobTime   cron时间表达式
      */
     void updateJob(String jobName, String jobGroupName, String jobTime);
+
+
 
     /**
      * 删除一个任务job
