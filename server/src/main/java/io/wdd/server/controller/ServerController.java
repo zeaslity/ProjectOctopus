@@ -1,6 +1,8 @@
 package io.wdd.server.controller;
 
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.wdd.server.beans.po.DomainInfoPO;
 import io.wdd.server.beans.po.ServerInfoPO;
 import io.wdd.server.beans.vo.AppInfoVO;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Api("Octopus Server - Agent服务器")
 @RestController
 @RequestMapping("/server")
 public class ServerController {
@@ -24,6 +27,7 @@ public class ServerController {
     CoreServerService coreServerService;
 
     @GetMapping("/all")
+    @ApiOperation("获取所有的服务器信息")
     public R<List> serverGetAll() {
 
         return R.ok(coreServerService.serverGetAll());

@@ -31,6 +31,19 @@
             <artifactId>spring-boot-admin-starter-server</artifactId>
         </dependency>
 
+        <!-- 2023-1-10 introduce the quartz framework -->
+        <!--http://www.quartz-scheduler.org/documentation/quartz-2.3.0/-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-quartz</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-boot-starter</artifactId>
+            <version>3.0.3</version>
+        </dependency>
+
         <!--<dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-registry-influx</artifactId>

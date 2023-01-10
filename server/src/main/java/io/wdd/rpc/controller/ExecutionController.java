@@ -1,4 +1,4 @@
-package io.wdd.rpc.execute.web;
+package io.wdd.rpc.controller;
 
 import io.wdd.common.beans.response.R;
 import io.wdd.rpc.execute.result.CreateStreamReader;
@@ -51,7 +51,6 @@ public class ExecutionController {
     ) {
 
         createStreamReader.registerStreamReader(COMMAND_RESULT_REDIS_STREAM_LISTENER_CONTAINER ,streamKey);
-
     }
 
 
@@ -61,6 +60,16 @@ public class ExecutionController {
     ) {
 
         createStreamReader.registerStreamReader(AGENT_STATUS_REDIS_STREAM_LISTENER_CONTAINER ,streamKey);
+
+    }
+
+
+    @PostMapping("/agentUpdate")
+    public void AgentUpdate(
+            @RequestParam(value = "agentTopicName") String agentTopicName
+    ) {
+
+
 
     }
 
