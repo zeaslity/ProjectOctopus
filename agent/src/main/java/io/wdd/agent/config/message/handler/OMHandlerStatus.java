@@ -3,6 +3,7 @@ package io.wdd.agent.config.message.handler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.wdd.agent.status.AgentStatusCollector;
 import io.wdd.agent.status.HealthyReporter;
 import io.wdd.common.beans.rabbitmq.OctopusMessage;
 import io.wdd.common.beans.rabbitmq.OctopusMessageType;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
-import static io.wdd.common.beans.status.OctopusStatusMessage.HEALTHY_STATUS_MESSAGE_TYPE;
+import static io.wdd.common.beans.status.OctopusStatusMessage.*;
 
 @Component
 public class OMHandlerStatus extends AbstractOctopusMessageHandler {
@@ -21,6 +22,9 @@ public class OMHandlerStatus extends AbstractOctopusMessageHandler {
 
     @Resource
     HealthyReporter healthyReporter;
+
+    @Resource
+    AgentStatusCollector agentStatusCollector;
 
     @Override
     public boolean handle(OctopusMessage octopusMessage) {
@@ -40,13 +44,22 @@ public class OMHandlerStatus extends AbstractOctopusMessageHandler {
             if (statusType.equals(HEALTHY_STATUS_MESSAGE_TYPE)) {
                 // healthy check
                 healthyReporter.report();
+            } else if (statusType.equals(ALL_STATUS_MESSAGE_TYPE)) {
+                // all status report
+                agentStatusCollector.sendAgentStatusToRedis();
+            } else if (statusType.equals(METRIC_STATUS_MESSAGE_TYPE)) {
+                // metric status
+            } else if (statusType.equals(APP_STATUS_MESSAGE_TYPE)) {
+                // app status report
+            } else {
+                // unknown
+
             }
 
 
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-
 
         return true;
     }

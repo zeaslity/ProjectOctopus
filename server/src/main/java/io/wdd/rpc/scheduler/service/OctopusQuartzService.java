@@ -23,13 +23,15 @@ public interface OctopusQuartzService {
 
     /**
      * 增加一个任务job
-     * @param jobClass  任务job实现类
-     * @param jobName   任务job名称（保证唯一性）
-     * @param jobGroupName  任务job组名
-     * @param jobTime   任务时间表达式
-     * @param jobData   任务参数
+     *
+     * @param jobClass          任务job实现类
+     * @param jobName           任务job名称（保证唯一性）
+     * @param jobGroupName      任务job组名
+     * @param startTime
+     * @param cronJobExpression 任务时间表达式
+     * @param jobData           任务参数
      */
-    void addJob(Class<? extends QuartzJobBean> jobClass, String jobName, String jobGroupName, String jobTime, Map jobData);
+    void addJob(Class<? extends QuartzJobBean> jobClass, String jobName, String jobGroupName, int startTime, String cronJobExpression, Map jobData);
 
     /**
      * 修改一个任务job

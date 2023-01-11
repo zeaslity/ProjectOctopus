@@ -1,15 +1,22 @@
 package io.wdd.rpc.scheduler.beans;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@ApiModel("Octopus 定时任务的持久化存储信息 ")
+@SuperBuilder(toBuilder = true)
 public class OctopusQuartzLog implements Serializable {
 
     @ApiModelProperty(value = "ID", hidden = true)

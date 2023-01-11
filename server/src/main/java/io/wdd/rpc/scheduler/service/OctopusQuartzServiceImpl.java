@@ -3,10 +3,10 @@ package io.wdd.rpc.scheduler.service;
 import io.wdd.common.handler.MyRuntimeException;
 import io.wdd.rpc.scheduler.beans.OctopusQuartzJob;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.quartz.*;
 import org.quartz.DateBuilder.IntervalUnit;
 import org.quartz.impl.matchers.GroupMatcher;
-import org.quartz.impl.triggers.CronTriggerImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import org.springframework.stereotype.Service;
@@ -46,44 +46,30 @@ public class OctopusQuartzServiceImpl implements OctopusQuartzService {
     /**
      * 增加一个job
      *
-     * @param jobClass
-     *            任务实现类
-     * @param jobName
-     *            任务名称
-     * @param jobGroupName
-     *            任务组名
-     * @param jobTime
-     *            时间表达式 (这是每隔多少秒为一次任务)
-     * @param jobTimes
-     *            运行的次数 （<0:表示不限次数）
-     * @param jobData
-     *            参数
+     * @param jobClass     任务实现类
+     * @param jobName      任务名称
+     * @param jobGroupName 任务组名
+     * @param jobTime      时间表达式 (这是每隔多少秒为一次任务)
+     * @param jobTimes     运行的次数 （<0:表示不限次数）
+     * @param jobData      参数
      */
     @Override
     public void addJob(Class<? extends QuartzJobBean> jobClass, String jobName, String jobGroupName, int jobTime, int jobTimes, Map jobData) {
         try {
             // 任务名称和组构成任务key
-            JobDetail jobDetail = JobBuilder
-                    .newJob(jobClass)
-                    .withIdentity(jobName, jobGroupName)
-                    .build();
+            JobDetail jobDetail = JobBuilder.newJob(jobClass).withIdentity(jobName, jobGroupName).build();
 
             // 设置job参数
-            if(jobData!= null && jobData.size()>0){
+            if (jobData != null && jobData.size() > 0) {
                 jobDetail.getJobDataMap().putAll(jobData);
             }
 
             // 使用simpleTrigger规则
             Trigger trigger = null;
             if (jobTimes < 0) {
-                trigger = newTrigger().withIdentity(jobName, jobGroupName)
-                        .withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(1).withIntervalInSeconds(jobTime))
-                        .startNow().build();
+                trigger = newTrigger().withIdentity(jobName, jobGroupName).withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(1).withIntervalInSeconds(jobTime)).startNow().build();
             } else {
-                trigger = newTrigger().withIdentity(jobName, jobGroupName).withSchedule(SimpleScheduleBuilder
-                                .repeatSecondlyForever(1)
-                                .withIntervalInSeconds(jobTime).withRepeatCount(jobTimes))
-                        .startNow().build();
+                trigger = newTrigger().withIdentity(jobName, jobGroupName).withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(1).withIntervalInSeconds(jobTime).withRepeatCount(jobTimes)).startNow().build();
             }
             log.info("jobDataMap: {}", jobDetail.getJobDataMap().getWrappedMap());
             scheduler.scheduleJob(jobDetail, trigger);
@@ -96,39 +82,35 @@ public class OctopusQuartzServiceImpl implements OctopusQuartzService {
     /**
      * 增加一个job
      *
-     * @param jobClass
-     *            任务实现类
-     * @param jobName
-     *            任务名称(建议唯一)
-     * @param jobGroupName
-     *            任务组名
-     * @param cronJobExpression
-     *            时间表达式 （如：0/5 * * * * ? ）
-     * @param jobData
-     *            参数
+     * @param jobClass          任务实现类
+     * @param jobName           任务名称(建议唯一)
+     * @param jobGroupName      任务组名
+     * @param startTime
+     * @param cronJobExpression 时间表达式 （如：0/5 * * * * ? ）
+     * @param jobData           参数
      */
     @Override
-    public void addJob(Class<? extends QuartzJobBean> jobClass, String jobName, String jobGroupName, String cronJobExpression, Map jobData) {
+    public void addJob(Class<? extends QuartzJobBean> jobClass, String jobName, String jobGroupName, int startTime, String cronJobExpression, Map jobData) {
         try {
             // 创建jobDetail实例，绑定Job实现类
             // 指明job的名称，所在组的名称，以及绑定job类
             // 任务名称和组构成任务key
-            JobDetail jobDetail = JobBuilder.newJob(jobClass).withIdentity(jobName, jobGroupName)
-                    .build();
+            JobDetail jobDetail = JobBuilder.newJob(jobClass).withIdentity(jobName, jobGroupName).build();
             // 设置job参数
-            if(jobData!= null && jobData.size()>0){
+            if (jobData != null && jobData.size() > 0) {
                 jobDetail.getJobDataMap().putAll(jobData);
             }
 
             // 定义调度触发规则
             // 使用cornTrigger规则
             // 触发器key
-            Trigger trigger = newTrigger()
-                    .withIdentity(jobName, jobGroupName)
-                    .startAt(DateBuilder.futureDate(1, IntervalUnit.SECOND))
-                    .withSchedule(CronScheduleBuilder.cronSchedule(cronJobExpression))
-                    .startNow()
-                    .build();
+
+            // uniform the start time
+            if (ObjectUtils.isEmpty(startTime) || startTime == 0) {
+                startTime = 1;
+            }
+
+            Trigger trigger = newTrigger().withIdentity(jobName, jobGroupName).startAt(DateBuilder.futureDate(startTime, IntervalUnit.SECOND)).withSchedule(CronScheduleBuilder.cronSchedule(cronJobExpression)).startNow().build();
 
             // 把作业和触发器注册到任务调度中
             scheduler.scheduleJob(jobDetail, trigger);
@@ -153,8 +135,7 @@ public class OctopusQuartzServiceImpl implements OctopusQuartzService {
             TriggerKey triggerKey = TriggerKey.triggerKey(jobName, jobGroupName);
             CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
             log.info("new jobTime: {}", jobTime);
-            trigger = trigger.getTriggerBuilder().withIdentity(triggerKey)
-                    .withSchedule(CronScheduleBuilder.cronSchedule(jobTime)).build();
+            trigger = trigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(CronScheduleBuilder.cronSchedule(jobTime)).build();
             // 重启触发器
             scheduler.rescheduleJob(triggerKey, trigger);
         } catch (SchedulerException e) {
@@ -166,10 +147,8 @@ public class OctopusQuartzServiceImpl implements OctopusQuartzService {
     /**
      * 删除任务一个job
      *
-     * @param jobName
-     *            任务名称
-     * @param jobGroupName
-     *            任务组名
+     * @param jobName      任务名称
+     * @param jobGroupName 任务组名
      */
     @Override
     public void deleteJob(String jobName, String jobGroupName) {

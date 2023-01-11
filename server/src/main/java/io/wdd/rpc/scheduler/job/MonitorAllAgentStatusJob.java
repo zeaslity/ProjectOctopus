@@ -22,7 +22,7 @@ public class MonitorAllAgentStatusJob extends QuartzJobBean {
     protected void executeInternal(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 
         // get the jobMetaMap
-        //JobDataMap jobDataMap = jobExecutionContext.getJobDetail().getJobDataMap();
+        JobDataMap jobDataMap = jobExecutionContext.getJobDetail().getJobDataMap();
 
         // actually execute the monitor service
         monitorAllAgentStatus.go();

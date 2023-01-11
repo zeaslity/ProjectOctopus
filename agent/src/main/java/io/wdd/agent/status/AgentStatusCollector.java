@@ -109,7 +109,7 @@ public class AgentStatusCollector {
 
     // agent boot up 120s then start to report its status
     // at the fix rate of 15s
-    @Scheduled(initialDelay = ReportInitDelay, fixedRate = ReportFixedRate)
+    /*@Scheduled(initialDelay = ReportInitDelay, fixedRate = ReportFixedRate)*/
     public void sendAgentStatusToRedis() {
 
         try {
