@@ -23,6 +23,9 @@ public class AgentRuntimeMetricStatus {
 
     public static List<String> ALL_HEALTHY_AGENT_TOPIC_NAMES;
 
+    public static final String METRIC_REPORT_TIME_PINCH = "metricRepeatPinch";
+    public static final String METRIC_REPORT_TIMES_COUNT = "metricRepeatCount";
+
     @Resource
     CollectAgentStatus collectAgentStatus;
 
@@ -47,7 +50,7 @@ public class AgentRuntimeMetricStatus {
                             return OctopusStatusMessage.builder()
                                     .type(METRIC_STATUS_MESSAGE_TYPE)
                                     .metricRepeatCount(metricRepeatCount)
-                                    .metricRepeatCount(metricRepeatCount)
+                                    .metricRepeatPinch(metricRepeatPinch)
                                     .agentTopicName(agentTopicName)
                                     .build();
                         }

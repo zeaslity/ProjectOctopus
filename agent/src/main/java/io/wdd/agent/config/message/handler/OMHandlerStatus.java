@@ -49,6 +49,12 @@ public class OMHandlerStatus extends AbstractOctopusMessageHandler {
                 agentStatusCollector.sendAgentStatusToRedis();
             } else if (statusType.equals(METRIC_STATUS_MESSAGE_TYPE)) {
                 // metric status
+
+
+                agentStatusCollector.collect(
+                        statusMessage.getMetricRepeatCount(),
+                        statusMessage.getMetricRepeatPinch()
+                );
             } else if (statusType.equals(APP_STATUS_MESSAGE_TYPE)) {
                 // app status report
             } else {

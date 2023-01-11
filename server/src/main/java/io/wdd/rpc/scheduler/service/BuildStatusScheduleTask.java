@@ -12,6 +12,10 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
+
+import static io.wdd.rpc.status.AgentRuntimeMetricStatus.METRIC_REPORT_TIMES_COUNT;
+import static io.wdd.rpc.status.AgentRuntimeMetricStatus.METRIC_REPORT_TIME_PINCH;
 
 @Component
 @Slf4j
@@ -67,15 +71,19 @@ public class BuildStatusScheduleTask {
             throw new RuntimeException(e);
         }
 
-        // build the Job
+        HashMap<String, Integer> map = new HashMap<String, Integer>();
+        map.put(METRIC_REPORT_TIME_PINCH,metricReportTimePinch);
+        map.put(METRIC_REPORT_TIMES_COUNT,metricReportTimesCount);
+
+        // build the Job 只发送一次消息，然后让Agent获取消息 （重复间隔，重复次数） 进行相应的处理！
         // todo 解决创建太多对象的问题，需要缓存相应的内容
         octopusQuartzService.addJob(
                 AgentRunMetricStatusJob.class,
                 "agentRunMetricStatusJob",
                 JOB_GROUP_NAME,
                 metricReportTimePinch,
-                metricReportTimesCount,
-                null
+                1,
+                map
         );
 
     }

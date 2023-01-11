@@ -3,6 +3,7 @@ package io.wdd.agent.status;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wdd.agent.config.beans.init.AgentServerInfo;
+import io.wdd.agent.config.utils.AgentCommonThreadPool;
 import io.wdd.agent.executor.AppStatusExecutor;
 import io.wdd.common.beans.status.*;
 import io.wdd.common.utils.TimeUtils;
@@ -10,14 +11,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.stream.StreamRecords;
 import org.springframework.data.redis.connection.stream.StringRecord;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import oshi.SystemInfo;
 import oshi.hardware.HardwareAbstractionLayer;
 import oshi.software.os.OperatingSystem;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -36,10 +39,19 @@ public class AgentStatusCollector {
     private static final long ReportInitDelay = 60000;
     private static final long ReportFixedRate = 15000;
 
+    private String statusRedisStreamKey;
+
+
     static {
         systemInfo = new SystemInfo();
         hardware = systemInfo.getHardware();
         os = systemInfo.getOperatingSystem();
+    }
+
+
+    @PostConstruct
+    private void generateStatusRedisStreamKey() {
+        statusRedisStreamKey = AgentStatus.getRedisStatusKey( agentServerInfo.getAgentTopicName());
     }
 
     @Resource
@@ -114,11 +126,9 @@ public class AgentStatusCollector {
 
         try {
 
-            String statusStreamKey = agentServerInfo.getServerName() + "-status";
-
             Map<String, String> map = Map.of(TimeUtils.currentTimeString(), objectMapper.writeValueAsString(collect()));
 
-            StringRecord stringRecord = StreamRecords.string(map).withStreamKey(statusStreamKey);
+            StringRecord stringRecord = StreamRecords.string(map).withStreamKey(statusRedisStreamKey);
 
             log.debug("Agent Status is ==> {}", map);
             redisTemplate.opsForStream().add(stringRecord);
@@ -129,4 +139,32 @@ public class AgentStatusCollector {
 
     }
 
+    /**
+     *  接收来自 OMHandlerStatus 的调用
+     *    汇报服务器的状态信息
+     *
+     * @param metricRepeatCount 需要重复的次数
+     * @param metricRepeatPinch 重复时间间隔
+     */
+    public void collect(int metricRepeatCount, int metricRepeatPinch) {
+
+        for (int count = 0; count < metricRepeatCount; count++) {
+
+            try {
+
+                // use async thread pool to call the status collect method
+                AgentCommonThreadPool.pool.submit(
+                        () -> this.sendAgentStatusToRedis()
+                );
+
+                // main thread sleep for metricRepeatPinch
+                TimeUnit.SECONDS.sleep(metricRepeatPinch);
+
+
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+    }
 }

@@ -14,6 +14,12 @@ import java.util.List;
 @SuperBuilder(toBuilder = true)
 public class AgentStatus {
 
+    private static final String AGENT_STATUS_KEY_SUFFIX = "-Status";
+
+    public static String getRedisStatusKey(String agentTopicName) {
+        return agentTopicName+AGENT_STATUS_KEY_SUFFIX;
+    }
+
     String time;
 
     String agentName;
