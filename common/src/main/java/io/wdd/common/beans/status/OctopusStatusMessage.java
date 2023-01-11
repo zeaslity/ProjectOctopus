@@ -28,5 +28,8 @@ public class OctopusStatusMessage {
 
     String agentTopicName;
 
+    int metricRepeatCount;
+
+    int metricRepeatPinch;
 
 }

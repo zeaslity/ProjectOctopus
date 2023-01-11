@@ -1,22 +1,29 @@
 package io.wdd.rpc.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wdd.common.beans.status.OctopusStatusMessage;
 import io.wdd.common.utils.TimeUtils;
+import io.wdd.rpc.scheduler.service.BuildStatusScheduleTask;
+import io.wdd.rpc.scheduler.service.OctopusQuartzService;
 import io.wdd.server.beans.vo.ServerInfoVO;
 import io.wdd.server.coreService.CoreServerService;
 import lombok.extern.slf4j.Slf4j;
+import org.quartz.Trigger;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static io.wdd.common.beans.status.OctopusStatusMessage.ALL_AGENT_STATUS_REDIS_KEY;
 import static io.wdd.common.beans.status.OctopusStatusMessage.HEALTHY_STATUS_MESSAGE_TYPE;
+import static io.wdd.rpc.status.AgentRuntimeMetricStatus.ALL_HEALTHY_AGENT_TOPIC_NAMES;
 
 /**
  * 获取所有注册的Agent
@@ -44,6 +51,8 @@ public class MonitorAllAgentStatus {
     CollectAgentStatus collectAgentStatus;
     @Resource
     CoreServerService coreServerService;
+    @Resource
+    BuildStatusScheduleTask buildStatusScheduleTask;
 
     public void go() {
 
@@ -75,7 +84,8 @@ public class MonitorAllAgentStatus {
 
     private void checkOrCreateRedisHealthyKey() {
 
-        if (!redisTemplate.hasKey(ALL_AGENT_STATUS_REDIS_KEY)) {
+        // must init the cached map && make sure  the redis key existed!
+        if (null == AGENT_HEALTHY_INIT_MAP || !redisTemplate.hasKey(ALL_AGENT_STATUS_REDIS_KEY)) {
             log.info("ALL_AGENT_STATUS_REDIS_KEY not existed , start to create");
 
             // build the  redis all agent healthy map struct
@@ -95,13 +105,15 @@ public class MonitorAllAgentStatus {
     }
 
     private void buildAndSendAgentHealthMessage() {
+
         List<OctopusStatusMessage> collect = ALL_AGENT_TOPICNAME_LIST.stream().map(
                 agentTopicName -> OctopusStatusMessage.builder()
                         .agentTopicName(agentTopicName)
                         .type(HEALTHY_STATUS_MESSAGE_TYPE)
                         .build()
         ).collect(Collectors.toList());
-        collectAgentStatus.collectAgentStatusList(collect);
+
+        collectAgentStatus.statusMessageToAgent(collect);
     }
 
     private void updateAllAgentHealthyStatus() {
@@ -123,6 +135,17 @@ public class MonitorAllAgentStatus {
 
         // help gc
         tmp = null;
+
+        // Trigger调用Agent Metric 任务
+        ArrayList<String> allHealthyAgentTopicNames = new ArrayList<>(32);
+        for (int i = 0; i < statusList.size(); i++) {
+            if (statusList.get(i).equals("1")) {
+                allHealthyAgentTopicNames.add(ALL_AGENT_TOPICNAME_LIST.get(i));
+            }
+        }
+        ALL_HEALTHY_AGENT_TOPIC_NAMES = allHealthyAgentTopicNames;
+        // 执行Metric上报任务
+        buildStatusScheduleTask.buildAgentMetricScheduleTask();
 
         // update time
         AGENT_HEALTHY_INIT_MAP.put("updateTime", currentTimeString);

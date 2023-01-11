@@ -1,6 +1,7 @@
 package io.wdd.rpc.scheduler.service;
 
 import io.wdd.rpc.scheduler.beans.OctopusQuartzJob;
+import org.quartz.Trigger;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 import java.util.List;
 import java.util.Map;
@@ -15,11 +16,11 @@ public interface OctopusQuartzService {
      * @param jobClass  任务job实现类
      * @param jobName   任务job名称（保证唯一性）
      * @param jobGroupName  任务job组名
-     * @param jobTime   任务时间间隔（秒）
-     * @param jobTimes  任务运行次数（若<0，则不限次数）
+     * @param jobRunTimePinch   任务时间间隔（秒）
+     * @param jobRunRepeatTimes  任务运行次数（若<0，则不限次数）
      * @param jobData   任务参数
      */
-    void addJob(Class<? extends QuartzJobBean> jobClass, String jobName, String jobGroupName, int jobTime, int jobTimes, Map jobData);
+    void addJob(Class<? extends QuartzJobBean> jobClass, String jobName, String jobGroupName, int jobRunTimePinch, int jobRunRepeatTimes, Map jobData);
 
     /**
      * 增加一个任务job
@@ -82,6 +83,9 @@ public interface OctopusQuartzService {
      * @return
      */
     List<Map<String, Object>> queryRunJob();
+
+
+    List<Trigger> queryAllTrigger();
 
 
 }

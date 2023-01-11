@@ -1,5 +1,7 @@
 package io.wdd.rpc.status;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.wdd.common.beans.rabbitmq.OctopusMessage;
 import io.wdd.common.beans.rabbitmq.OctopusMessageType;
 import io.wdd.common.beans.status.OctopusStatusMessage;
@@ -22,14 +24,17 @@ public class CollectAgentStatus {
     @Resource
     ToAgentMessageSender toAgentMessageSender;
 
+    @Resource
+    ObjectMapper objectMapper;
+
 
     public void collectAgentStatus(OctopusStatusMessage statusMessage) {
 
-        this.collectAgentStatusList(List.of(statusMessage));
+        this.statusMessageToAgent(List.of(statusMessage));
     }
 
 
-    public void collectAgentStatusList(List<OctopusStatusMessage> statusMessageList) {
+    public void statusMessageToAgent(List<OctopusStatusMessage> statusMessageList) {
 
         // build all the OctopusMessage
         List<OctopusMessage> octopusMessageList = statusMessageList.stream().map(
@@ -43,15 +48,23 @@ public class CollectAgentStatus {
         toAgentMessageSender.send(octopusMessageList);
 
         // todo how to get result ?
-
     }
 
     private OctopusMessage buildOctopusMessageStatus(OctopusStatusMessage octopusStatusMessage) {
+
+        // must be like this or it will be deserialized as LinkedHashMap
+        String s;
+        try {
+            s = objectMapper.writeValueAsString(octopusStatusMessage);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
         return OctopusMessage.builder()
                 .uuid(octopusStatusMessage.getAgentTopicName())
                 .type(OctopusMessageType.STATUS)
                 .init_time(TimeUtils.currentTime())
-                .content(octopusStatusMessage)
+                .content(s)
                 .build();
     }
 

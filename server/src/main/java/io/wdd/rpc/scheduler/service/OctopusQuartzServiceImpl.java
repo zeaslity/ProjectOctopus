@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import static io.wdd.rpc.scheduler.service.BuildStatusScheduleTask.JOB_GROUP_NAME;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
@@ -49,15 +51,18 @@ public class OctopusQuartzServiceImpl implements OctopusQuartzService {
      * @param jobClass     任务实现类
      * @param jobName      任务名称
      * @param jobGroupName 任务组名
-     * @param jobTime      时间表达式 (这是每隔多少秒为一次任务)
-     * @param jobTimes     运行的次数 （<0:表示不限次数）
+     * @param jobRunTimePinch      时间表达式 (这是每隔多少秒为一次任务)
+     * @param jobRunRepeatTimes     运行的次数 （<0:表示不限次数）
      * @param jobData      参数
      */
     @Override
-    public void addJob(Class<? extends QuartzJobBean> jobClass, String jobName, String jobGroupName, int jobTime, int jobTimes, Map jobData) {
+    public void addJob(Class<? extends QuartzJobBean> jobClass, String jobName, String jobGroupName, int jobRunTimePinch, int jobRunRepeatTimes, Map jobData) {
         try {
             // 任务名称和组构成任务key
-            JobDetail jobDetail = JobBuilder.newJob(jobClass).withIdentity(jobName, jobGroupName).build();
+            JobDetail jobDetail = JobBuilder
+                    .newJob(jobClass)
+                    .withIdentity(jobName, jobGroupName)
+                    .build();
 
             // 设置job参数
             if (jobData != null && jobData.size() > 0) {
@@ -65,14 +70,22 @@ public class OctopusQuartzServiceImpl implements OctopusQuartzService {
             }
 
             // 使用simpleTrigger规则
-            Trigger trigger = null;
-            if (jobTimes < 0) {
-                trigger = newTrigger().withIdentity(jobName, jobGroupName).withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(1).withIntervalInSeconds(jobTime)).startNow().build();
-            } else {
-                trigger = newTrigger().withIdentity(jobName, jobGroupName).withSchedule(SimpleScheduleBuilder.repeatSecondlyForever(1).withIntervalInSeconds(jobTime).withRepeatCount(jobTimes)).startNow().build();
-            }
-            log.info("jobDataMap: {}", jobDetail.getJobDataMap().getWrappedMap());
+            Trigger trigger = newTrigger()
+                    .withIdentity(jobName, jobGroupName)
+                    .withSchedule(
+                            SimpleScheduleBuilder
+                                    .repeatSecondlyForTotalCount(
+                                            jobRunRepeatTimes,
+                                            jobRunTimePinch
+                                    )
+                    )
+                    .startNow()
+                    .build();
+
+            log.debug("jobDataMap: {}", jobDetail.getJobDataMap().getWrappedMap());
+
             scheduler.scheduleJob(jobDetail, trigger);
+
         } catch (SchedulerException e) {
             e.printStackTrace();
             throw new MyRuntimeException("add job error!");
@@ -110,7 +123,16 @@ public class OctopusQuartzServiceImpl implements OctopusQuartzService {
                 startTime = 1;
             }
 
-            Trigger trigger = newTrigger().withIdentity(jobName, jobGroupName).startAt(DateBuilder.futureDate(startTime, IntervalUnit.SECOND)).withSchedule(CronScheduleBuilder.cronSchedule(cronJobExpression)).startNow().build();
+            Trigger trigger = newTrigger()
+                    .withIdentity(jobName, jobGroupName)
+                    .startAt(
+                            DateBuilder.futureDate(startTime, IntervalUnit.SECOND)
+                    )
+                    .withSchedule(
+                            CronScheduleBuilder.cronSchedule(cronJobExpression)
+                    )
+                    .startNow()
+                    .build();
 
             // 把作业和触发器注册到任务调度中
             scheduler.scheduleJob(jobDetail, trigger);
@@ -281,6 +303,28 @@ public class OctopusQuartzServiceImpl implements OctopusQuartzService {
             throw new MyRuntimeException("query run jobs error!");
         }
         return jobList;
+    }
+
+    @Override
+    public List<Trigger> queryAllTrigger() {
+
+        try {
+
+            return scheduler.getTriggerKeys(
+                    GroupMatcher.groupEquals(JOB_GROUP_NAME)
+            ).stream().map(
+                    triggerKey -> {
+                        try {
+                            return scheduler.getTrigger(triggerKey);
+                        } catch (SchedulerException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+            ).collect(Collectors.toList());
+
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
