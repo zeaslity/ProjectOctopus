@@ -13,7 +13,7 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Method;
 
 
-@Async
+@Deprecated
 public class ExecutionJob extends QuartzJobBean {
 
     @Override

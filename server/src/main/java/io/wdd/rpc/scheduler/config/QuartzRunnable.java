@@ -7,6 +7,7 @@ import org.springframework.util.ReflectionUtils;
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
 
+@Deprecated
 public class QuartzRunnable implements Callable<Object> {
 
     private final Object target;

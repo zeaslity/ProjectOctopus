@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static io.wdd.common.beans.status.OctopusStatusMessage.ALL_AGENT_STATUS_REDIS_KEY;
+import static io.wdd.common.beans.status.OctopusStatusMessage.HEALTHY_STATUS_MESSAGE_TYPE;
+
 /**
  * 获取所有注册的Agent
  * <p>
@@ -31,8 +34,6 @@ import java.util.stream.Collectors;
 public class MonitorAllAgentStatus {
 
     private static final int MAX_WAIT_AGENT_REPORT_STATUS_TIME = 5;
-    private static final String ALL_AGENT_STATUS_REDIS_KEY = "ALL_AGENT_STATUS";
-    private static final String STATUS_MESSAGE_TYPE = "ping";
 
     private HashMap<String, String> AGENT_HEALTHY_INIT_MAP;
     private List<String> ALL_AGENT_TOPICNAME_LIST;
@@ -97,7 +98,7 @@ public class MonitorAllAgentStatus {
         List<OctopusStatusMessage> collect = ALL_AGENT_TOPICNAME_LIST.stream().map(
                 agentTopicName -> OctopusStatusMessage.builder()
                         .agentTopicName(agentTopicName)
-                        .type(STATUS_MESSAGE_TYPE)
+                        .type(HEALTHY_STATUS_MESSAGE_TYPE)
                         .build()
         ).collect(Collectors.toList());
         collectAgentStatus.collectAgentStatusList(collect);
@@ -108,16 +109,20 @@ public class MonitorAllAgentStatus {
                 ALL_AGENT_STATUS_REDIS_KEY,
                 ALL_AGENT_TOPICNAME_LIST);
 
+
+        // current log to console is ok
         HashMap<String, String> tmp = new HashMap<>(32);
         for (int i = 0; i < ALL_AGENT_TOPICNAME_LIST.size(); i++) {
-            tmp.put(ALL_AGENT_TOPICNAME_LIST.get(i),
+            tmp.put(
+                    ALL_AGENT_TOPICNAME_LIST.get(i),
                     uniformHealthyStatus(String.valueOf(statusList.get(i)))
             );
         }
-        // current log to console is ok
-
         String currentTimeString = TimeUtils.currentTimeString();
         log.info("[ AGENT HEALTHY CHECK ] time is {} ,  result are => {}", currentTimeString, tmp);
+
+        // help gc
+        tmp = null;
 
         // update time
         AGENT_HEALTHY_INIT_MAP.put("updateTime", currentTimeString);
